@@ -1,0 +1,54 @@
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--fq-space-1);
+}
+
+.label {
+  font-size: var(--fq-text-sm);
+  font-weight: var(--fq-weight-medium);
+  color: var(--fq-color-ink);
+}
+
+/* Filled input per the spec: #DDDDDD fill, 12px radius, ~52px tall, focus shows a green border. */
+.input {
+  min-height: var(--fq-size-control);
+  padding: var(--fq-space-2) var(--fq-space-4);
+  font-size: var(--fq-text-md);
+  color: var(--fq-color-ink);
+  background-color: var(--fq-color-input-fill);
+  border: 1px solid var(--fq-color-input-fill);
+  border-radius: var(--fq-radius-md);
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.input::placeholder {
+  color: var(--fq-color-text-secondary);
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--fq-color-green-button);
+  box-shadow: 0 0 0 3px var(--fq-color-focus-ring);
+}
+
+.inputError {
+  border-color: var(--fq-color-danger);
+}
+
+.inputError:focus {
+  border-color: var(--fq-color-danger);
+  box-shadow: 0 0 0 3px var(--fq-color-danger-tint);
+}
+
+.hint {
+  font-size: var(--fq-text-xs);
+  color: var(--fq-color-text-secondary);
+}
+
+.error {
+  font-size: var(--fq-text-xs);
+  color: var(--fq-color-danger);
+}

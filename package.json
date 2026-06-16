@@ -1,0 +1,49 @@
+{
+  "name": "farmersquest-web",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Customer and farmer web app for FarmersQuest. Presentation only; consumes the FarmersQuest API.",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "generate:api": "openapi-typescript ./openapi/farmersquest-api.openapi.json --output ./src/services/api/schema.ts"
+  },
+  "dependencies": {
+    "openapi-fetch": "^0.13.5",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "react-router-dom": "^7.6.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.18.0",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.2.0",
+    "@testing-library/user-event": "^14.5.2",
+    "@types/node": "^22.10.0",
+    "@types/react": "^19.1.0",
+    "@types/react-dom": "^19.1.0",
+    "@vitejs/plugin-react": "^5.0.0",
+    "eslint": "^9.18.0",
+    "eslint-plugin-react-hooks": "^5.1.0",
+    "eslint-plugin-react-refresh": "^0.4.18",
+    "globals": "^15.14.0",
+    "jsdom": "^25.0.1",
+    "openapi-typescript": "^7.5.0",
+    "prettier": "^3.4.2",
+    "typescript": "^5.7.3",
+    "typescript-eslint": "^8.20.0",
+    "vite": "^7.0.0",
+    "vitest": "^3.0.0"
+  }
+}

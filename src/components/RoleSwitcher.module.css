@@ -1,0 +1,22 @@
+.switcher {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--fq-space-2);
+}
+
+.caption {
+  font-size: var(--fq-text-sm);
+  color: var(--fq-color-on-color);
+  opacity: 0.85;
+}
+
+.select {
+  padding: var(--fq-space-1) var(--fq-space-2);
+  font-size: var(--fq-text-sm);
+  font-weight: var(--fq-weight-medium);
+  color: var(--fq-color-ink);
+  background-color: var(--fq-color-surface);
+  border: 1px solid var(--fq-color-input-fill);
+  border-radius: var(--fq-radius-sm);
+  cursor: pointer;
+}

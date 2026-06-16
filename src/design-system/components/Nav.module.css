@@ -1,0 +1,65 @@
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: var(--fq-space-2);
+}
+
+.title {
+  padding: var(--fq-space-2) var(--fq-space-3);
+  font-size: var(--fq-text-xs);
+  font-weight: var(--fq-weight-semibold);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--fq-color-text-secondary);
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--fq-space-1);
+}
+
+.item {
+  margin: 0;
+}
+
+/* Applied by the host to the link element through renderLink. */
+.link {
+  display: flex;
+  align-items: center;
+  gap: var(--fq-space-3);
+  padding: var(--fq-space-2) var(--fq-space-3);
+  border-radius: var(--fq-radius-md);
+  color: var(--fq-color-ink);
+  font-size: var(--fq-text-md);
+  font-weight: var(--fq-weight-medium);
+  text-decoration: none;
+}
+
+.link:hover {
+  background-color: var(--fq-color-surface-green);
+  text-decoration: none;
+}
+
+.linkActive {
+  background-color: var(--fq-color-surface-green);
+  color: var(--fq-color-green-deep);
+  font-weight: var(--fq-weight-semibold);
+}
+
+.icon {
+  display: inline-flex;
+  font-size: var(--fq-text-lg);
+  line-height: 1;
+}
+
+.label {
+  flex: 1;
+}
+
+.trailing {
+  flex-shrink: 0;
+}

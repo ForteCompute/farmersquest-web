@@ -1,0 +1,52 @@
+/* Global baseline styles, built on the design tokens (projected to CSS variables by theme.ts).
+   No brand values are hardcoded here; everything references a var(--fq-*) token. */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: var(--fq-font-sans);
+  font-size: var(--fq-text-md);
+  line-height: var(--fq-leading-normal);
+  color: var(--fq-color-ink);
+  background-color: var(--fq-color-surface-green-soft);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1,
+h2,
+h3,
+h4,
+p,
+figure {
+  margin: 0;
+}
+
+a {
+  color: var(--fq-color-green-action);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+button {
+  font-family: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--fq-color-green-button);
+  outline-offset: 2px;
+}
