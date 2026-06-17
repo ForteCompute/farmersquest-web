@@ -2,9 +2,10 @@
 // var(--fq-font-*), var(--fq-text-*), var(--fq-leading-*) and var(--fq-weight-*) custom properties
 // derived in src/design-system/theme.ts.
 //
-// Per design/DESIGN-SPEC.md: Poppins (rounded geometric sans) with a system fallback. If Poppins is
-// not licensed, the team approves the closest match; do not silently switch. The fallback stack
-// keeps the app readable before the web font loads.
+// Per design/DESIGN-SPEC.md: Poppins (rounded geometric sans) with a system fallback. Poppins is
+// self-hosted (SIL Open Font License 1.1): the font files live in fonts/poppins/ and are loaded by
+// fonts.css, served from our own origin with no external CDN. The fallback stack keeps the app
+// readable until the web font loads (font-display: swap).
 export const typography = {
   fontFamily: {
     sans: "'Poppins', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
