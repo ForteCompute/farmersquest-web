@@ -2,6 +2,7 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { App } from './app/App';
 import { applyTheme } from './design-system';
+import './design-system/fonts.css';
 import './design-system/global.css';
 
 // Project the design tokens onto the document as CSS custom properties before first paint, then
