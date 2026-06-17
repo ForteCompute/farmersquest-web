@@ -1,0 +1,39 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--fq-space-5);
+  width: 100%;
+  max-width: 30rem;
+  margin: 0 auto;
+}
+
+.back {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--fq-space-1);
+  align-self: flex-start;
+  font-size: var(--fq-text-sm);
+  font-weight: var(--fq-weight-semibold);
+  color: var(--fq-color-green-deep);
+}
+
+.back:hover {
+  text-decoration: none;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--fq-space-1);
+}
+
+.title {
+  font-size: var(--fq-text-2xl);
+  font-weight: var(--fq-weight-bold);
+  color: var(--fq-color-ink);
+}
+
+.subtitle {
+  font-size: var(--fq-text-sm);
+  color: var(--fq-color-text-secondary);
+}

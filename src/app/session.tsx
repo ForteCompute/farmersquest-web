@@ -1,23 +1,44 @@
 import { createContext, useCallback, useContext, useMemo, useState } from 'react';
 import type { ReactNode } from 'react';
-import { isRole, type Role } from './roles';
+import { isRole, mapApiRole, type Role } from './roles';
+import { setAuthToken } from '@/services/api/authToken';
+import type { AccountDto, AuthResultDto } from '@/services/auth';
 
-// A minimal session context holding the active role. This is a placeholder for real authentication:
-// it lets the shell gate navigation by role today, and gives feature code a stable `useSession`
-// hook to build against. When sign in arrives, only this provider changes; consumers do not.
+// The session context. It holds the authenticated account and access token when signed in, and the
+// active role. Before sign in, the role is chosen in the shell (the role switcher) and kept in the
+// browser, purely to drive role-gated navigation. Once signed in, the role comes from the
+// authenticated account and the server remains the sole authority on what each role may do.
+//
+// Consumers read `role`, `account`, and `isAuthenticated`, and call `signIn` / `signOut`. Sign in
+// (registration's follow-on login, and the sign-in screen) hands the auth result here; this is the
+// single place the token is stored and handed to the API client.
 
 interface SessionValue {
   role: Role;
+  account: AccountDto | null;
+  isAuthenticated: boolean;
   setRole: (role: Role) => void;
+  /** Sign in. When persist is false ("remember me" unchecked) the session is kept in memory only
+   *  and does not survive a reload. Defaults to persisting. */
+  signIn: (auth: AuthResultDto, persist?: boolean) => void;
+  signOut: () => void;
+  /** Replace the stored account after a profile or preferences change, keeping the token. */
+  updateAccount: (account: AccountDto) => void;
 }
 
-const STORAGE_KEY = 'fq.web.role';
+const ROLE_KEY = 'fq.web.role';
+const SESSION_KEY = 'fq.web.session';
+
+interface StoredSession {
+  token: string;
+  account: AccountDto;
+}
 
 const SessionContext = createContext<SessionValue | null>(null);
 
 function readStoredRole(): Role {
   try {
-    const stored = window.localStorage.getItem(STORAGE_KEY);
+    const stored = window.localStorage.getItem(ROLE_KEY);
     if (isRole(stored)) {
       return stored;
     }
@@ -27,19 +48,110 @@ function readStoredRole(): Role {
   return 'buyer';
 }
 
+function readStoredSession(): StoredSession | null {
+  try {
+    const raw = window.localStorage.getItem(SESSION_KEY);
+    if (!raw) {
+      return null;
+    }
+    const parsed: unknown = JSON.parse(raw);
+    if (
+      typeof parsed === 'object' &&
+      parsed !== null &&
+      typeof (parsed as { token?: unknown }).token === 'string' &&
+      typeof (parsed as { account?: unknown }).account === 'object' &&
+      (parsed as { account?: unknown }).account !== null
+    ) {
+      return parsed as StoredSession;
+    }
+  } catch {
+    // Corrupt or unavailable storage: treat as signed out.
+  }
+  return null;
+}
+
 export function SessionProvider({ children }: { children: ReactNode }) {
-  const [role, setRoleState] = useState<Role>(readStoredRole);
+  const [manualRole, setManualRole] = useState<Role>(readStoredRole);
+  const [stored, setStored] = useState<StoredSession | null>(() => {
+    const existing = readStoredSession();
+    if (existing) {
+      // Hand the persisted token to the API client so authenticated calls work after a reload.
+      setAuthToken(existing.token);
+    }
+    return existing;
+  });
 
   const setRole = useCallback((next: Role) => {
-    setRoleState(next);
+    setManualRole(next);
     try {
-      window.localStorage.setItem(STORAGE_KEY, next);
+      window.localStorage.setItem(ROLE_KEY, next);
     } catch {
       // Best effort only; the in-memory role still updates.
     }
   }, []);
 
-  const value = useMemo<SessionValue>(() => ({ role, setRole }), [role, setRole]);
+  const signIn = useCallback((auth: AuthResultDto, persist = true) => {
+    const token = auth.accessToken ?? '';
+    const account = auth.account ?? null;
+    if (!token || !account) {
+      return;
+    }
+    const next: StoredSession = { token, account };
+    setAuthToken(token);
+    setStored(next);
+    try {
+      if (persist) {
+        window.localStorage.setItem(SESSION_KEY, JSON.stringify(next));
+      } else {
+        // "Remember me" off: keep this session in memory only.
+        window.localStorage.removeItem(SESSION_KEY);
+      }
+    } catch {
+      // Best effort; the in-memory session still holds for this tab.
+    }
+  }, []);
+
+  const updateAccount = useCallback((account: AccountDto) => {
+    setStored((prev) => {
+      if (!prev) {
+        return prev;
+      }
+      const next = { ...prev, account };
+      try {
+        // Mirror the persistence already in effect: only rewrite storage if a session is stored.
+        if (window.localStorage.getItem(SESSION_KEY)) {
+          window.localStorage.setItem(SESSION_KEY, JSON.stringify(next));
+        }
+      } catch {
+        // Best effort; in-memory account still updates.
+      }
+      return next;
+    });
+  }, []);
+
+  const signOut = useCallback(() => {
+    setAuthToken(null);
+    setStored(null);
+    try {
+      window.localStorage.removeItem(SESSION_KEY);
+    } catch {
+      // Ignore storage failures on sign out.
+    }
+  }, []);
+
+  const value = useMemo<SessionValue>(() => {
+    const account = stored?.account ?? null;
+    const role = (account ? mapApiRole(account.role) : null) ?? manualRole;
+    return {
+      role,
+      account,
+      isAuthenticated: stored !== null,
+      setRole,
+      signIn,
+      signOut,
+      updateAccount,
+    };
+  }, [stored, manualRole, setRole, signIn, signOut, updateAccount]);
 
   return <SessionContext.Provider value={value}>{children}</SessionContext.Provider>;
 }

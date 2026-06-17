@@ -1,46 +1,47 @@
-/* Poppins, self-hosted. The woff2 (and woff fallback) files live in fonts/poppins/ in this repo and
-   are bundled and served from our own origin by Vite. No external font CDN is used. Poppins is
-   licensed under the SIL Open Font License 1.1 (see fonts/poppins/OFL.txt).
+/* Nunito, self-hosted. The woff2 (and woff fallback) files live in fonts/nunito/ in this repo and
+   are bundled and served from our own origin by Vite. No external font CDN is used. Nunito is
+   licensed under the SIL Open Font License 1.1 (see fonts/nunito/OFL.txt).
 
-   font-display: swap renders text immediately in the fallback stack and swaps to Poppins once it
-   loads. Weights match the typography tokens: 400 regular, 500 medium, 600 semibold, 700 bold. */
+   Nunito is the font the Figma frames are drawn in; the design tokens reference it. font-display:
+   swap renders text immediately in the fallback stack and swaps to Nunito once it loads. Weights
+   match the typography tokens: 400 regular, 500 medium, 600 semibold, 700 bold. */
 
 @font-face {
-  font-family: 'Poppins';
+  font-family: 'Nunito';
   font-style: normal;
   font-weight: 400;
   font-display: swap;
   src:
-    url('./fonts/poppins/poppins-latin-400-normal.woff2') format('woff2'),
-    url('./fonts/poppins/poppins-latin-400-normal.woff') format('woff');
+    url('./fonts/nunito/nunito-latin-400-normal.woff2') format('woff2'),
+    url('./fonts/nunito/nunito-latin-400-normal.woff') format('woff');
 }
 
 @font-face {
-  font-family: 'Poppins';
+  font-family: 'Nunito';
   font-style: normal;
   font-weight: 500;
   font-display: swap;
   src:
-    url('./fonts/poppins/poppins-latin-500-normal.woff2') format('woff2'),
-    url('./fonts/poppins/poppins-latin-500-normal.woff') format('woff');
+    url('./fonts/nunito/nunito-latin-500-normal.woff2') format('woff2'),
+    url('./fonts/nunito/nunito-latin-500-normal.woff') format('woff');
 }
 
 @font-face {
-  font-family: 'Poppins';
+  font-family: 'Nunito';
   font-style: normal;
   font-weight: 600;
   font-display: swap;
   src:
-    url('./fonts/poppins/poppins-latin-600-normal.woff2') format('woff2'),
-    url('./fonts/poppins/poppins-latin-600-normal.woff') format('woff');
+    url('./fonts/nunito/nunito-latin-600-normal.woff2') format('woff2'),
+    url('./fonts/nunito/nunito-latin-600-normal.woff') format('woff');
 }
 
 @font-face {
-  font-family: 'Poppins';
+  font-family: 'Nunito';
   font-style: normal;
   font-weight: 700;
   font-display: swap;
   src:
-    url('./fonts/poppins/poppins-latin-700-normal.woff2') format('woff2'),
-    url('./fonts/poppins/poppins-latin-700-normal.woff') format('woff');
+    url('./fonts/nunito/nunito-latin-700-normal.woff2') format('woff2'),
+    url('./fonts/nunito/nunito-latin-700-normal.woff') format('woff');
 }

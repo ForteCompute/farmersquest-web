@@ -1,0 +1,221 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--fq-space-6);
+  width: 100%;
+  max-width: 30rem;
+  margin: 0 auto;
+}
+
+.heading {
+  font-size: var(--fq-text-xl);
+  font-weight: var(--fq-weight-bold);
+  color: var(--fq-color-green-button);
+  text-align: center;
+}
+
+.identity {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--fq-space-2);
+}
+
+.avatarWrap {
+  position: relative;
+  width: 100px;
+  height: 100px;
+}
+
+.avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100px;
+  height: 100px;
+  font-size: var(--fq-text-2xl);
+  font-weight: var(--fq-weight-bold);
+  color: var(--fq-color-green-deep);
+  background-color: var(--fq-color-surface-green);
+  border: 1px solid var(--fq-color-green-action);
+  border-radius: var(--fq-radius-circle);
+}
+
+.avatarEdit {
+  position: absolute;
+  right: 2px;
+  bottom: 2px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  color: var(--fq-color-on-color);
+  background-color: var(--fq-color-green-action);
+  border-radius: var(--fq-radius-circle);
+}
+
+.nameRow {
+  display: flex;
+  align-items: center;
+  gap: var(--fq-space-1);
+}
+
+.name {
+  font-size: var(--fq-text-2xl);
+  font-weight: var(--fq-weight-bold);
+  color: var(--fq-color-ink);
+}
+
+/* The green VERIFIED pill from the frame: solid green, white icon and label. */
+.verifiedPill {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 0 var(--fq-space-2);
+  height: 20px;
+  font-size: var(--fq-text-xs);
+  font-weight: var(--fq-weight-bold);
+  color: var(--fq-color-on-color);
+  background-color: var(--fq-color-green-action);
+  border-radius: var(--fq-radius-badge);
+}
+
+.pendingPill {
+  display: inline-flex;
+  align-items: center;
+  padding: 0 var(--fq-space-2);
+  height: 20px;
+  font-size: var(--fq-text-xs);
+  font-weight: var(--fq-weight-semibold);
+  color: var(--fq-color-text-secondary);
+  background-color: var(--fq-color-surface-green);
+  border: 1px solid var(--fq-color-border-muted);
+  border-radius: var(--fq-radius-badge);
+}
+
+.subtitle {
+  font-size: var(--fq-text-md);
+  font-weight: var(--fq-weight-medium);
+  color: var(--fq-color-text-secondary);
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--fq-space-2);
+}
+
+.sectionTitle {
+  font-size: var(--fq-text-md);
+  font-weight: var(--fq-weight-semibold);
+  color: var(--fq-color-ink);
+}
+
+.details {
+  display: flex;
+  flex-direction: column;
+  gap: var(--fq-space-3);
+  margin: 0;
+}
+
+.detail {
+  display: flex;
+  align-items: center;
+  gap: var(--fq-space-3);
+  padding: var(--fq-space-3) var(--fq-space-4);
+  background-color: var(--fq-color-surface-green);
+  border-radius: var(--fq-radius-md);
+}
+
+.detailIcon {
+  display: inline-flex;
+}
+
+.detailText {
+  display: flex;
+  flex-direction: column;
+}
+
+.detailLabel {
+  font-size: var(--fq-text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--fq-color-text-secondary);
+}
+
+.detailValue {
+  margin: 0;
+  font-size: var(--fq-text-md);
+  font-weight: var(--fq-weight-semibold);
+  color: var(--fq-color-ink);
+}
+
+.rows {
+  display: flex;
+  flex-direction: column;
+  gap: var(--fq-space-3);
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: var(--fq-space-5);
+  min-height: 59px;
+  padding: var(--fq-space-4);
+  color: var(--fq-color-ink);
+  background-color: var(--fq-color-surface-green);
+  border-radius: var(--fq-radius-md);
+  text-decoration: none;
+}
+
+.row:hover {
+  filter: brightness(0.98);
+  text-decoration: none;
+}
+
+.rowDisabled {
+  color: var(--fq-color-text-secondary);
+  cursor: not-allowed;
+}
+
+.rowIcon {
+  display: inline-flex;
+}
+
+.rowLabel {
+  flex: 1;
+  font-size: var(--fq-text-md);
+  font-weight: var(--fq-weight-medium);
+}
+
+.logout {
+  min-height: 59px;
+  color: var(--fq-color-logout);
+  border-color: var(--fq-color-text-secondary);
+}
+
+.logout:hover:not(:disabled) {
+  background-color: var(--fq-color-danger-tint);
+}
+
+.logoutInner {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--fq-space-3);
+}
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--fq-space-3);
+  padding: var(--fq-space-10);
+  text-align: center;
+}
+
+.link {
+  color: var(--fq-color-green-action);
+  font-weight: var(--fq-weight-semibold);
+  text-decoration: underline;
+}

@@ -10,12 +10,25 @@
   color: var(--fq-color-ink);
 }
 
-/* Filled input per the spec: #DDDDDD fill, 12px radius, ~52px tall, focus shows a green border. */
-.input {
-  min-height: var(--fq-size-control);
-  padding: var(--fq-space-2) var(--fq-space-4);
-  font-size: var(--fq-text-md);
-  color: var(--fq-color-ink);
+/* Visually hidden but available to assistive tech, for placeholder-as-label fields. */
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Filled input per the spec: #DDDDDD fill, 12px radius, ~52px tall, focus shows a green border.
+   The control wraps the input with optional left icon and right adornment inside the same fill. */
+.control {
+  display: flex;
+  align-items: center;
+  min-height: var(--fq-size-input-height);
   background-color: var(--fq-color-input-fill);
   border: 1px solid var(--fq-color-input-fill);
   border-radius: var(--fq-radius-md);
@@ -24,23 +37,64 @@
     box-shadow 0.15s ease;
 }
 
-.input::placeholder {
-  color: var(--fq-color-text-secondary);
-}
-
-.input:focus {
-  outline: none;
+.control:focus-within {
   border-color: var(--fq-color-green-button);
   box-shadow: 0 0 0 3px var(--fq-color-focus-ring);
 }
 
-.inputError {
+.controlError {
   border-color: var(--fq-color-danger);
 }
 
-.inputError:focus {
+.controlError:focus-within {
   border-color: var(--fq-color-danger);
   box-shadow: 0 0 0 3px var(--fq-color-danger-tint);
+}
+
+.input {
+  flex: 1;
+  min-width: 0;
+  min-height: calc(var(--fq-size-input-height) - 2px);
+  padding: var(--fq-space-2) var(--fq-space-4);
+  font-size: var(--fq-text-md);
+  font-weight: var(--fq-weight-medium);
+  color: var(--fq-color-ink);
+  background: transparent;
+  border: 0;
+  border-radius: var(--fq-radius-md);
+}
+
+.input:focus {
+  outline: none;
+}
+
+.input::placeholder {
+  color: var(--fq-color-text-secondary);
+  font-weight: var(--fq-weight-regular);
+}
+
+/* Trim the input's own side padding where an icon or adornment already provides it. The frame sets
+   a 7px gap between the leading icon and the text. */
+.hasLeading .input {
+  padding-left: var(--fq-space-2);
+}
+
+.hasTrailing .input {
+  padding-right: var(--fq-space-1);
+}
+
+.leading {
+  display: inline-flex;
+  align-items: center;
+  padding-left: var(--fq-space-3);
+  color: var(--fq-color-text-secondary);
+}
+
+.trailing {
+  display: inline-flex;
+  align-items: center;
+  padding-right: var(--fq-space-3);
+  color: var(--fq-color-text-secondary);
 }
 
 .hint {

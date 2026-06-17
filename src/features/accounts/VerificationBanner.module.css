@@ -1,0 +1,30 @@
+.banner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--fq-space-1);
+  padding: var(--fq-space-4);
+  border-radius: var(--fq-radius-md);
+  border: 1px solid transparent;
+}
+
+.pending {
+  background-color: var(--fq-color-surface-green);
+  border-color: var(--fq-color-border-muted);
+}
+
+.attention {
+  background-color: var(--fq-color-danger-tint);
+  border-color: var(--fq-color-danger);
+}
+
+.title {
+  font-size: var(--fq-text-md);
+  font-weight: var(--fq-weight-semibold);
+  color: var(--fq-color-ink);
+}
+
+.text {
+  font-size: var(--fq-text-sm);
+  color: var(--fq-color-text-secondary);
+  line-height: var(--fq-leading-normal);
+}

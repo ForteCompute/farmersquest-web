@@ -1,0 +1,39 @@
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--fq-space-4);
+  background-color: rgba(0, 35, 0, 0.45);
+}
+
+.dialog {
+  width: 100%;
+  max-width: 26rem;
+  padding: var(--fq-space-6);
+  background-color: var(--fq-color-surface);
+  border-radius: var(--fq-radius-md);
+  box-shadow: var(--fq-shadow-lg);
+}
+
+.title {
+  font-size: var(--fq-text-xl);
+  font-weight: var(--fq-weight-bold);
+  color: var(--fq-color-ink);
+}
+
+.message {
+  margin-top: var(--fq-space-2);
+  font-size: var(--fq-text-md);
+  color: var(--fq-color-text-secondary);
+  line-height: var(--fq-leading-normal);
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--fq-space-3);
+  margin-top: var(--fq-space-6);
+}

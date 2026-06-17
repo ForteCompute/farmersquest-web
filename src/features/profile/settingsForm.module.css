@@ -1,0 +1,42 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--fq-space-4);
+}
+
+.banner {
+  padding: var(--fq-space-3) var(--fq-space-4);
+  font-size: var(--fq-text-sm);
+  border-radius: var(--fq-radius-md);
+}
+
+.error {
+  color: var(--fq-color-danger);
+  background-color: var(--fq-color-danger-tint);
+}
+
+.success {
+  color: var(--fq-color-green-deep);
+  background-color: var(--fq-color-surface-green);
+}
+
+.toggles {
+  display: flex;
+  flex-direction: column;
+  gap: var(--fq-space-4);
+  padding: var(--fq-space-4);
+  background-color: var(--fq-color-surface-green-soft);
+  border-radius: var(--fq-radius-md);
+}
+
+.toggleRow {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.toggleHint {
+  margin-left: calc(20px + var(--fq-space-2));
+  font-size: var(--fq-text-xs);
+  color: var(--fq-color-text-secondary);
+}

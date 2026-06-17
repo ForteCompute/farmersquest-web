@@ -2,3 +2,4 @@
 export * from './tokens';
 export { applyTheme, themeCustomProperties } from './theme';
 export * from './components';
+export * from './icons';

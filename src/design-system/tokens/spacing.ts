@@ -20,7 +20,8 @@ export const spacing = {
   radius: {
     none: '0',
     sm: '0.5rem', // 8px, images
-    md: '0.75rem', // 12px, inputs, buttons, cards, search (the spec default)
+    md: '0.625rem', // 10px, inputs, buttons, cards (exact frame value)
+    badge: '0.3125rem', // 5px, small status badges
     chip: '0.875rem', // 14px, category chips
     pill: '999px',
     circle: '50%', // add button, icon buttons, social buttons
@@ -30,9 +31,11 @@ export const spacing = {
     md: '0 2px 8px rgba(0, 35, 0, 0.10)',
     lg: '0 8px 24px rgba(0, 35, 0, 0.14)',
   },
-  // Control sizing. The spec uses about 52px tall inputs and primary buttons.
+  // Control sizing. Exact frame values: 46px inputs, 48px primary buttons.
   size: {
-    control: '3.25rem', // 52px
+    control: '3rem', // 48px, kept for backward compatibility (matches button height)
+    inputHeight: '2.875rem', // 46px, filled inputs
+    buttonHeight: '3rem', // 48px, primary buttons
   },
   // Layout. Mobile frames are 402px wide; the web scales up on a wider canvas.
   layout: {
