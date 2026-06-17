@@ -1,0 +1,35 @@
+.row {
+  display: flex;
+  justify-content: center;
+  gap: var(--fq-space-3);
+}
+
+/* Rounded-square digit boxes: grey fill, green border on focus, per the frames. */
+.box {
+  width: 3.25rem;
+  height: 3.25rem;
+  padding: 0;
+  font-size: var(--fq-text-xl);
+  font-weight: var(--fq-weight-semibold);
+  text-align: center;
+  color: var(--fq-color-ink);
+  background-color: var(--fq-color-input-fill);
+  border: 2px solid transparent;
+  border-radius: var(--fq-radius-md);
+}
+
+.box:focus {
+  outline: none;
+  border-color: var(--fq-color-green-button);
+}
+
+.boxError {
+  border-color: var(--fq-color-danger);
+}
+
+.error {
+  margin-top: var(--fq-space-2);
+  font-size: var(--fq-text-xs);
+  color: var(--fq-color-danger);
+  text-align: center;
+}

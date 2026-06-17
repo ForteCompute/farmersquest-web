@@ -1,17 +1,28 @@
-import { NavLink, Outlet } from 'react-router-dom';
+import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { Nav, NavItemContent, type NavItem } from '@/design-system';
 import { config } from '@/services/config';
 import { useSession } from '@/app/session';
 import { navForRole } from '@/app/navigation';
 import { ROLE_LABELS } from '@/app/roles';
+import { logout } from '@/services/auth';
 import { RoleSwitcher } from './RoleSwitcher';
 import styles from './AppShell.module.css';
 
-// The application chrome: brand header, role switcher, role-gated sidebar navigation, and the
-// routed content area. The navigation shown is driven entirely by the active role.
+// The application chrome: brand header, role-gated sidebar navigation, and the routed content area.
+// When signed in, the header shows the account and a sign-out control; before sign in, the role
+// switcher drives the role-gated navigation for previewing the shell.
 export function AppShell() {
-  const { role } = useSession();
+  const { role, account, isAuthenticated, signOut } = useSession();
+  const navigate = useNavigate();
   const entries = navForRole(role);
+
+  async function handleSignOut() {
+    // Tell the API to revoke the token, then clear the local session regardless of the result and
+    // return to sign in. Clearing locally always happens so sign out never leaves a stuck session.
+    await logout();
+    signOut();
+    navigate('/sign-in', { replace: true });
+  }
 
   const navItems: NavItem[] = entries.map((entry) => ({
     key: entry.key,
@@ -32,7 +43,16 @@ export function AppShell() {
             <span className={styles.envTag}>{config.environment}</span>
           )}
         </div>
-        <RoleSwitcher />
+        {isAuthenticated ? (
+          <div className={styles.account}>
+            {account?.fullName && <span className={styles.accountName}>{account.fullName}</span>}
+            <button type="button" className={styles.signOut} onClick={handleSignOut}>
+              Sign out
+            </button>
+          </div>
+        ) : (
+          <RoleSwitcher />
+        )}
       </header>
 
       <div className={styles.body}>

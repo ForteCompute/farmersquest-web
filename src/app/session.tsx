@@ -18,7 +18,9 @@ interface SessionValue {
   account: AccountDto | null;
   isAuthenticated: boolean;
   setRole: (role: Role) => void;
-  signIn: (auth: AuthResultDto) => void;
+  /** Sign in. When persist is false ("remember me" unchecked) the session is kept in memory only
+   *  and does not survive a reload. Defaults to persisting. */
+  signIn: (auth: AuthResultDto, persist?: boolean) => void;
   signOut: () => void;
 }
 
@@ -86,7 +88,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  const signIn = useCallback((auth: AuthResultDto) => {
+  const signIn = useCallback((auth: AuthResultDto, persist = true) => {
     const token = auth.accessToken ?? '';
     const account = auth.account ?? null;
     if (!token || !account) {
@@ -96,7 +98,12 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     setAuthToken(token);
     setStored(next);
     try {
-      window.localStorage.setItem(SESSION_KEY, JSON.stringify(next));
+      if (persist) {
+        window.localStorage.setItem(SESSION_KEY, JSON.stringify(next));
+      } else {
+        // "Remember me" off: keep this session in memory only.
+        window.localStorage.removeItem(SESSION_KEY);
+      }
     } catch {
       // Best effort; the in-memory session still holds for this tab.
     }

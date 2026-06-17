@@ -1,0 +1,85 @@
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--fq-space-1);
+  text-align: center;
+}
+
+.title {
+  font-size: var(--fq-text-2xl);
+  font-weight: var(--fq-weight-bold);
+  color: var(--fq-color-ink);
+}
+
+.subtitle {
+  max-width: 32ch;
+  font-size: var(--fq-text-sm);
+  color: var(--fq-color-text-secondary);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--fq-space-3);
+  margin-top: var(--fq-space-8);
+}
+
+.passwordGroup {
+  display: flex;
+  flex-direction: column;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--fq-space-3);
+}
+
+.submit {
+  margin-top: var(--fq-space-5);
+}
+
+.social {
+  display: flex;
+  justify-content: center;
+  gap: var(--fq-space-6);
+  margin-top: var(--fq-space-8);
+}
+
+.socialButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  background-color: var(--fq-color-surface);
+  border: 1px solid var(--fq-color-input-fill);
+  border-radius: var(--fq-radius-circle);
+  cursor: not-allowed;
+}
+
+.signUpRow {
+  margin-top: var(--fq-space-4);
+  font-size: var(--fq-text-md);
+  color: var(--fq-color-ink);
+  text-align: center;
+}
+
+.link {
+  color: var(--fq-color-green-action);
+  font-weight: var(--fq-weight-semibold);
+  text-decoration: underline;
+}
+
+.terms {
+  margin-top: var(--fq-space-8);
+  font-size: var(--fq-text-xs);
+  color: var(--fq-color-text-secondary);
+  text-align: center;
+}
+
+.termsLink {
+  text-decoration: underline;
+}
