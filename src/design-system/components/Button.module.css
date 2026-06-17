@@ -49,6 +49,13 @@
 .primary:hover:not(:disabled) {
   background-color: var(--fq-color-green-deep);
 }
+/* Disabled primary is the spec's muted green (#B0CFB0), not a faded brand green, matching the
+   frames where an incomplete form shows a light-green Continue. */
+.primary:disabled {
+  background-color: var(--fq-color-border-muted);
+  color: var(--fq-color-on-color);
+  opacity: 1;
+}
 
 .secondary {
   background-color: var(--fq-color-surface-green);

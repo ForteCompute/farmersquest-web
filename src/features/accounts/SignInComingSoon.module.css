@@ -1,0 +1,11 @@
+.message {
+  font-size: var(--fq-text-md);
+  color: var(--fq-color-ink);
+  text-align: center;
+}
+
+.link {
+  color: var(--fq-color-green-action);
+  font-weight: var(--fq-weight-semibold);
+  text-decoration: underline;
+}

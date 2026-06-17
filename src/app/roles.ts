@@ -17,3 +17,17 @@ export const ROLE_LABELS: Record<Role, string> = {
 export function isRole(value: unknown): value is Role {
   return typeof value === 'string' && (ROLES as readonly string[]).includes(value);
 }
+
+// Maps an API account role string to a role this client serves. The API also knows middleman and
+// admin, which belong to other clients; those return null here. Matching is case-insensitive so the
+// client does not depend on the exact casing the contract uses.
+export function mapApiRole(apiRole: string | null | undefined): Role | null {
+  const value = apiRole?.trim().toLowerCase();
+  if (value === 'farmer') {
+    return 'farmer';
+  }
+  if (value === 'buyer') {
+    return 'buyer';
+  }
+  return null;
+}
