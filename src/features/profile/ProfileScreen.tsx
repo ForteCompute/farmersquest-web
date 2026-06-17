@@ -1,20 +1,7 @@
 import { useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import {
-  Badge,
-  BellIcon,
-  Button,
-  CheckCircleIcon,
-  ChevronRightIcon,
-  HelpIcon,
-  LockIcon,
-  LogOutIcon,
-  MailIcon,
-  PencilIcon,
-  PhoneIcon,
-  UserIcon,
-} from '@/design-system';
+import { Button, FigmaIcon, PhoneIcon } from '@/design-system';
 import { useSession } from '@/app/session';
 import { ROLE_LABELS } from '@/app/roles';
 import { VerificationBanner } from '@/features/accounts';
@@ -27,7 +14,8 @@ import styles from './ProfileScreen.module.css';
 // call returns). The wallet shown in the second frame is out of scope (a future feature).
 //
 // Only fields the contract returns are shown. The frame's Farm Name, Location, and Primary Crops
-// have no account fields yet; tracked as the same API gap noted for registration.
+// have no account fields yet; tracked as the same API gap noted for registration. Editing is reached
+// through the avatar pen, matching the frame (Settings holds no Edit Profile row).
 function initials(name: string | null | undefined): string {
   const parts = (name ?? '').trim().split(/\s+/).filter(Boolean);
   if (parts.length === 0) {
@@ -98,20 +86,19 @@ export function ProfileScreen() {
             {initials(account.fullName)}
           </span>
           <Link className={styles.avatarEdit} to="/profile/edit" aria-label="Edit profile">
-            <PencilIcon size={16} />
+            <FigmaIcon name="pen" size={16} />
           </Link>
         </div>
         <div className={styles.nameRow}>
           <span className={styles.name}>{account.fullName ?? 'Your account'}</span>
           {isFarmer &&
             (isVerified ? (
-              <Badge tone="success">
-                <span className={styles.verifiedBadge}>
-                  <CheckCircleIcon size={14} /> Verified
-                </span>
-              </Badge>
+              <span className={styles.verifiedPill}>
+                <FigmaIcon name="verified" size={16} />
+                VERIFIED
+              </span>
             ) : (
-              <Badge tone="neutral">Pending</Badge>
+              <span className={styles.pendingPill}>Pending</span>
             ))}
         </div>
         <p className={styles.subtitle}>{ROLE_LABELS[role]}</p>
@@ -122,11 +109,19 @@ export function ProfileScreen() {
       <section className={styles.section}>
         <h2 className={styles.sectionTitle}>Account Details</h2>
         <dl className={styles.details}>
-          <Detail icon={<MailIcon size={18} />} label="Email" value={account.email} />
-          <Detail icon={<PhoneIcon size={18} />} label="Phone" value={account.phoneNumber} />
-          <Detail icon={<UserIcon size={18} />} label="Username" value={account.username} />
+          <Detail icon={<FigmaIcon name="email" size={22} />} label="Email" value={account.email} />
+          <Detail icon={<PhoneIcon size={22} />} label="Phone" value={account.phoneNumber} />
+          <Detail
+            icon={<FigmaIcon name="person" size={22} />}
+            label="Username"
+            value={account.username}
+          />
           {memberSince && (
-            <Detail icon={<UserIcon size={18} />} label="Member since" value={memberSince} />
+            <Detail
+              icon={<FigmaIcon name="person" size={22} />}
+              label="Member since"
+              value={memberSince}
+            />
           )}
         </dl>
       </section>
@@ -134,23 +129,22 @@ export function ProfileScreen() {
       <section className={styles.section}>
         <h2 className={styles.sectionTitle}>Settings &amp; Security</h2>
         <nav className={styles.rows}>
-          <SettingsRow to="/profile/edit" icon={<PencilIcon size={20} />} label="Edit Profile" />
           <SettingsRow
             to="/profile/security"
-            icon={<LockIcon size={20} />}
+            icon={<FigmaIcon name="password-outline" size={24} />}
             label="Security & Password"
           />
           <SettingsRow
             to="/profile/notifications"
-            icon={<BellIcon size={20} />}
+            icon={<FigmaIcon name="bell" size={24} />}
             label="Notifications"
           />
           <div className={[styles.row, styles.rowDisabled].join(' ')} aria-disabled="true">
             <span className={styles.rowIcon}>
-              <HelpIcon size={20} />
+              <FigmaIcon name="support" size={24} />
             </span>
             <span className={styles.rowLabel}>Support</span>
-            <ChevronRightIcon size={20} />
+            <FigmaIcon name="chevron" size={20} />
           </div>
         </nav>
       </section>
@@ -163,7 +157,7 @@ export function ProfileScreen() {
         disabled={signingOut}
       >
         <span className={styles.logoutInner}>
-          <LogOutIcon size={20} /> Log Out
+          <FigmaIcon name="logout" size={24} /> Log Out
         </span>
       </Button>
     </div>
@@ -195,7 +189,7 @@ function SettingsRow({ to, icon, label }: { to: string; icon: ReactNode; label: 
     <Link className={styles.row} to={to}>
       <span className={styles.rowIcon}>{icon}</span>
       <span className={styles.rowLabel}>{label}</span>
-      <ChevronRightIcon size={20} />
+      <FigmaIcon name="chevron" size={20} />
     </Link>
   );
 }

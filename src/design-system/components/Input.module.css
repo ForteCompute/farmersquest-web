@@ -28,7 +28,7 @@
 .control {
   display: flex;
   align-items: center;
-  min-height: var(--fq-size-control);
+  min-height: var(--fq-size-input-height);
   background-color: var(--fq-color-input-fill);
   border: 1px solid var(--fq-color-input-fill);
   border-radius: var(--fq-radius-md);
@@ -54,9 +54,10 @@
 .input {
   flex: 1;
   min-width: 0;
-  min-height: calc(var(--fq-size-control) - 2px);
+  min-height: calc(var(--fq-size-input-height) - 2px);
   padding: var(--fq-space-2) var(--fq-space-4);
   font-size: var(--fq-text-md);
+  font-weight: var(--fq-weight-medium);
   color: var(--fq-color-ink);
   background: transparent;
   border: 0;
@@ -69,11 +70,13 @@
 
 .input::placeholder {
   color: var(--fq-color-text-secondary);
+  font-weight: var(--fq-weight-regular);
 }
 
-/* Trim the input's own side padding where an icon or adornment already provides it. */
+/* Trim the input's own side padding where an icon or adornment already provides it. The frame sets
+   a 7px gap between the leading icon and the text. */
 .hasLeading .input {
-  padding-left: var(--fq-space-1);
+  padding-left: var(--fq-space-2);
 }
 
 .hasTrailing .input {
@@ -83,7 +86,7 @@
 .leading {
   display: inline-flex;
   align-items: center;
-  padding-left: var(--fq-space-4);
+  padding-left: var(--fq-space-3);
   color: var(--fq-color-text-secondary);
 }
 

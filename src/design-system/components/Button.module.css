@@ -31,12 +31,12 @@
   font-size: var(--fq-text-sm);
 }
 .md {
-  min-height: var(--fq-size-control);
+  min-height: var(--fq-size-button-height);
   padding: var(--fq-space-2) var(--fq-space-5);
   font-size: var(--fq-text-lg);
 }
 .lg {
-  min-height: var(--fq-size-control);
+  min-height: var(--fq-size-button-height);
   padding: var(--fq-space-3) var(--fq-space-6);
   font-size: var(--fq-text-lg);
 }
@@ -49,12 +49,12 @@
 .primary:hover:not(:disabled) {
   background-color: var(--fq-color-green-deep);
 }
-/* Disabled primary is the spec's muted green (#B0CFB0), not a faded brand green, matching the
-   frames where an incomplete form shows a light-green Continue. */
+/* Disabled primary matches the frames: the brand green at 35% opacity (the light-green Continue on
+   an incomplete form). */
 .primary:disabled {
-  background-color: var(--fq-color-border-muted);
+  background-color: var(--fq-color-green-button);
   color: var(--fq-color-on-color);
-  opacity: 1;
+  opacity: 0.35;
 }
 
 .secondary {

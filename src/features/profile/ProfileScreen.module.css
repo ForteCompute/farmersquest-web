@@ -10,7 +10,7 @@
 .heading {
   font-size: var(--fq-text-xl);
   font-weight: var(--fq-weight-bold);
-  color: var(--fq-color-green-deep);
+  color: var(--fq-color-green-button);
   text-align: center;
 }
 
@@ -23,28 +23,28 @@
 
 .avatarWrap {
   position: relative;
-  width: 96px;
-  height: 96px;
+  width: 100px;
+  height: 100px;
 }
 
 .avatar {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 96px;
-  height: 96px;
+  width: 100px;
+  height: 100px;
   font-size: var(--fq-text-2xl);
   font-weight: var(--fq-weight-bold);
   color: var(--fq-color-green-deep);
   background-color: var(--fq-color-surface-green);
-  border: 2px solid var(--fq-color-green-action);
+  border: 1px solid var(--fq-color-green-action);
   border-radius: var(--fq-radius-circle);
 }
 
 .avatarEdit {
   position: absolute;
-  right: 0;
-  bottom: 0;
+  right: 2px;
+  bottom: 2px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -52,14 +52,13 @@
   height: 30px;
   color: var(--fq-color-on-color);
   background-color: var(--fq-color-green-action);
-  border: 2px solid var(--fq-color-surface);
   border-radius: var(--fq-radius-circle);
 }
 
 .nameRow {
   display: flex;
   align-items: center;
-  gap: var(--fq-space-3);
+  gap: var(--fq-space-1);
 }
 
 .name {
@@ -68,25 +67,47 @@
   color: var(--fq-color-ink);
 }
 
-.verifiedBadge {
+/* The green VERIFIED pill from the frame: solid green, white icon and label. */
+.verifiedPill {
   display: inline-flex;
   align-items: center;
-  gap: var(--fq-space-1);
+  gap: 2px;
+  padding: 0 var(--fq-space-2);
+  height: 20px;
+  font-size: var(--fq-text-xs);
+  font-weight: var(--fq-weight-bold);
+  color: var(--fq-color-on-color);
+  background-color: var(--fq-color-green-action);
+  border-radius: var(--fq-radius-badge);
+}
+
+.pendingPill {
+  display: inline-flex;
+  align-items: center;
+  padding: 0 var(--fq-space-2);
+  height: 20px;
+  font-size: var(--fq-text-xs);
+  font-weight: var(--fq-weight-semibold);
+  color: var(--fq-color-text-secondary);
+  background-color: var(--fq-color-surface-green);
+  border: 1px solid var(--fq-color-border-muted);
+  border-radius: var(--fq-radius-badge);
 }
 
 .subtitle {
   font-size: var(--fq-text-md);
+  font-weight: var(--fq-weight-medium);
   color: var(--fq-color-text-secondary);
 }
 
 .section {
   display: flex;
   flex-direction: column;
-  gap: var(--fq-space-3);
+  gap: var(--fq-space-2);
 }
 
 .sectionTitle {
-  font-size: var(--fq-text-lg);
+  font-size: var(--fq-text-md);
   font-weight: var(--fq-weight-semibold);
   color: var(--fq-color-ink);
 }
@@ -94,7 +115,7 @@
 .details {
   display: flex;
   flex-direction: column;
-  gap: var(--fq-space-2);
+  gap: var(--fq-space-3);
   margin: 0;
 }
 
@@ -103,13 +124,12 @@
   align-items: center;
   gap: var(--fq-space-3);
   padding: var(--fq-space-3) var(--fq-space-4);
-  background-color: var(--fq-color-surface-green-soft);
+  background-color: var(--fq-color-surface-green);
   border-radius: var(--fq-radius-md);
 }
 
 .detailIcon {
   display: inline-flex;
-  color: var(--fq-color-green-action);
 }
 
 .detailText {
@@ -127,7 +147,7 @@
 .detailValue {
   margin: 0;
   font-size: var(--fq-text-md);
-  font-weight: var(--fq-weight-medium);
+  font-weight: var(--fq-weight-semibold);
   color: var(--fq-color-ink);
 }
 
@@ -140,16 +160,17 @@
 .row {
   display: flex;
   align-items: center;
-  gap: var(--fq-space-3);
+  gap: var(--fq-space-5);
+  min-height: 59px;
   padding: var(--fq-space-4);
   color: var(--fq-color-ink);
-  background-color: var(--fq-color-surface-green-soft);
+  background-color: var(--fq-color-surface-green);
   border-radius: var(--fq-radius-md);
   text-decoration: none;
 }
 
 .row:hover {
-  background-color: var(--fq-color-surface-green);
+  filter: brightness(0.98);
   text-decoration: none;
 }
 
@@ -160,7 +181,6 @@
 
 .rowIcon {
   display: inline-flex;
-  color: var(--fq-color-green-deep);
 }
 
 .rowLabel {
@@ -170,8 +190,9 @@
 }
 
 .logout {
-  color: var(--fq-color-danger);
-  border-color: var(--fq-color-input-fill);
+  min-height: 59px;
+  color: var(--fq-color-logout);
+  border-color: var(--fq-color-text-secondary);
 }
 
 .logout:hover:not(:disabled) {
@@ -181,7 +202,7 @@
 .logoutInner {
   display: inline-flex;
   align-items: center;
-  gap: var(--fq-space-2);
+  gap: var(--fq-space-3);
 }
 
 .empty {

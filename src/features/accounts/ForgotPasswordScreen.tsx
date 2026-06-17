@@ -1,15 +1,7 @@
 import { useEffect, useState } from 'react';
 import type { FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {
-  Button,
-  Input,
-  LockIcon,
-  MailIcon,
-  OtpInput,
-  PasswordInput,
-  Spinner,
-} from '@/design-system';
+import { Button, FigmaIcon, Input, OtpInput, PasswordInput, Spinner } from '@/design-system';
 import { requestPasswordReset, resetPassword } from '@/services/auth';
 import { isValidEmail } from './registerValidation';
 import { AuthLayout } from './AuthLayout';
@@ -152,7 +144,7 @@ export function ForgotPasswordScreen() {
             inputMode="email"
             placeholder="E-mail"
             autoComplete="email"
-            leadingIcon={<MailIcon />}
+            leadingIcon={<FigmaIcon name="email" size={24} />}
             value={email}
             error={error || ''}
             onChange={(e) => {
@@ -235,7 +227,7 @@ export function ForgotPasswordScreen() {
           labelHidden
           placeholder="Password"
           autoComplete="new-password"
-          leadingIcon={<LockIcon />}
+          leadingIcon={<FigmaIcon name="password" size={24} />}
           value={password}
           onChange={(e) => {
             setPassword(e.target.value);
@@ -247,7 +239,7 @@ export function ForgotPasswordScreen() {
           labelHidden
           placeholder="Confirm Password"
           autoComplete="new-password"
-          leadingIcon={<LockIcon />}
+          leadingIcon={<FigmaIcon name="password" size={24} />}
           value={confirm}
           onChange={(e) => {
             setConfirm(e.target.value);

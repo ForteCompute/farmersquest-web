@@ -2,6 +2,8 @@
 
 This is the single source of truth for the look of every screen. It is taken directly from the exported Figma frames (the 90 screen set). Build the design system and every screen to match these frames exactly: the same colours, type, spacing, radii, and components. Do not invent or approximate. When a screen exists in the Figma, match that frame. The reference frames live in `design/figma/` in this repo.
 
+These values were reconciled against the live Figma file and corrected where earlier PNG-derived notes were wrong: the brand family is Nunito (not Poppins), input radius is 10px (not 12), control heights are 46px inputs / 48px buttons (not 52), page padding is about 26px (not 16), body text is `#1E1E1E` and secondary text `#808080`. The live file is the source of truth.
+
 Brand note to confirm with the team: the frames carry the wordmark "Naija AgriHub". Keep the exact layout and theme either way; only the wordmark and logo may be swapped to FarmersQuest if the team decides. Do not change anything else.
 
 ## Colours (exact, sampled from the frames)
@@ -24,8 +26,8 @@ Neutrals and text
 
 - Input fill / divider: `#DDDDDD` (lighter variant `#E9E9E9`)
 - Muted green border / disabled: `#B0CFB0` (lighter `#A6C9A6`)
-- Secondary text / labels: `#8A8A8A` (lighter `#B8B8B8`)
-- Body text: `#1A1A1A` (near-black)
+- Secondary text / labels / placeholder: `#808080` (lighter `#B8B8B8`)
+- Body text: `#1E1E1E` (near-black)
 - Text on green: `#FFFFFF`
 
 Semantic
@@ -35,32 +37,33 @@ Semantic
 
 ## Typography
 
-- Family: Poppins (rounded geometric sans), with a system sans fallback. If Poppins is not licensed, use the closest match the team approves; do not silently switch.
-- Page heading: about 26px, bold (for example "Sign In To Your Account").
-- Section heading: about 20px, bold (for example "Categories", "All Listings").
-- Body: about 15px, regular.
-- Label / caption: about 12px, regular, secondary colour.
-- Button label: about 16px, bold, white.
+- Family: Nunito (rounded humanist sans, OFL licensed), with a system sans fallback. Weights used: regular 400, medium 500, semibold 600, bold 700.
+- Page heading: 24px, bold (for example "Sign In To Your Account", "Create Your Account").
+- Section heading: 20px, bold (for example "Categories", "All Listings").
+- Body and inputs: 16px, regular.
+- Button label: 18px, bold, white.
+- Label / caption / subtitle: 12px (secondary colour).
+- Fine print (for example terms): 10px, semibold, secondary colour.
 - Currency shown as Naira, for example `₦80,000`.
 
 ## Shape and spacing
 
-- Corner radius: 12px on inputs, buttons, cards, and search; rounded squares (about 14px) on category chips; 8 to 12px on images.
+- Corner radius: 10px on inputs, buttons, cards, and search; rounded squares (about 14px) on category chips; 8 to 10px on images.
 - Circular: add button, top-bar icon buttons (heart, bell), social buttons.
-- Control height: about 52px for inputs and primary buttons.
-- Page padding: about 16px. Gaps: about 12 to 16px. Two-column product grid with about 12px gutter.
+- Control height: 46px for inputs, 48px for primary buttons.
+- Page padding: about 26px. Gaps: about 24px between stacked fields. Two-column product grid with about 12px gutter.
 - Mobile-first at 402px wide. Web scales these up on a wider canvas; keep the same system.
 
 ## Components (match the frames)
 
-- Input: filled `#DDDDDD`, radius 12px, left icon, grey placeholder, focus shows a `#006400` border. Password field has a show/hide eye on the right.
-- Primary button: `#006400`, white bold label, radius 12px, full width, about 52px tall.
+- Input: filled `#DDDDDD`, radius 10px, 46px tall, left icon, grey placeholder, focus shows a `#006400` border. Password field has a show/hide eye on the right.
+- Primary button: `#006400`, white bold label, radius 10px, full width, 48px tall. Disabled is the same green at 35% opacity.
 - Action button: circular `#008000` with a white plus, used to add a listing to cart.
 - Filter button: rounded square `#008000` with a white icon, beside the search bar.
 - Link: `#008000`, underlined (for example "Forgot Password?", "See All", "Sign-In Instead").
 - Checkbox: square, green check.
 - Category chip: white rounded-square card with a green border, an image, and a label below.
-- Product card: background `#EBF3EB`, radius 12px, product image, small grey category label, bold name, green bold price, small grey unit (for example "Per basket"), a heart at top-right, and a green circular plus at bottom-right.
+- Product card: background `#EBF3EB`, radius 10px, product image, small grey category label, bold name, green bold price, small grey unit (for example "Per basket"), a heart at top-right, and a green circular plus at bottom-right.
 - Top bar: location with a pin icon on the left; circular heart and bell buttons on the right (bell has a red dot).
 - Bottom navigation: solid `#003C00` bar with five tabs (Home, Cart, Order, Messages, Profile), white icons and labels, the active tab inside a white rounded container.
 - Icons: outline style, consistent weight (Iconpark or feather style).
