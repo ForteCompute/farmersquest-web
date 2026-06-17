@@ -14,6 +14,11 @@ export type RegisterFarmerInput = components['schemas']['RegisterFarmerCommand']
 export type LoginInput = components['schemas']['LoginCommand'];
 export type RequestPasswordResetInput = components['schemas']['RequestPasswordResetCommand'];
 export type ResetPasswordInput = components['schemas']['ResetPasswordCommand'];
+export type UpdateProfileInput = components['schemas']['UpdateProfileCommand'];
+export type ChangePasswordInput = components['schemas']['ChangePasswordCommand'];
+export type NotificationPreferences = components['schemas']['NotificationPreferencesDto'];
+export type UpdateNotificationPreferencesInput =
+  components['schemas']['UpdateNotificationPreferencesCommand'];
 
 export type Result<T> = { ok: true; data: T } | { ok: false; error: ParsedProblem };
 
@@ -90,6 +95,60 @@ export async function resetPassword(input: ResetPasswordInput): Promise<Result<n
       return failure(error);
     }
     return { ok: true, data: null };
+  } catch {
+    return failure(undefined);
+  }
+}
+
+// The /me endpoints act on the authenticated user only; the token identifies who that is, so a user
+// can only ever read or change their own account. The API re-checks this on every call.
+export async function getMe(): Promise<Result<AccountDto>> {
+  try {
+    const { data, error } = await apiClient.GET('/api/v1/accounts/me');
+    if (error || !data) {
+      return failure(error);
+    }
+    return { ok: true, data };
+  } catch {
+    return failure(undefined);
+  }
+}
+
+export async function updateProfile(input: UpdateProfileInput): Promise<Result<AccountDto | null>> {
+  try {
+    const { data, error } = await apiClient.PUT('/api/v1/accounts/me', { body: input });
+    if (error) {
+      return failure(error);
+    }
+    return { ok: true, data: data ?? null };
+  } catch {
+    return failure(undefined);
+  }
+}
+
+export async function changePassword(input: ChangePasswordInput): Promise<Result<null>> {
+  try {
+    const { error } = await apiClient.POST('/api/v1/accounts/me/change-password', { body: input });
+    if (error) {
+      return failure(error);
+    }
+    return { ok: true, data: null };
+  } catch {
+    return failure(undefined);
+  }
+}
+
+export async function updateNotificationPreferences(
+  input: UpdateNotificationPreferencesInput,
+): Promise<Result<AccountDto | null>> {
+  try {
+    const { data, error } = await apiClient.PUT('/api/v1/accounts/me/notification-preferences', {
+      body: input,
+    });
+    if (error) {
+      return failure(error);
+    }
+    return { ok: true, data: data ?? null };
   } catch {
     return failure(undefined);
   }

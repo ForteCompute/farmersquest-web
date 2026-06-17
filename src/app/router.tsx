@@ -10,6 +10,12 @@ import {
   VerifyIdentityScreen,
   VerifyPhoneScreen,
 } from '@/features/accounts';
+import {
+  EditProfileScreen,
+  NotificationsScreen,
+  ProfileScreen,
+  SecurityScreen,
+} from '@/features/profile';
 import { PlaceholderScreen } from '@/features/PlaceholderScreen';
 import { RootRedirect } from './RootRedirect';
 
@@ -82,6 +88,12 @@ export const routes: RouteObject[] = [
           </RoleGuard>
         ),
       },
+
+      // Account screens, common to both roles (the API scopes them to the signed-in user).
+      { path: 'profile', element: <ProfileScreen /> },
+      { path: 'profile/edit', element: <EditProfileScreen /> },
+      { path: 'profile/security', element: <SecurityScreen /> },
+      { path: 'profile/notifications', element: <NotificationsScreen /> },
 
       { path: '*', element: <Navigate to="/" replace /> },
     ],

@@ -14,12 +14,14 @@ const buyerNav: NavEntry[] = [
   { key: 'buyer-home', label: 'Home', path: '/buyer', icon: '🏠' },
   { key: 'buyer-browse', label: 'Browse', path: '/buyer/browse', icon: '🛒' },
   { key: 'buyer-orders', label: 'Orders', path: '/buyer/orders', icon: '📦' },
+  { key: 'profile', label: 'Profile', path: '/profile', icon: '👤' },
 ];
 
 const farmerNav: NavEntry[] = [
   { key: 'farmer-home', label: 'Home', path: '/farmer', icon: '🏠' },
   { key: 'farmer-listings', label: 'Listings', path: '/farmer/listings', icon: '🌾' },
   { key: 'farmer-orders', label: 'Orders', path: '/farmer/orders', icon: '📦' },
+  { key: 'profile', label: 'Profile', path: '/profile', icon: '👤' },
 ];
 
 export function navForRole(role: Role): NavEntry[] {
