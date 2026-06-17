@@ -1,0 +1,205 @@
+/* Shared styles for the non-functional onboarding steps (phone, verify identity, ID upload).
+   These reproduce the frames visually; nothing here is wired to an endpoint yet. */
+
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--fq-space-1);
+  text-align: center;
+}
+
+.title {
+  font-size: var(--fq-text-2xl);
+  font-weight: var(--fq-weight-bold);
+  color: var(--fq-color-ink);
+}
+
+.subtitle {
+  max-width: 32ch;
+  font-size: var(--fq-text-sm);
+  color: var(--fq-color-text-secondary);
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--fq-space-4);
+  margin-top: var(--fq-space-8);
+}
+
+.continue {
+  margin-top: var(--fq-space-4);
+}
+
+.footer {
+  margin-top: auto;
+  padding-top: var(--fq-space-10);
+  font-size: var(--fq-text-xs);
+  color: var(--fq-color-text-secondary);
+  text-align: center;
+}
+
+/* Phone step */
+.phoneControl {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  min-height: var(--fq-size-control);
+  background-color: var(--fq-color-input-fill);
+  border-radius: var(--fq-radius-md);
+  overflow: hidden;
+}
+
+.phonePrefix {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--fq-space-2);
+  padding: 0 var(--fq-space-3);
+  font-weight: var(--fq-weight-semibold);
+  color: var(--fq-color-ink);
+  border-right: 1px solid var(--fq-color-text-secondary-soft);
+}
+
+.phoneInput {
+  flex: 1;
+  min-width: 0;
+  padding: var(--fq-space-2) var(--fq-space-4);
+  font-size: var(--fq-text-md);
+  color: var(--fq-color-ink);
+  background: transparent;
+  border: 0;
+}
+
+.phoneInput:focus {
+  outline: none;
+}
+
+.phoneInput::placeholder {
+  color: var(--fq-color-text-secondary);
+}
+
+/* Verify identity step */
+.optionList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--fq-space-4);
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  gap: var(--fq-space-3);
+  width: 100%;
+  padding: var(--fq-space-3) var(--fq-space-4);
+  text-align: left;
+  background-color: var(--fq-color-input-fill);
+  border: 2px solid transparent;
+  border-radius: var(--fq-radius-md);
+  cursor: pointer;
+}
+
+.optionSelected {
+  background-color: var(--fq-color-surface-green-soft);
+  border-color: var(--fq-color-green-button);
+}
+
+.optionIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: var(--fq-radius-circle);
+  flex-shrink: 0;
+}
+
+.iconNeutral {
+  background-color: var(--fq-color-surface);
+  color: var(--fq-color-ink);
+}
+
+.iconGreen {
+  background-color: var(--fq-color-surface-green);
+  color: var(--fq-color-green-deep);
+}
+
+.iconRed {
+  background-color: var(--fq-color-danger-tint);
+  color: var(--fq-color-danger);
+}
+
+.optionText {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+}
+
+.optionTitle {
+  font-size: var(--fq-text-md);
+  font-weight: var(--fq-weight-semibold);
+  color: var(--fq-color-ink);
+}
+
+.optionDesc {
+  font-size: var(--fq-text-xs);
+  color: var(--fq-color-text-secondary);
+}
+
+.radio {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  color: var(--fq-color-green-action);
+  flex-shrink: 0;
+}
+
+.radioEmpty {
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--fq-color-text-secondary);
+  border-radius: var(--fq-radius-circle);
+}
+
+/* Upload step */
+.uploadSection {
+  display: flex;
+  flex-direction: column;
+  gap: var(--fq-space-2);
+}
+
+.uploadLabel {
+  font-size: var(--fq-text-sm);
+  font-weight: var(--fq-weight-semibold);
+  letter-spacing: 0.04em;
+  color: var(--fq-color-ink);
+}
+
+.dropzone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--fq-space-2);
+  width: 100%;
+  min-height: 9.5rem;
+  padding: var(--fq-space-6);
+  color: var(--fq-color-ink);
+  background: transparent;
+  border: 1.5px dashed var(--fq-color-green-action);
+  border-radius: var(--fq-radius-md);
+  cursor: not-allowed;
+}
+
+.dropzoneText {
+  font-size: var(--fq-text-md);
+  color: var(--fq-color-ink);
+}
+
+.uploadHelper {
+  font-size: var(--fq-text-sm);
+  color: var(--fq-color-text-secondary);
+}

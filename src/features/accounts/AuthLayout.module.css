@@ -1,0 +1,40 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 100dvh;
+  padding: var(--fq-space-8) 0;
+  background-color: var(--fq-color-surface);
+}
+
+/* Mobile-first column at the frame width, centred on larger viewports. The page padding sits inside
+   the column (border-box) so the total never exceeds the frame width and nothing clips at 402px. */
+.column {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: var(--fq-layout-mobile-width);
+  min-width: 0;
+  padding: 0 var(--fq-space-4);
+}
+
+.back {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--fq-space-1);
+  margin-bottom: var(--fq-space-4);
+  color: var(--fq-color-ink);
+  background: transparent;
+  border: 0;
+  border-radius: var(--fq-radius-sm);
+  cursor: pointer;
+}
+
+.back:focus-visible {
+  outline: 2px solid var(--fq-color-green-button);
+  outline-offset: 2px;
+}

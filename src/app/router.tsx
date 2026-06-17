@@ -2,13 +2,27 @@ import { Navigate, createBrowserRouter, type RouteObject } from 'react-router-do
 import { AppShell, RoleGuard } from '@/components';
 import { BuyerHome } from '@/features/buyer';
 import { FarmerHome } from '@/features/farmer';
+import {
+  RegisterScreen,
+  SignInComingSoon,
+  UploadIdScreen,
+  VerifyIdentityScreen,
+  VerifyPhoneScreen,
+} from '@/features/accounts';
 import { PlaceholderScreen } from '@/features/PlaceholderScreen';
 import { RootRedirect } from './RootRedirect';
 
-// Route table. Buyer and farmer sections are role gated. Real screens are placeholders for now; the
-// shape is here so feature tickets slot their screens straight in. Exported so tests can mount it
-// in a memory router.
+// Route table. The account screens (registration, and the non-functional onboarding steps) sit
+// outside the app shell, shown before the user is in the authenticated app. Buyer and farmer
+// sections are role gated. Exported so tests can mount it in a memory router.
 export const routes: RouteObject[] = [
+  { path: '/register', element: <Navigate to="/register/buyer" replace /> },
+  { path: '/register/buyer', element: <RegisterScreen role="buyer" /> },
+  { path: '/register/farmer', element: <RegisterScreen role="farmer" /> },
+  { path: '/register/verify-phone', element: <VerifyPhoneScreen /> },
+  { path: '/register/verify-identity', element: <VerifyIdentityScreen /> },
+  { path: '/register/upload-id', element: <UploadIdScreen /> },
+  { path: '/sign-in', element: <SignInComingSoon /> },
   {
     path: '/',
     element: <AppShell />,
