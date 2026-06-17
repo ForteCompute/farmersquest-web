@@ -108,7 +108,7 @@ describe('EditProfileScreen', () => {
     await signInAndOpenProfile(account());
     mockUpdateProfile.mockResolvedValue({ ok: true, data: account({ fullName: 'Ada N. Obi' }) });
 
-    await user.click(screen.getByRole('link', { name: 'Edit Profile' }));
+    await user.click(screen.getByRole('link', { name: /edit profile/i }));
     const name = await screen.findByLabelText('Full name');
     await user.clear(name);
     await user.type(name, 'Ada N. Obi');

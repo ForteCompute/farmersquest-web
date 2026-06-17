@@ -1,17 +1,7 @@
 import { useState } from 'react';
 import type { FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import {
-  Button,
-  Checkbox,
-  FacebookLogo,
-  GoogleLogo,
-  Input,
-  LockIcon,
-  MailIcon,
-  PasswordInput,
-  Spinner,
-} from '@/design-system';
+import { Button, Checkbox, FigmaIcon, Input, PasswordInput, Spinner } from '@/design-system';
 import { useSession } from '@/app/session';
 import { homePathForRole } from '@/app/navigation';
 import { mapApiRole } from '@/app/roles';
@@ -73,7 +63,7 @@ export function SignInScreen() {
           labelHidden
           placeholder="Email or username"
           autoComplete="username"
-          leadingIcon={<MailIcon />}
+          leadingIcon={<FigmaIcon name="email" size={24} />}
           value={loginValue}
           onChange={(e) => {
             setLoginValue(e.target.value);
@@ -87,7 +77,7 @@ export function SignInScreen() {
             labelHidden
             placeholder="Password"
             autoComplete="current-password"
-            leadingIcon={<LockIcon />}
+            leadingIcon={<FigmaIcon name="password" size={24} />}
             value={password}
             error={error || ''}
             onChange={(e) => {
@@ -115,10 +105,10 @@ export function SignInScreen() {
 
       <div className={styles.social} aria-hidden="true">
         <button type="button" className={styles.socialButton} disabled title="Coming soon">
-          <GoogleLogo />
+          <FigmaIcon name="google" size={30} />
         </button>
         <button type="button" className={styles.socialButton} disabled title="Coming soon">
-          <FacebookLogo />
+          <FigmaIcon name="facebook" size={30} />
         </button>
       </div>
 

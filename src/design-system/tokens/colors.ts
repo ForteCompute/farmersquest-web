@@ -17,19 +17,20 @@ export const colors = {
   surfaceGreenSoft: '#ebf3eb', // home background, product card background
   surfaceWarm: '#f4f4f0', // product detail background (warm neutral)
 
-  // Neutrals and text.
+  // Neutrals and text. Exact values sampled from the Figma frames.
   inputFill: '#dddddd', // input fill, divider
   inputFillSoft: '#e9e9e9', // lighter divider variant
   borderMuted: '#b0cfb0', // muted green border, disabled
   borderMutedSoft: '#a6c9a6', // lighter muted green
-  textSecondary: '#8a8a8a', // secondary text, labels
+  textSecondary: '#808080', // secondary text, labels (frame value)
   textSecondarySoft: '#b8b8b8', // lighter secondary text
-  ink: '#1a1a1a', // body text
+  ink: '#1e1e1e', // body text (frame value)
   onColor: '#ffffff', // text on green
 
   // Semantic.
   price: '#008000', // price and positive
   danger: '#e23b3b', // wishlist active, notification dot, errors
+  logout: '#a52920', // log out action (frame value)
 
   // Derived helpers: soft fills and a focus ring derived from the brand colours above, for surfaces
   // that need them (focus rings, error backgrounds). Not new brand colours.

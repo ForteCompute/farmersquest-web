@@ -1,16 +1,7 @@
 import { useState } from 'react';
 import type { FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import {
-  Button,
-  FacebookLogo,
-  GoogleLogo,
-  IdCardIcon,
-  Input,
-  LockIcon,
-  MailIcon,
-  PasswordInput,
-} from '@/design-system';
+import { Button, FigmaIcon, IdCardIcon, Input, PasswordInput } from '@/design-system';
 import { useSession } from '@/app/session';
 import { homePathForRole } from '@/app/navigation';
 import { mapApiRole, type Role } from '@/app/roles';
@@ -168,7 +159,7 @@ export function RegisterScreen({ role }: RegisterScreenProps) {
           inputMode="email"
           placeholder="E-mail"
           autoComplete="email"
-          leadingIcon={<MailIcon />}
+          leadingIcon={<FigmaIcon name="email" size={24} />}
           value={values.email}
           error={errors.email || ''}
           onChange={(e) => update('email', e.target.value)}
@@ -179,7 +170,7 @@ export function RegisterScreen({ role }: RegisterScreenProps) {
           labelHidden
           placeholder="Password"
           autoComplete="new-password"
-          leadingIcon={<LockIcon />}
+          leadingIcon={<FigmaIcon name="password" size={24} />}
           value={values.password}
           error={errors.password || ''}
           onChange={(e) => update('password', e.target.value)}
@@ -192,7 +183,7 @@ export function RegisterScreen({ role }: RegisterScreenProps) {
             inputMode="numeric"
             placeholder="NIN"
             autoComplete="off"
-            leadingIcon={<IdCardIcon />}
+            leadingIcon={<IdCardIcon size={24} />}
             value={values.nin}
             error={errors.nin || ''}
             hint="Your 11-digit National Identification Number. Used to verify your farm."
@@ -207,10 +198,10 @@ export function RegisterScreen({ role }: RegisterScreenProps) {
 
       <div className={styles.social} aria-hidden="true">
         <button type="button" className={styles.socialButton} disabled title="Coming soon">
-          <GoogleLogo />
+          <FigmaIcon name="google" size={30} />
         </button>
         <button type="button" className={styles.socialButton} disabled title="Coming soon">
-          <FacebookLogo />
+          <FigmaIcon name="facebook" size={30} />
         </button>
       </div>
 

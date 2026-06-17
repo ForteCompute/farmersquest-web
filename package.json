@@ -20,6 +20,7 @@
     "generate:api": "openapi-typescript ./openapi/farmersquest-api.openapi.json --output ./src/services/api/schema.ts"
   },
   "dependencies": {
+    "@fontsource/nunito": "5.2.7",
     "openapi-fetch": "^0.13.5",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",

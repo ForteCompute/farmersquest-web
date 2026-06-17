@@ -1,5 +1,8 @@
 import type { SVGProps } from 'react';
 
+export { FigmaIcon } from './FigmaIcon';
+export type { FigmaIconName, FigmaIconProps } from './FigmaIcon';
+
 // Outline icons in the feather / Iconpark style the design spec calls for: 24x24 viewBox, no fill,
 // 2px strokes in currentColor so they inherit text colour. Brand marks (Google, Facebook) and the
 // Nigeria flag are the deliberate exceptions, since those carry fixed brand colours.

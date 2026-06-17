@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import type { Ref } from 'react';
 import { Input, type InputProps } from './Input';
-import { EyeIcon, EyeOffIcon } from '../icons';
+import { EyeIcon } from '../icons';
+import { FigmaIcon } from '../icons/FigmaIcon';
 import styles from './PasswordInput.module.css';
 
 export interface PasswordInputProps extends Omit<InputProps, 'type' | 'trailingAdornment'> {
@@ -28,7 +29,7 @@ export function PasswordInput({ toggleLabel, ...rest }: PasswordInputProps) {
           aria-label={visible ? labels.hide : labels.show}
           aria-pressed={visible}
         >
-          {visible ? <EyeOffIcon /> : <EyeIcon />}
+          {visible ? <EyeIcon size={24} /> : <FigmaIcon name="eye-slash" size={24} />}
         </button>
       }
       {...rest}

@@ -21,7 +21,7 @@
 .form {
   display: flex;
   flex-direction: column;
-  gap: var(--fq-space-4);
+  gap: var(--fq-space-6);
   margin-top: var(--fq-space-8);
 }
 
@@ -38,25 +38,24 @@
   /* minmax(0, 1fr) lets the two columns shrink below the inputs' intrinsic width so the row never
      overflows the frame on narrow viewports. */
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  gap: var(--fq-space-3);
+  gap: var(--fq-space-6);
 }
 
+/* The frame shows the social marks as bare icons in a narrow centred row, not framed buttons. */
 .social {
   display: flex;
-  justify-content: center;
-  gap: var(--fq-space-6);
-  margin-top: var(--fq-space-6);
+  justify-content: space-between;
+  width: 112px;
+  margin: var(--fq-space-6) auto 0;
 }
 
 .socialButton {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 2.75rem;
-  height: 2.75rem;
-  background-color: var(--fq-color-surface);
-  border: 1px solid var(--fq-color-input-fill);
-  border-radius: var(--fq-radius-circle);
+  padding: 0;
+  background: transparent;
+  border: 0;
   cursor: not-allowed;
 }
 
