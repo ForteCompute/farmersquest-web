@@ -13,6 +13,8 @@ export { OtpInput } from './OtpInput';
 export type { OtpInputProps } from './OtpInput';
 export { Spinner } from './Spinner';
 export type { SpinnerProps } from './Spinner';
+export { ConfirmDialog } from './ConfirmDialog';
+export type { ConfirmDialogProps } from './ConfirmDialog';
 export { Card } from './Card';
 export type { CardProps } from './Card';
 export { Badge } from './Badge';

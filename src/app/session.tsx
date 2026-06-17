@@ -22,6 +22,8 @@ interface SessionValue {
    *  and does not survive a reload. Defaults to persisting. */
   signIn: (auth: AuthResultDto, persist?: boolean) => void;
   signOut: () => void;
+  /** Replace the stored account after a profile or preferences change, keeping the token. */
+  updateAccount: (account: AccountDto) => void;
 }
 
 const ROLE_KEY = 'fq.web.role';
@@ -109,6 +111,24 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
+  const updateAccount = useCallback((account: AccountDto) => {
+    setStored((prev) => {
+      if (!prev) {
+        return prev;
+      }
+      const next = { ...prev, account };
+      try {
+        // Mirror the persistence already in effect: only rewrite storage if a session is stored.
+        if (window.localStorage.getItem(SESSION_KEY)) {
+          window.localStorage.setItem(SESSION_KEY, JSON.stringify(next));
+        }
+      } catch {
+        // Best effort; in-memory account still updates.
+      }
+      return next;
+    });
+  }, []);
+
   const signOut = useCallback(() => {
     setAuthToken(null);
     setStored(null);
@@ -129,8 +149,9 @@ export function SessionProvider({ children }: { children: ReactNode }) {
       setRole,
       signIn,
       signOut,
+      updateAccount,
     };
-  }, [stored, manualRole, setRole, signIn, signOut]);
+  }, [stored, manualRole, setRole, signIn, signOut, updateAccount]);
 
   return <SessionContext.Provider value={value}>{children}</SessionContext.Provider>;
 }

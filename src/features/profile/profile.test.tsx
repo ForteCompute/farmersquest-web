@@ -1,0 +1,164 @@
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { render, screen, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { MemoryRouter, useRoutes } from 'react-router-dom';
+import { SessionProvider } from '@/app/session';
+import { routes } from '@/app/router';
+import type { AccountDto, AuthResultDto } from '@/services/auth';
+
+vi.mock('@/services/auth', () => ({
+  login: vi.fn(),
+  logout: vi.fn(),
+  getMe: vi.fn(),
+  updateProfile: vi.fn(),
+  changePassword: vi.fn(),
+  updateNotificationPreferences: vi.fn(),
+}));
+
+import {
+  changePassword,
+  getMe,
+  login,
+  updateNotificationPreferences,
+  updateProfile,
+} from '@/services/auth';
+
+const mockLogin = vi.mocked(login);
+const mockGetMe = vi.mocked(getMe);
+const mockUpdateProfile = vi.mocked(updateProfile);
+const mockChangePassword = vi.mocked(changePassword);
+const mockUpdateNotificationPreferences = vi.mocked(updateNotificationPreferences);
+
+function account(overrides: Partial<AccountDto> = {}): AccountDto {
+  return {
+    id: '00000000-0000-0000-0000-000000000001',
+    email: 'ada@example.com',
+    username: 'ada',
+    fullName: 'Ada Obi',
+    role: 'Buyer',
+    phoneNumber: '08030000000',
+    status: 'Active',
+    verificationStatus: null,
+    notificationPreferences: { email: true, sms: false, whatsApp: false },
+    createdAtUtc: '2026-01-01T00:00:00Z',
+    ...overrides,
+  };
+}
+
+function authResult(acc: AccountDto): AuthResultDto {
+  return {
+    accessToken: 'token-123',
+    tokenType: 'Bearer',
+    expiresAtUtc: '2026-01-01T01:00:00Z',
+    account: acc,
+  };
+}
+
+function MountedRoutes() {
+  return useRoutes(routes);
+}
+
+const user = userEvent.setup();
+
+async function signInAndOpenProfile(acc: AccountDto) {
+  mockLogin.mockResolvedValue({ ok: true, data: authResult(acc) });
+  mockGetMe.mockResolvedValue({ ok: true, data: acc });
+  render(
+    <SessionProvider>
+      <MemoryRouter initialEntries={['/sign-in']}>
+        <MountedRoutes />
+      </MemoryRouter>
+    </SessionProvider>,
+  );
+  await user.type(screen.getByPlaceholderText('Email or username'), 'ada');
+  await user.type(screen.getByPlaceholderText('Password'), 'password123');
+  await user.click(screen.getByRole('button', { name: /continue/i }));
+  await screen.findByRole('heading', { name: /FarmersQuest/i });
+  await user.click(screen.getByRole('link', { name: /profile/i }));
+  await screen.findByRole('heading', { name: /^Account$/i });
+}
+
+beforeEach(() => {
+  try {
+    window.localStorage?.clear?.();
+  } catch {
+    // Best effort.
+  }
+});
+
+afterEach(() => {
+  vi.clearAllMocks();
+});
+
+describe('ProfileScreen', () => {
+  it('shows the account details and a farmer pending-verification message', async () => {
+    await signInAndOpenProfile(
+      account({ role: 'Farmer', fullName: 'Musa Bello', verificationStatus: 'Pending' }),
+    );
+
+    // The name shows both in the shell header and on the profile.
+    expect(screen.getAllByText('Musa Bello').length).toBeGreaterThan(0);
+    expect(screen.getByText('ada@example.com')).toBeInTheDocument();
+    expect(screen.getByText(/pending verification/i)).toBeInTheDocument();
+  });
+});
+
+describe('EditProfileScreen', () => {
+  it('saves the profile through PUT /me', async () => {
+    await signInAndOpenProfile(account());
+    mockUpdateProfile.mockResolvedValue({ ok: true, data: account({ fullName: 'Ada N. Obi' }) });
+
+    await user.click(screen.getByRole('link', { name: 'Edit Profile' }));
+    const name = await screen.findByLabelText('Full name');
+    await user.clear(name);
+    await user.type(name, 'Ada N. Obi');
+    await user.click(screen.getByRole('button', { name: /save changes/i }));
+
+    expect(mockUpdateProfile).toHaveBeenCalledWith({
+      fullName: 'Ada N. Obi',
+      phoneNumber: '08030000000',
+    });
+    expect(await screen.findByRole('heading', { name: /^Account$/i })).toBeInTheDocument();
+  });
+});
+
+describe('SecurityScreen', () => {
+  it('confirms before changing the password and posts the change', async () => {
+    await signInAndOpenProfile(account());
+    mockChangePassword.mockResolvedValue({ ok: true, data: null });
+
+    await user.click(screen.getByRole('link', { name: /security & password/i }));
+    await user.type(await screen.findByLabelText('Current password'), 'oldpassword1');
+    await user.type(screen.getByLabelText('New password'), 'newpassword1');
+    await user.type(screen.getByLabelText('Confirm new password'), 'newpassword1');
+    await user.click(screen.getByRole('button', { name: /change password/i }));
+
+    // A confirmation dialog gates the sensitive change.
+    const dialog = await screen.findByRole('dialog');
+    await user.click(within(dialog).getByRole('button', { name: /change password/i }));
+
+    expect(mockChangePassword).toHaveBeenCalledWith({
+      currentPassword: 'oldpassword1',
+      newPassword: 'newpassword1',
+    });
+    expect(await screen.findByText(/your password has been changed/i)).toBeInTheDocument();
+  });
+});
+
+describe('NotificationsScreen', () => {
+  it('saves notification preferences through PUT /me/notification-preferences', async () => {
+    await signInAndOpenProfile(account());
+    mockUpdateNotificationPreferences.mockResolvedValue({ ok: true, data: account() });
+
+    await user.click(screen.getByRole('link', { name: /notifications/i }));
+    await user.click(await screen.findByLabelText('SMS'));
+    await user.click(screen.getByRole('button', { name: /save preferences/i }));
+
+    expect(mockUpdateNotificationPreferences).toHaveBeenCalledWith({
+      email: true,
+      sms: true,
+      whatsApp: false,
+    });
+    expect(await screen.findByText(/preferences have been saved/i)).toBeInTheDocument();
+  });
+});
