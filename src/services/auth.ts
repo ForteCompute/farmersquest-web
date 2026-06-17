@@ -12,6 +12,8 @@ export type AuthResultDto = components['schemas']['AuthResultDto'];
 export type RegisterBuyerInput = components['schemas']['RegisterBuyerCommand'];
 export type RegisterFarmerInput = components['schemas']['RegisterFarmerCommand'];
 export type LoginInput = components['schemas']['LoginCommand'];
+export type RequestPasswordResetInput = components['schemas']['RequestPasswordResetCommand'];
+export type ResetPasswordInput = components['schemas']['ResetPasswordCommand'];
 
 export type Result<T> = { ok: true; data: T } | { ok: false; error: ParsedProblem };
 
@@ -58,6 +60,36 @@ export async function login(input: LoginInput): Promise<Result<AuthResultDto>> {
       return failure(error);
     }
     return { ok: true, data };
+  } catch {
+    return failure(undefined);
+  }
+}
+
+export async function requestPasswordReset(
+  input: RequestPasswordResetInput,
+): Promise<Result<null>> {
+  try {
+    const { error } = await apiClient.POST('/api/v1/accounts/password-reset/request', {
+      body: input,
+    });
+    if (error) {
+      return failure(error);
+    }
+    return { ok: true, data: null };
+  } catch {
+    return failure(undefined);
+  }
+}
+
+export async function resetPassword(input: ResetPasswordInput): Promise<Result<null>> {
+  try {
+    const { error } = await apiClient.POST('/api/v1/accounts/password-reset/confirm', {
+      body: input,
+    });
+    if (error) {
+      return failure(error);
+    }
+    return { ok: true, data: null };
   } catch {
     return failure(undefined);
   }

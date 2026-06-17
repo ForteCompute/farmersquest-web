@@ -40,6 +40,32 @@
   color: var(--fq-color-green-deep);
 }
 
+.account {
+  display: flex;
+  align-items: center;
+  gap: var(--fq-space-3);
+}
+
+.accountName {
+  font-size: var(--fq-text-sm);
+  font-weight: var(--fq-weight-medium);
+}
+
+.signOut {
+  padding: var(--fq-space-1) var(--fq-space-3);
+  font-size: var(--fq-text-sm);
+  font-weight: var(--fq-weight-semibold);
+  color: var(--fq-color-on-color);
+  background: transparent;
+  border: 1px solid var(--fq-color-on-color);
+  border-radius: var(--fq-radius-md);
+  cursor: pointer;
+}
+
+.signOut:hover {
+  background-color: rgba(255, 255, 255, 0.12);
+}
+
 .body {
   flex: 1;
   display: flex;

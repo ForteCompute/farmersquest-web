@@ -3,8 +3,9 @@ import { AppShell, RoleGuard } from '@/components';
 import { BuyerHome } from '@/features/buyer';
 import { FarmerHome } from '@/features/farmer';
 import {
+  ForgotPasswordScreen,
   RegisterScreen,
-  SignInComingSoon,
+  SignInScreen,
   UploadIdScreen,
   VerifyIdentityScreen,
   VerifyPhoneScreen,
@@ -22,7 +23,8 @@ export const routes: RouteObject[] = [
   { path: '/register/verify-phone', element: <VerifyPhoneScreen /> },
   { path: '/register/verify-identity', element: <VerifyIdentityScreen /> },
   { path: '/register/upload-id', element: <UploadIdScreen /> },
-  { path: '/sign-in', element: <SignInComingSoon /> },
+  { path: '/sign-in', element: <SignInScreen /> },
+  { path: '/forgot-password', element: <ForgotPasswordScreen /> },
   {
     path: '/',
     element: <AppShell />,

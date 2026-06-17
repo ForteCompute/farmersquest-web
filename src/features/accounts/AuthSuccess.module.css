@@ -1,0 +1,52 @@
+.wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.title {
+  font-size: var(--fq-text-2xl);
+  font-weight: var(--fq-weight-bold);
+  color: var(--fq-color-ink);
+}
+
+.medallionWrap {
+  position: relative;
+  width: 220px;
+  height: 180px;
+  margin-top: var(--fq-space-4);
+}
+
+.medallion {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 120px;
+  height: 120px;
+  color: var(--fq-color-on-color);
+  background-color: var(--fq-color-green-button);
+  border-radius: var(--fq-radius-circle);
+}
+
+.confetti {
+  position: absolute;
+  width: 10px;
+  height: 6px;
+  border-radius: 2px;
+}
+
+.message {
+  max-width: 36ch;
+  margin-top: var(--fq-space-4);
+  font-size: var(--fq-text-md);
+  color: var(--fq-color-ink);
+}
+
+.action {
+  margin-top: var(--fq-space-8);
+}
