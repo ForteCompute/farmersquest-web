@@ -2,16 +2,16 @@ import { useEffect, useId, useState } from 'react';
 import type { FormEvent, ReactNode } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
-  ArrowRightIcon,
-  CheckCircleIcon,
-  ChevronDownIcon,
-  HandshakeIcon,
-  SearchIcon,
-  ShieldCheckIcon,
-  TrendingUpIcon,
-  TruckIcon,
-} from '@/design-system';
-import { CategoryCard, ProductRow, useReveal } from '@/components/storefront';
+  ArrowRight,
+  CategoryCard,
+  ChevronDown,
+  CircleCheck,
+  CONTENT_ICONS,
+  ProductRow,
+  Search,
+  ShieldCheck,
+  useReveal,
+} from '@/components/storefront';
 import {
   getCategories,
   getStates,
@@ -33,15 +33,6 @@ import styles from './LandingPage.module.css';
 type Status = 'loading' | 'ok' | 'error';
 const SPOTLIGHT_COUNT = 3;
 
-const ICONS: Record<string, typeof SearchIcon> = {
-  search: SearchIcon,
-  shield: ShieldCheckIcon,
-  truck: TruckIcon,
-  check: CheckCircleIcon,
-  handshake: HandshakeIcon,
-  trending: TrendingUpIcon,
-};
-
 interface Spotlight {
   category: CategoryNode;
   products: ProductSummary[];
@@ -58,6 +49,7 @@ export function LandingPage() {
   const [catStatus, setCatStatus] = useState<Status>('loading');
   const [featured, setFeatured] = useState<ProductSummary[]>([]);
   const [featuredStatus, setFeaturedStatus] = useState<Status>('loading');
+  const [featuredTitle, setFeaturedTitle] = useState('Featured products');
   const [spotlights, setSpotlights] = useState<Spotlight[]>([]);
 
   useEffect(() => {
@@ -65,10 +57,25 @@ export function LandingPage() {
 
     void getStates().then((r) => active && r.ok && setStates(r.data));
 
-    void listProducts({ featured: true, pageSize: 8 }).then((r) => {
+    // Featured products lead the discovery rows. If nothing is flagged featured yet, fall back to
+    // the newest listings (the catalog default sort) so the row is always full, never an empty void.
+    void listProducts({ featured: true, pageSize: 8 }).then(async (r) => {
       if (!active) return;
-      if (r.ok) {
-        setFeatured(r.data.items ?? []);
+      if (!r.ok) {
+        setFeaturedStatus('error');
+        return;
+      }
+      const items = r.data.items ?? [];
+      if (items.length > 0) {
+        setFeatured(items);
+        setFeaturedStatus('ok');
+        return;
+      }
+      const fresh = await listProducts({ pageSize: 8 });
+      if (!active) return;
+      if (fresh.ok) {
+        setFeatured(fresh.data.items ?? []);
+        setFeaturedTitle('Fresh on the marketplace');
         setFeaturedStatus('ok');
       } else {
         setFeaturedStatus('error');
@@ -115,27 +122,40 @@ export function LandingPage() {
 
   return (
     <>
-      <Hero states={states} categories={categories} onSearch={(qs) => navigate(`/browse${qs}`)} />
+      <Hero
+        states={states}
+        categories={categories}
+        products={featured}
+        loading={featuredStatus === 'loading'}
+        onSearch={(qs) => navigate(`/browse${qs}`)}
+      />
 
       <HotSearches />
 
-      <Reveal className={styles.section}>
-        <div className={styles.sectionHead}>
-          <h2 className={styles.h2}>Browse by category</h2>
-          <Link className={styles.seeAll} to="/browse">
-            See all categories <ArrowRightIcon size={16} />
-          </Link>
+      <Reveal className={styles.bandSoft}>
+        <div className={styles.bandInner}>
+          <div className={styles.sectionHead}>
+            <h2 className={styles.h2}>Browse by category</h2>
+            <Link className={styles.seeAll} to="/browse">
+              See all categories <ArrowRight size={16} />
+            </Link>
+          </div>
+          <CategoryGrid categories={categories} status={catStatus} />
         </div>
-        <CategoryGrid categories={categories} status={catStatus} />
       </Reveal>
 
       <Reveal className={styles.section}>
         <ProductRow
-          title="Featured products"
+          title={featuredTitle}
           viewAllHref="/browse"
           products={featured}
           loading={featuredStatus === 'loading'}
           error={featuredStatus === 'error'}
+          emptyState={
+            <p className={styles.notice}>
+              New listings are arriving. Check back shortly for fresh produce and livestock.
+            </p>
+          }
         />
       </Reveal>
 
@@ -178,10 +198,14 @@ function Reveal({ children, className }: { children: ReactNode; className?: stri
 function Hero({
   states,
   categories,
+  products,
+  loading,
   onSearch,
 }: {
   states: StateRef[];
   categories: CategoryNode[];
+  products: ProductSummary[];
+  loading: boolean;
   onSearch: (queryString: string) => void;
 }) {
   const [stateCode, setStateCode] = useState('');
@@ -200,80 +224,130 @@ function Hero({
 
   return (
     <section className={styles.hero}>
-      <div className={styles.heroInner}>
-        <p className={styles.heroEyebrow}>Direct from verified farmers</p>
-        <h1 className={styles.heroTitle}>
-          Buy fresh produce and livestock direct from Nigerian farmers
-        </h1>
-        <p className={styles.heroLead}>
-          Compare prices, order in minutes, and pay safely. Your money is held until you confirm
-          delivery.
-        </p>
+      <div className={styles.heroGrid}>
+        <div className={styles.heroInner}>
+          <p className={styles.heroEyebrow}>Direct from verified farmers</p>
+          <h1 className={styles.heroTitle}>
+            Buy fresh produce and livestock direct from Nigerian farmers
+          </h1>
+          <p className={styles.heroLead}>
+            Compare prices, order in minutes, and pay safely. Your money is held until you confirm
+            delivery.
+          </p>
 
-        <form
-          className={styles.heroSearch}
-          onSubmit={submit}
-          role="search"
-          aria-labelledby={labelId}
-        >
-          <span id={labelId} className="sr-only">
-            Search the marketplace
-          </span>
-          <label className={styles.heroField}>
-            <span className="sr-only">State</span>
-            <select
-              value={stateCode}
-              onChange={(e) => setStateCode(e.target.value)}
-              aria-label="State"
-            >
-              <option value="">All Nigeria</option>
-              {states.map((s) => (
-                <option key={s.code ?? s.name ?? ''} value={s.code ?? ''}>
-                  {s.name}
-                </option>
-              ))}
-            </select>
-            <ChevronDownIcon size={16} />
-          </label>
-          <label className={styles.heroField}>
-            <span className="sr-only">Category</span>
-            <select
-              value={categorySlug}
-              onChange={(e) => setCategorySlug(e.target.value)}
-              aria-label="Category"
-            >
-              <option value="">All categories</option>
-              {categories.map((c) => (
-                <option key={c.id} value={c.slug ?? ''}>
-                  {c.name}
-                </option>
-              ))}
-            </select>
-            <ChevronDownIcon size={16} />
-          </label>
-          <input
-            className={styles.heroInput}
-            type="search"
-            placeholder="What are you looking for?"
-            value={keyword}
-            onChange={(e) => setKeyword(e.target.value)}
-            aria-label="Keyword"
-          />
-          <button type="submit" className={styles.heroSearchButton}>
-            <SearchIcon size={20} /> Search
-          </button>
-        </form>
+          <form
+            className={styles.heroSearch}
+            onSubmit={submit}
+            role="search"
+            aria-labelledby={labelId}
+          >
+            <span id={labelId} className="sr-only">
+              Search the marketplace
+            </span>
+            <label className={styles.heroField}>
+              <span className="sr-only">State</span>
+              <select
+                value={stateCode}
+                onChange={(e) => setStateCode(e.target.value)}
+                aria-label="State"
+              >
+                <option value="">All Nigeria</option>
+                {states.map((s) => (
+                  <option key={s.code ?? s.name ?? ''} value={s.code ?? ''}>
+                    {s.name}
+                  </option>
+                ))}
+              </select>
+              <ChevronDown size={16} />
+            </label>
+            <label className={styles.heroField}>
+              <span className="sr-only">Category</span>
+              <select
+                value={categorySlug}
+                onChange={(e) => setCategorySlug(e.target.value)}
+                aria-label="Category"
+              >
+                <option value="">All categories</option>
+                {categories.map((c) => (
+                  <option key={c.id} value={c.slug ?? ''}>
+                    {c.name}
+                  </option>
+                ))}
+              </select>
+              <ChevronDown size={16} />
+            </label>
+            <input
+              className={styles.heroInput}
+              type="search"
+              placeholder="What are you looking for?"
+              value={keyword}
+              onChange={(e) => setKeyword(e.target.value)}
+              aria-label="Keyword"
+            />
+            <button type="submit" className={styles.heroSearchButton}>
+              <Search size={20} /> Search
+            </button>
+          </form>
 
-        <div className={styles.heroActions}>
-          <Link to="/browse" className={styles.heroPrimary}>
-            Start buying
-          </Link>
-          <Link to="/join/farmer" className={styles.heroSecondary}>
-            Start selling
-          </Link>
+          <div className={styles.heroActions}>
+            <Link to="/browse" className={styles.heroPrimary}>
+              Start buying
+            </Link>
+            <Link to="/join/farmer" className={styles.heroSecondary}>
+              Start selling
+            </Link>
+          </div>
         </div>
+
+        <HeroVisual products={products} loading={loading} />
       </div>
     </section>
+  );
+}
+
+// The hero's right side. There is no owned hero photo yet and we use no unlicensed stock, so we
+// build a layered composition from our own data: floating cards of real catalogue listings with
+// their images, plus a verified-trust card. It gives the hero depth and fills the space.
+// TODO(design): replace with a real, owned hero photograph once one is available.
+function HeroVisual({ products, loading }: { products: ProductSummary[]; loading: boolean }) {
+  const tiles = products.slice(0, 3);
+
+  return (
+    <div className={styles.heroVisual} aria-hidden="true">
+      <div className={styles.heroGlow} />
+      {loading || tiles.length === 0
+        ? Array.from({ length: 3 }, (_, i) => (
+            <div
+              key={i}
+              className={[styles.heroTile, styles[`heroTile${i + 1}`], 'fq-skeleton'].join(' ')}
+            />
+          ))
+        : tiles.map((p, i) => (
+            <div key={p.id} className={[styles.heroTile, styles[`heroTile${i + 1}`]].join(' ')}>
+              {p.primaryImageUrl && (
+                <img
+                  className={styles.heroTileImg}
+                  src={p.primaryImageUrl}
+                  alt=""
+                  loading="lazy"
+                  width={220}
+                  height={160}
+                />
+              )}
+              <span className={styles.heroTileBody}>
+                <span className={styles.heroTileTitle}>{p.title}</span>
+                {p.state && <span className={styles.heroTileMeta}>{p.state}</span>}
+              </span>
+            </div>
+          ))}
+      <div className={styles.heroTrust}>
+        <ShieldCheck size={20} />
+        <span>
+          <strong>Verified farmers</strong>
+          <span className={styles.heroTrustSub}>Payment held until you confirm delivery</span>
+        </span>
+      </div>
+    </div>
   );
 }
 
@@ -329,7 +403,7 @@ function HowItWorks() {
       </h2>
       <div className={styles.steps}>
         {HOW_IT_WORKS.map((step, i) => {
-          const Icon = ICONS[step.icon] ?? SearchIcon;
+          const Icon = CONTENT_ICONS[step.icon] ?? Search;
           return (
             <div key={step.title} className={styles.step}>
               <span className={styles.stepIcon}>
@@ -351,7 +425,7 @@ function ValueCards() {
     <Reveal className={styles.section}>
       <div className={styles.valueGrid}>
         {VALUE_CARDS.map((card) => {
-          const Icon = ICONS[card.icon] ?? ShieldCheckIcon;
+          const Icon = CONTENT_ICONS[card.icon] ?? ShieldCheck;
           return (
             <div key={card.title} className={styles.valueCard}>
               <span className={styles.valueIcon}>
@@ -380,7 +454,7 @@ function DesignedForFarmer() {
           <ul className={styles.farmerPoints}>
             {FARMER_POINTS.map((point) => (
               <li key={point} className={styles.farmerPoint}>
-                <CheckCircleIcon size={20} /> {point}
+                <CircleCheck size={20} /> {point}
               </li>
             ))}
           </ul>
@@ -402,7 +476,7 @@ function BecomeSeller() {
           <ul className={styles.sellerBenefits}>
             {SELLER_BENEFITS.map((b) => (
               <li key={b} className={styles.sellerBenefit}>
-                <CheckCircleIcon size={18} /> {b}
+                <CircleCheck size={18} /> {b}
               </li>
             ))}
           </ul>
@@ -424,7 +498,7 @@ function Faq() {
           <details key={item.q} className={styles.faqItem}>
             <summary className={styles.faqQ}>
               {item.q}
-              <ChevronDownIcon size={20} />
+              <ChevronDown size={20} />
             </summary>
             <p className={styles.faqA}>{item.a}</p>
           </details>

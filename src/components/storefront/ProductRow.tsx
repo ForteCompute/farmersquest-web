@@ -1,5 +1,6 @@
+import type { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRightIcon } from '@/design-system';
+import { ArrowRight } from './icons';
 import type { ProductSummary } from '@/services/catalog';
 import { ProductCard } from './ProductCard';
 import { ProductCardSkeleton } from './ProductCardSkeleton';
@@ -7,8 +8,9 @@ import styles from './ProductRow.module.css';
 
 // A titled, horizontally scrolling row of product cards with a View all link. Used for featured
 // products, category spotlights on the landing, and related products on the detail page. Shows
-// shimmering skeletons while loading and a quiet message on error. Renders nothing when there are no
-// products and not loading, so the caller can hide an empty category row.
+// shimmering skeletons while loading and a quiet message on error. When there are no products and
+// not loading, it shows the designed empty state if one was given, otherwise renders nothing so the
+// caller can hide a row it deliberately does not want (for example an empty category spotlight).
 export interface ProductRowProps {
   title: string;
   viewAllHref?: string;
@@ -16,6 +18,7 @@ export interface ProductRowProps {
   loading?: boolean;
   error?: boolean;
   skeletonCount?: number;
+  emptyState?: ReactNode;
 }
 
 export function ProductRow({
@@ -25,8 +28,10 @@ export function ProductRow({
   loading = false,
   error = false,
   skeletonCount = 4,
+  emptyState,
 }: ProductRowProps) {
-  if (!loading && !error && products.length === 0) {
+  const isEmpty = !loading && !error && products.length === 0;
+  if (isEmpty && !emptyState) {
     return null;
   }
 
@@ -36,7 +41,7 @@ export function ProductRow({
         <h2 className={styles.title}>{title}</h2>
         {viewAllHref && (
           <Link className={styles.viewAll} to={viewAllHref}>
-            View all <ArrowRightIcon size={16} />
+            View all <ArrowRight size={16} />
           </Link>
         )}
       </div>
@@ -45,6 +50,8 @@ export function ProductRow({
         <p className={styles.error} role="status">
           We could not load these right now.
         </p>
+      ) : isEmpty ? (
+        <div className={styles.empty}>{emptyState}</div>
       ) : (
         <div className={styles.row}>
           {loading

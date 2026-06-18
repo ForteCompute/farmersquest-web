@@ -13,3 +13,30 @@ export { CategoryCard } from './CategoryCard';
 export type { CategoryCardProps } from './CategoryCard';
 export { SignInPromptProvider, useSignInPrompt } from './SignInPrompt';
 export { useReveal } from './useReveal';
+export { categoryIcon, CONTENT_ICONS } from './iconMap';
+export {
+  ArrowRight,
+  BadgeCheck,
+  BrandFacebook,
+  BrandLinkedin,
+  BrandX,
+  ChevronDown,
+  CircleCheck,
+  Handshake,
+  Heart,
+  Home,
+  Leaf,
+  MapPin,
+  Menu,
+  Plus,
+  Search,
+  ShieldCheck,
+  ShoppingCart,
+  Star,
+  Store,
+  TrendingUp,
+  Truck,
+  User,
+  X,
+} from './icons';
+export type { LucideIcon } from './icons';

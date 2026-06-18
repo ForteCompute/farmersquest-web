@@ -10,6 +10,10 @@ import './design-system/motion.css';
 // mount the app.
 applyTheme();
 
+// Mark that scripting is live. Reveal-on-scroll only hides its start state under this flag, so if
+// the script never runs the content stays fully visible instead of stuck invisible.
+document.documentElement.classList.add('fq-js');
+
 const container = document.getElementById('root');
 if (!container) {
   throw new Error('Root container #root was not found in index.html.');

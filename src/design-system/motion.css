@@ -33,11 +33,15 @@
   }
 }
 
-/* Reveal on scroll: hidden until it enters the viewport, then fades and slides up once. */
-.fq-reveal {
+/* Reveal on scroll: fades and slides up once when it enters the viewport. The hidden start state is
+   gated behind .fq-js (added to <html> only when the app boots), so if scripting never runs the
+   content is fully visible rather than stuck invisible. The reveal hook also has a safety timer, so
+   a section can never stay hidden even if the observer does not fire (for example off-screen in a
+   full-page capture). Content visibility never depends on the animation. */
+.fq-js .fq-reveal {
   opacity: 0;
 }
-.fq-reveal[data-revealed='true'] {
+.fq-js .fq-reveal[data-revealed='true'] {
   animation: fq-fade-up var(--fq-dur-slow) var(--fq-ease-out) both;
 }
 
@@ -56,8 +60,8 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .fq-reveal,
-  .fq-reveal[data-revealed='true'] {
+  .fq-js .fq-reveal,
+  .fq-js .fq-reveal[data-revealed='true'] {
     animation: none !important;
     opacity: 1 !important;
     transform: none !important;

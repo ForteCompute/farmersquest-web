@@ -1,15 +1,15 @@
 import { NavLink } from 'react-router-dom';
-import { HomeIcon, SearchIcon, StoreIcon, UserIcon } from '@/design-system';
+import { Home, Search, Store, User } from './icons';
 import styles from './MobileTabBar.module.css';
 
 // The fixed bottom tab bar shown on phones only, like a shopping app. Four tabs: Home, Browse, Sell,
 // Account. Alerts and Chat are intentionally left out until those features exist. The active tab is
 // highlighted in green. Hidden on tablet and desktop, which use the top header.
 const TABS = [
-  { label: 'Home', to: '/', Icon: HomeIcon, end: true },
-  { label: 'Browse', to: '/browse', Icon: SearchIcon, end: false },
-  { label: 'Sell', to: '/join/farmer', Icon: StoreIcon, end: false },
-  { label: 'Account', to: '/account', Icon: UserIcon, end: false },
+  { label: 'Home', to: '/', Icon: Home, end: true },
+  { label: 'Browse', to: '/browse', Icon: Search, end: false },
+  { label: 'Sell', to: '/join/farmer', Icon: Store, end: false },
+  { label: 'Account', to: '/account', Icon: User, end: false },
 ];
 
 export function MobileTabBar() {

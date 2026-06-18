@@ -1,15 +1,7 @@
 import { useEffect, useId, useState } from 'react';
 import type { FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import {
-  CartIcon,
-  ChevronDownIcon,
-  HeartIcon,
-  LeafIcon,
-  MenuIcon,
-  SearchIcon,
-  XIcon,
-} from '@/design-system';
+import { ChevronDown, Heart, Leaf, Menu, Search, ShoppingCart, X } from './icons';
 import { config } from '@/services/config';
 import { getCategories, getStates, type CategoryNode, type StateRef } from '@/services/catalog';
 import { useSession } from '@/app/session';
@@ -78,11 +70,11 @@ export function StorefrontHeader() {
           aria-expanded={menuOpen}
           onClick={() => setMenuOpen(true)}
         >
-          <MenuIcon size={24} />
+          <Menu size={24} />
         </button>
 
         <Link to="/" className={styles.logo}>
-          <LeafIcon size={26} />
+          <Leaf size={26} />
           <span>{config.appName}</span>
         </Link>
 
@@ -109,7 +101,7 @@ export function StorefrontHeader() {
                 </option>
               ))}
             </select>
-            <ChevronDownIcon size={16} />
+            <ChevronDown size={16} />
           </label>
 
           <button
@@ -118,7 +110,7 @@ export function StorefrontHeader() {
             aria-label="Wishlist"
             onClick={gatedCount('save items to your wishlist')}
           >
-            <HeartIcon size={22} />
+            <Heart size={22} />
           </button>
           <button
             type="button"
@@ -126,7 +118,7 @@ export function StorefrontHeader() {
             aria-label="Cart"
             onClick={gatedCount('use your cart')}
           >
-            <CartIcon size={22} />
+            <ShoppingCart size={22} />
           </button>
 
           <Link to="/sign-in" className={styles.signIn}>
@@ -186,7 +178,7 @@ export function StorefrontHeader() {
           aria-label="Search keyword"
         />
         <button type="submit" className={styles.searchButton} aria-label="Search">
-          <SearchIcon size={20} />
+          <Search size={20} />
           <span className={styles.searchButtonText}>Search</span>
         </button>
       </form>
@@ -197,7 +189,7 @@ export function StorefrontHeader() {
           <div className={styles.drawerPanel}>
             <div className={styles.drawerHead}>
               <Link to="/" className={styles.logo} onClick={() => setMenuOpen(false)}>
-                <LeafIcon size={24} />
+                <Leaf size={24} />
                 <span>{config.appName}</span>
               </Link>
               <button
@@ -206,7 +198,7 @@ export function StorefrontHeader() {
                 aria-label="Close menu"
                 onClick={() => setMenuOpen(false)}
               >
-                <XIcon size={24} />
+                <X size={24} />
               </button>
             </div>
             <nav className={styles.drawerNav} aria-label="Mobile">

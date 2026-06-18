@@ -1,13 +1,6 @@
 import type { MouseEvent } from 'react';
 import { Link } from 'react-router-dom';
-import {
-  HeartIcon,
-  LeafIcon,
-  MapPinIcon,
-  PlusIcon,
-  ShieldCheckIcon,
-  StarIcon,
-} from '@/design-system';
+import { BadgeCheck, Heart, Leaf, MapPin, Plus, Star } from './icons';
 import { useSession } from '@/app/session';
 import type { ProductSummary } from '@/services/catalog';
 import {
@@ -65,14 +58,14 @@ export function ProductCard({ product }: ProductCardProps) {
           />
         ) : (
           <span className={styles.imageFallback} aria-hidden="true">
-            <LeafIcon size={40} />
+            <Leaf size={40} />
           </span>
         )}
         {(verified || featured) && (
           <span className={styles.badges}>
             {verified && (
               <span className={[styles.badge, styles.badgeVerified].join(' ')}>
-                <ShieldCheckIcon size={14} /> Verified
+                <BadgeCheck size={14} /> Verified
               </span>
             )}
             {featured && (
@@ -86,14 +79,14 @@ export function ProductCard({ product }: ProductCardProps) {
           aria-label="Save to wishlist"
           onClick={gated('save this to your wishlist')}
         >
-          <HeartIcon size={18} />
+          <Heart size={18} />
         </button>
       </Link>
 
       <div className={styles.body}>
         {location && (
           <p className={styles.location}>
-            <MapPinIcon size={14} /> {location}
+            <MapPin size={14} /> {location}
           </p>
         )}
         <Link to={href} className={styles.title}>
@@ -121,7 +114,7 @@ export function ProductCard({ product }: ProductCardProps) {
           </span>
           {rating && (
             <span className={styles.rating}>
-              <StarIcon size={13} /> {rating.value} ({rating.count})
+              <Star size={13} /> {rating.value} ({rating.count})
             </span>
           )}
         </div>
@@ -133,7 +126,7 @@ export function ProductCard({ product }: ProductCardProps) {
         aria-label="Add to cart"
         onClick={gated('add this to your cart')}
       >
-        <PlusIcon size={20} />
+        <Plus size={20} />
       </button>
     </article>
   );

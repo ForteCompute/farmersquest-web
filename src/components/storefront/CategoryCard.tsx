@@ -1,11 +1,11 @@
 import { Link } from 'react-router-dom';
-import { LeafIcon } from '@/design-system';
+import { categoryIcon } from './iconMap';
 import type { CategoryNode } from '@/services/catalog';
 import styles from './CategoryCard.module.css';
 
 // A browse-by-category card: an icon, the category name, the live product count, and the first few
-// subcategories. The catalog has no category image field, so a brand icon is used (an icon is ours,
-// not data). The count and subcategories are live from the catalog.
+// subcategories. The catalog has no category image field, so each category gets its own clear icon
+// keyed by slug (an icon is ours, not data). The count and subcategories are live from the catalog.
 export interface CategoryCardProps {
   category: CategoryNode;
 }
@@ -13,11 +13,12 @@ export interface CategoryCardProps {
 export function CategoryCard({ category }: CategoryCardProps) {
   const subs = (category.children ?? []).slice(0, 3);
   const count = category.productCount ?? 0;
+  const Icon = categoryIcon(category.slug);
 
   return (
     <Link className={styles.card} to={`/category/${category.slug ?? ''}`}>
       <span className={styles.icon} aria-hidden="true">
-        <LeafIcon size={24} />
+        <Icon size={26} />
       </span>
       <span className={styles.body}>
         <span className={styles.name}>{category.name}</span>

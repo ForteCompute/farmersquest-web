@@ -32,7 +32,15 @@ export function useReveal<T extends HTMLElement = HTMLDivElement>() {
       { rootMargin: '0px 0px -10% 0px', threshold: 0.05 },
     );
     observer.observe(node);
-    return () => observer.disconnect();
+
+    // Safety net: never leave a section hidden. If the observer has not fired (for example a section
+    // that is off-screen in a full-page render and is never scrolled to), reveal it anyway.
+    const fallback = window.setTimeout(() => setRevealed(true), 1500);
+
+    return () => {
+      observer.disconnect();
+      window.clearTimeout(fallback);
+    };
   }, [revealed]);
 
   return { ref, revealed };

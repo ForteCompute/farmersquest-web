@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import type { FormEvent } from 'react';
 import { Link } from 'react-router-dom';
-import { FacebookLogo, LeafIcon } from '@/design-system';
+import { BrandFacebook, BrandLinkedin, BrandX, Leaf } from './icons';
 import { config } from '@/services/config';
 import styles from './StorefrontFooter.module.css';
 
@@ -113,7 +113,7 @@ export function StorefrontFooter() {
       <div className={styles.columns}>
         <div className={styles.brand}>
           <Link to="/" className={styles.brandLogo}>
-            <LeafIcon size={24} />
+            <Leaf size={24} />
             <span>{config.appName}</span>
           </Link>
           <p className={styles.brandBlurb}>
@@ -122,13 +122,13 @@ export function StorefrontFooter() {
           </p>
           <div className={styles.social}>
             <a className={styles.socialLink} href="#" aria-label="Facebook">
-              <FacebookLogo size={18} />
+              <BrandFacebook size={18} />
             </a>
             <a className={styles.socialLink} href="#" aria-label="X">
-              <span aria-hidden="true">X</span>
+              <BrandX size={18} />
             </a>
             <a className={styles.socialLink} href="#" aria-label="LinkedIn">
-              <span aria-hidden="true">in</span>
+              <BrandLinkedin size={18} />
             </a>
           </div>
         </div>

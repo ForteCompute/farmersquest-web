@@ -49,6 +49,19 @@
   color: var(--fq-color-text-secondary);
 }
 
+/* Designed empty state, shown instead of a blank gap when a row has no products. */
+.empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 150px;
+  padding: var(--fq-space-8) var(--fq-space-4);
+  text-align: center;
+  background-color: var(--fq-color-surface-green-soft);
+  border: 1px dashed var(--fq-color-border-muted);
+  border-radius: var(--fq-radius-lg);
+}
+
 /* On wider screens, show four cards in the visible width before scrolling. */
 @media (min-width: 861px) {
   .row {
