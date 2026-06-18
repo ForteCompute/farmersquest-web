@@ -1,0 +1,103 @@
+.section {
+  margin-top: var(--fq-space-10);
+}
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--fq-space-3);
+  margin-bottom: var(--fq-space-5);
+}
+.heading {
+  font-size: var(--fq-text-xl);
+  font-weight: var(--fq-weight-bold);
+  color: var(--fq-color-ink);
+}
+.summary {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--fq-space-2);
+  font-size: var(--fq-text-md);
+  color: var(--fq-color-ink);
+}
+.summaryCount {
+  color: var(--fq-color-text-secondary);
+}
+.stars {
+  display: inline-flex;
+  align-items: center;
+  gap: 1px;
+}
+.starFull {
+  color: #f5a623;
+  fill: #f5a623;
+}
+.starEmpty {
+  color: var(--fq-color-border-muted);
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--fq-space-4);
+  max-width: 760px;
+}
+.review {
+  display: flex;
+  flex-direction: column;
+  gap: var(--fq-space-2);
+  padding: var(--fq-space-4);
+  background-color: var(--fq-color-surface);
+  border: 1px solid var(--fq-color-input-fill-soft);
+  border-radius: var(--fq-radius-md);
+}
+.reviewHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--fq-space-3);
+}
+.reviewer {
+  font-weight: var(--fq-weight-bold);
+  color: var(--fq-color-ink);
+}
+.date {
+  font-size: var(--fq-text-sm);
+  color: var(--fq-color-text-secondary);
+}
+.text {
+  font-size: var(--fq-text-md);
+  color: var(--fq-color-text-secondary);
+  line-height: var(--fq-leading-normal);
+}
+.notice {
+  color: var(--fq-color-text-secondary);
+}
+.more {
+  align-self: flex-start;
+  margin-top: var(--fq-space-4);
+  min-height: 44px;
+  padding: 0 var(--fq-space-6);
+  font-weight: var(--fq-weight-bold);
+  color: var(--fq-color-green-deep);
+  background-color: var(--fq-color-surface-green);
+  border: 0;
+  border-radius: var(--fq-radius-md);
+  cursor: pointer;
+}
+.more:hover {
+  background-color: var(--fq-color-border-muted);
+}
+.skeletonLine {
+  height: 16px;
+  width: 40%;
+  border-radius: var(--fq-radius-sm);
+}
+.skeletonBlock {
+  height: 40px;
+  border-radius: var(--fq-radius-sm);
+}
