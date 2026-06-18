@@ -209,18 +209,85 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/foundation/samples": {
+    "/api/v1/catalog/products": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** List sample items, paged. Foundation demonstration only. */
-        get: operations["ListSampleItems"];
+        /** Search and browse products. Use featured=true for the featured list. */
+        get: operations["ListProducts"];
         put?: never;
-        /** Create a sample item. Foundation demonstration only. */
-        post: operations["CreateSampleItem"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/catalog/categories": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** The category tree with subcategories and a live product count per node. */
+        get: operations["GetCategoryTree"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/catalog/products/{slug}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Full product detail with gallery, attributes, related products, and more from the farmer. */
+        get: operations["GetProductDetail"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/catalog/products/{slug}/reviews": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** A paged list of a product's reviews, newest first. */
+        get: operations["GetProductReviews"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/catalog/reference/states": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** The list of Nigerian states for the header selector and location filter. */
+        get: operations["GetStates"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -242,6 +309,10 @@ export interface components {
             status?: string | null;
             verificationStatus?: string | null;
             notificationPreferences?: components["schemas"]["NotificationPreferencesDto"];
+            state?: string | null;
+            region?: string | null;
+            farmName?: string | null;
+            crops?: string[] | null;
             /** Format: date-time */
             createdAtUtc?: string;
         };
@@ -252,22 +323,22 @@ export interface components {
             expiresAtUtc?: string;
             account?: components["schemas"]["AccountDto"];
         };
+        BadgesDto: {
+            verifiedFarmer?: boolean;
+            featured?: boolean;
+        };
+        CategoryNodeDto: {
+            /** Format: uuid */
+            id?: string;
+            slug?: string | null;
+            name?: string | null;
+            /** Format: int32 */
+            productCount?: number;
+            children?: components["schemas"]["CategoryNodeDto"][] | null;
+        };
         ChangePasswordCommand: {
             currentPassword?: string | null;
             newPassword?: string | null;
-        };
-        CreateSampleItemRequest: {
-            name?: string | null;
-            /** Format: double */
-            price?: number;
-        };
-        CreateSampleItemResponse: {
-            /** Format: uuid */
-            id?: string;
-            name?: string | null;
-            /** Format: double */
-            priceAmount?: number;
-            priceCurrency?: string | null;
         };
         HttpValidationProblemDetails: {
             type?: string | null;
@@ -301,12 +372,78 @@ export interface components {
         } & {
             [key: string]: unknown;
         };
+        ProductAttributeDto: {
+            name?: string | null;
+            value?: string | null;
+        };
+        ProductDetailDto: {
+            /** Format: uuid */
+            id?: string;
+            slug?: string | null;
+            title?: string | null;
+            description?: string | null;
+            /** Format: double */
+            price?: number | null;
+            currency?: string | null;
+            unitLabel?: string | null;
+            contactForPrice?: boolean;
+            /** Format: int32 */
+            stock?: number | null;
+            farmName?: string | null;
+            images?: string[] | null;
+            seller?: components["schemas"]["SellerDto"];
+            rating?: components["schemas"]["RatingDto"];
+            badges?: components["schemas"]["BadgesDto"];
+            state?: string | null;
+            attributes?: components["schemas"]["ProductAttributeDto"][] | null;
+            relatedProducts?: components["schemas"]["ProductSummaryDto"][] | null;
+            moreFromFarmer?: components["schemas"]["ProductSummaryDto"][] | null;
+        };
+        ProductSummaryDto: {
+            /** Format: uuid */
+            id?: string;
+            slug?: string | null;
+            title?: string | null;
+            primaryImageUrl?: string | null;
+            images?: string[] | null;
+            /** Format: double */
+            price?: number | null;
+            currency?: string | null;
+            unitLabel?: string | null;
+            contactForPrice?: boolean;
+            /** Format: int32 */
+            stock?: number | null;
+            farmName?: string | null;
+            seller?: components["schemas"]["SellerDto"];
+            rating?: components["schemas"]["RatingDto"];
+            state?: string | null;
+            badges?: components["schemas"]["BadgesDto"];
+        };
+        ProductSummaryDtoCatalogPage: {
+            items?: components["schemas"]["ProductSummaryDto"][] | null;
+            /** Format: int64 */
+            totalCount?: number;
+            /** Format: int32 */
+            page?: number;
+            /** Format: int32 */
+            pageSize?: number;
+            /** Format: int32 */
+            totalPages?: number;
+        };
+        RatingDto: {
+            /** Format: double */
+            value?: number;
+            /** Format: int32 */
+            count?: number;
+        };
         RegisterBuyerCommand: {
             email?: string | null;
             username?: string | null;
             fullName?: string | null;
             password?: string | null;
             phoneNumber?: string | null;
+            state?: string | null;
+            region?: string | null;
         };
         RegisterFarmerCommand: {
             email?: string | null;
@@ -315,6 +452,10 @@ export interface components {
             password?: string | null;
             phoneNumber?: string | null;
             nin?: string | null;
+            farmName?: string | null;
+            crops?: string[] | null;
+            state?: string | null;
+            region?: string | null;
         };
         RequestPasswordResetCommand: {
             email?: string | null;
@@ -322,6 +463,34 @@ export interface components {
         ResetPasswordCommand: {
             token?: string | null;
             newPassword?: string | null;
+        };
+        ReviewDto: {
+            reviewerName?: string | null;
+            /** Format: int32 */
+            rating?: number;
+            /** Format: date-time */
+            date?: string;
+            text?: string | null;
+        };
+        ReviewDtoCatalogPage: {
+            items?: components["schemas"]["ReviewDto"][] | null;
+            /** Format: int64 */
+            totalCount?: number;
+            /** Format: int32 */
+            page?: number;
+            /** Format: int32 */
+            pageSize?: number;
+            /** Format: int32 */
+            totalPages?: number;
+        };
+        SellerDto: {
+            name?: string | null;
+            avatarUrl?: string | null;
+            verified?: boolean;
+        };
+        StateDto: {
+            code?: string | null;
+            name?: string | null;
         };
         UpdateNotificationPreferencesCommand: {
             email?: boolean;
@@ -331,6 +500,10 @@ export interface components {
         UpdateProfileCommand: {
             fullName?: string | null;
             phoneNumber?: string | null;
+            state?: string | null;
+            region?: string | null;
+            farmName?: string | null;
+            crops?: string[] | null;
         };
     };
     responses: never;
@@ -725,9 +898,16 @@ export interface operations {
             };
         };
     };
-    ListSampleItems: {
+    ListProducts: {
         parameters: {
             query?: {
+                query?: string;
+                categorySlug?: string;
+                state?: string;
+                minPrice?: number;
+                maxPrice?: number;
+                sort?: string;
+                featured?: boolean;
                 page?: number;
                 pageSize?: number;
             };
@@ -742,30 +922,8 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
-            };
-        };
-    };
-    CreateSampleItem: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreateSampleItemRequest"];
-            };
-        };
-        responses: {
-            /** @description Created */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
                 content: {
-                    "application/json": components["schemas"]["CreateSampleItemResponse"];
+                    "application/json": components["schemas"]["ProductSummaryDtoCatalogPage"];
                 };
             };
             /** @description Bad Request */
@@ -774,16 +932,121 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                    "application/problem+json": components["schemas"]["HttpValidationProblemDetails"];
                 };
             };
-            /** @description Unauthorized */
-            401: {
+        };
+    };
+    GetCategoryTree: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CategoryNodeDto"][];
+                };
+            };
+        };
+    };
+    GetProductDetail: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProductDetailDto"];
+                };
+            };
+            /** @description Not Found */
+            404: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
                     "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+        };
+    };
+    GetProductReviews: {
+        parameters: {
+            query?: {
+                page?: number;
+                pageSize?: number;
+            };
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ReviewDtoCatalogPage"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["HttpValidationProblemDetails"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+        };
+    };
+    GetStates: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StateDto"][];
                 };
             };
         };
