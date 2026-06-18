@@ -14,8 +14,20 @@ export type Review = components['schemas']['ReviewDto'];
 export type ProductPage = components['schemas']['ProductSummaryDtoCatalogPage'];
 export type ReviewPage = components['schemas']['ReviewDtoCatalogPage'];
 
-// The products endpoint accepts sort as a free string (no enum in the contract). The exact accepted
-// tokens are confirmed when the browse page is built; the landing does not sort.
+// The products endpoint validates sort against a fixed set of tokens (newest, price_asc,
+// price_desc); anything else returns a 400. These are the labels the browse and category pages show.
+export const PRODUCT_SORTS = [
+  { value: 'newest', label: 'Newest' },
+  { value: 'price_asc', label: 'Price: low to high' },
+  { value: 'price_desc', label: 'Price: high to low' },
+] as const;
+
+export type ProductSort = (typeof PRODUCT_SORTS)[number]['value'];
+
+export function isProductSort(value: string | null | undefined): value is ProductSort {
+  return PRODUCT_SORTS.some((s) => s.value === value);
+}
+
 export interface ProductQuery {
   query?: string;
   categorySlug?: string;
@@ -24,6 +36,7 @@ export interface ProductQuery {
   maxPrice?: number;
   sort?: string;
   featured?: boolean;
+  verifiedOnly?: boolean;
   page?: number;
   pageSize?: number;
 }
@@ -55,6 +68,7 @@ export async function listProducts(query: ProductQuery = {}): Promise<Result<Pro
           maxPrice: query.maxPrice,
           sort: query.sort,
           featured: query.featured,
+          verifiedOnly: query.verifiedOnly,
           page: query.page,
           pageSize: query.pageSize,
         }),

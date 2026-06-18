@@ -1,0 +1,204 @@
+.layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--fq-space-6);
+}
+
+/* Mobile filter toggle; hidden on desktop where the sidebar is always shown. */
+.filterToggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0 var(--fq-space-5);
+  font-weight: var(--fq-weight-bold);
+  color: var(--fq-color-green-deep);
+  background-color: var(--fq-color-surface-green);
+  border: 1px solid var(--fq-color-input-fill-soft);
+  border-radius: var(--fq-radius-md);
+  cursor: pointer;
+}
+
+.filters {
+  display: none;
+  flex-direction: column;
+  gap: var(--fq-space-5);
+  padding: var(--fq-space-5);
+  background-color: var(--fq-color-surface);
+  border: 1px solid var(--fq-color-input-fill-soft);
+  border-radius: var(--fq-radius-lg);
+}
+.filtersOpen {
+  display: flex;
+}
+.filterHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.filterTitle {
+  font-size: var(--fq-text-lg);
+  font-weight: var(--fq-weight-bold);
+  color: var(--fq-color-ink);
+}
+.clearAll {
+  font-size: var(--fq-text-sm);
+  font-weight: var(--fq-weight-semibold);
+  color: var(--fq-color-green-action);
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+.clearAll:hover {
+  text-decoration: underline;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--fq-space-2);
+}
+.fieldLabel {
+  font-size: var(--fq-text-sm);
+  font-weight: var(--fq-weight-semibold);
+  color: var(--fq-color-ink);
+}
+.selectWrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.selectWrap select {
+  appearance: none;
+  width: 100%;
+  height: 44px;
+  padding: 0 var(--fq-space-7) 0 var(--fq-space-3);
+  font-family: inherit;
+  font-size: var(--fq-text-md);
+  color: var(--fq-color-ink);
+  background-color: var(--fq-color-surface);
+  border: 1px solid var(--fq-color-input-fill);
+  border-radius: var(--fq-radius-md);
+  cursor: pointer;
+}
+.selectWrap svg {
+  position: absolute;
+  right: var(--fq-space-3);
+  pointer-events: none;
+  color: var(--fq-color-text-secondary);
+}
+
+.priceRow {
+  display: flex;
+  align-items: center;
+  gap: var(--fq-space-2);
+  color: var(--fq-color-text-secondary);
+}
+.priceInput {
+  width: 100%;
+  min-width: 0;
+  height: 44px;
+  padding: 0 var(--fq-space-3);
+  font-family: inherit;
+  font-size: var(--fq-text-md);
+  color: var(--fq-color-ink);
+  border: 1px solid var(--fq-color-input-fill);
+  border-radius: var(--fq-radius-md);
+}
+.applyPrice {
+  align-self: flex-start;
+  min-height: 38px;
+  padding: 0 var(--fq-space-4);
+  font-size: var(--fq-text-sm);
+  font-weight: var(--fq-weight-bold);
+  color: var(--fq-color-green-deep);
+  background-color: var(--fq-color-surface-green);
+  border: 0;
+  border-radius: var(--fq-radius-md);
+  cursor: pointer;
+}
+.applyPrice:hover {
+  background-color: var(--fq-color-border-muted);
+}
+
+.checkboxField {
+  display: flex;
+  align-items: center;
+  gap: var(--fq-space-2);
+  font-size: var(--fq-text-md);
+  color: var(--fq-color-ink);
+  cursor: pointer;
+}
+.checkboxField input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--fq-color-green-button);
+}
+
+.results {
+  min-width: 0;
+}
+.resultsHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--fq-space-4);
+  margin-bottom: var(--fq-space-4);
+}
+.count {
+  font-size: var(--fq-text-md);
+  font-weight: var(--fq-weight-semibold);
+  color: var(--fq-color-ink);
+}
+.sort {
+  flex-shrink: 0;
+  min-width: 200px;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--fq-space-2);
+  margin-bottom: var(--fq-space-5);
+}
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--fq-space-1);
+  padding: var(--fq-space-1) var(--fq-space-3);
+  font-size: var(--fq-text-sm);
+  font-weight: var(--fq-weight-semibold);
+  color: var(--fq-color-green-deep);
+  background-color: var(--fq-color-surface-green);
+  border: 0;
+  border-radius: var(--fq-radius-pill);
+  cursor: pointer;
+}
+.chip:hover {
+  background-color: var(--fq-color-border-muted);
+}
+.clearAllButton {
+  min-height: 44px;
+  padding: 0 var(--fq-space-5);
+  font-weight: var(--fq-weight-bold);
+  color: var(--fq-color-on-color);
+  background-color: var(--fq-color-green-button);
+  border: 0;
+  border-radius: var(--fq-radius-md);
+  cursor: pointer;
+}
+
+@media (min-width: 900px) {
+  .layout {
+    grid-template-columns: 264px 1fr;
+    align-items: start;
+  }
+  .filterToggle {
+    display: none;
+  }
+  .filters {
+    display: flex;
+    position: sticky;
+    top: var(--fq-space-4);
+  }
+}

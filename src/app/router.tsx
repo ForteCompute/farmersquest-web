@@ -2,6 +2,7 @@ import { Navigate, createBrowserRouter, type RouteObject } from 'react-router-do
 import { AppShell, RoleGuard } from '@/components';
 import { StorefrontLayout } from '@/components/storefront';
 import { LandingPage } from '@/features/landing';
+import { BrowsePage } from '@/features/browse';
 import { BuyerHome } from '@/features/buyer';
 import { FarmerHome } from '@/features/farmer';
 import {
@@ -26,10 +27,9 @@ import { PlaceholderScreen } from '@/features/PlaceholderScreen';
 // - The signed-in app (role homes and account settings) is wrapped by the role-gated AppShell.
 // Exported so tests can mount it in a memory router.
 //
-// The storefront browse, category, and product pages and the final /join and /account routes arrive
-// in their own pull requests per the build order; until then, the landing links to /browse,
-// /category, /product fall through to the catch-all, and /join and /account alias the existing
-// account screens.
+// The storefront category and product pages and the final /join and /account routes arrive in their
+// own pull requests per the build order; until then /category and /product fall through to the
+// catch-all, and /join and /account alias the existing account screens.
 export const routes: RouteObject[] = [
   // Public storefront landing.
   {
@@ -37,6 +37,16 @@ export const routes: RouteObject[] = [
     element: (
       <StorefrontLayout showHeaderSearch={false}>
         <LandingPage />
+      </StorefrontLayout>
+    ),
+  },
+
+  // Public storefront browse with filters.
+  {
+    path: '/browse',
+    element: (
+      <StorefrontLayout>
+        <BrowsePage />
       </StorefrontLayout>
     ),
   },
