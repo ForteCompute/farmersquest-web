@@ -1,5 +1,7 @@
 import { Navigate, createBrowserRouter, type RouteObject } from 'react-router-dom';
 import { AppShell, RoleGuard } from '@/components';
+import { StorefrontLayout } from '@/components/storefront';
+import { LandingPage } from '@/features/landing';
 import { BuyerHome } from '@/features/buyer';
 import { FarmerHome } from '@/features/farmer';
 import {
@@ -17,12 +19,29 @@ import {
   SecurityScreen,
 } from '@/features/profile';
 import { PlaceholderScreen } from '@/features/PlaceholderScreen';
-import { RootRedirect } from './RootRedirect';
 
-// Route table. The account screens (registration, and the non-functional onboarding steps) sit
-// outside the app shell, shown before the user is in the authenticated app. Buyer and farmer
-// sections are role gated. Exported so tests can mount it in a memory router.
+// Route table.
+// - The root is the public storefront landing, no login needed.
+// - Account screens (sign up, sign in, password) sit outside the app shell.
+// - The signed-in app (role homes and account settings) is wrapped by the role-gated AppShell.
+// Exported so tests can mount it in a memory router.
+//
+// The storefront browse, category, and product pages and the final /join and /account routes arrive
+// in their own pull requests per the build order; until then, the landing links to /browse,
+// /category, /product fall through to the catch-all, and /join and /account alias the existing
+// account screens.
 export const routes: RouteObject[] = [
+  // Public storefront landing.
+  {
+    path: '/',
+    element: (
+      <StorefrontLayout showHeaderSearch={false}>
+        <LandingPage />
+      </StorefrontLayout>
+    ),
+  },
+
+  // Account screens (onboarding, auth).
   { path: '/register', element: <Navigate to="/register/buyer" replace /> },
   { path: '/register/buyer', element: <RegisterScreen role="buyer" /> },
   { path: '/register/farmer', element: <RegisterScreen role="farmer" /> },
@@ -31,13 +50,17 @@ export const routes: RouteObject[] = [
   { path: '/register/upload-id', element: <UploadIdScreen /> },
   { path: '/sign-in', element: <SignInScreen /> },
   { path: '/forgot-password', element: <ForgotPasswordScreen /> },
+
+  // Aliases for the confirmed route names, pointing at the current screens until the auth rename.
+  { path: '/join', element: <Navigate to="/register" replace /> },
+  { path: '/join/buyer', element: <Navigate to="/register/buyer" replace /> },
+  { path: '/join/farmer', element: <Navigate to="/register/farmer" replace /> },
+  { path: '/account', element: <Navigate to="/profile" replace /> },
+
+  // Signed-in app, role gated, inside the app shell.
   {
-    path: '/',
     element: <AppShell />,
     children: [
-      { index: true, element: <RootRedirect /> },
-
-      // Buyer section.
       {
         path: 'buyer',
         element: (
@@ -62,8 +85,6 @@ export const routes: RouteObject[] = [
           </RoleGuard>
         ),
       },
-
-      // Farmer section.
       {
         path: 'farmer',
         element: (
@@ -88,16 +109,14 @@ export const routes: RouteObject[] = [
           </RoleGuard>
         ),
       },
-
-      // Account screens, common to both roles (the API scopes them to the signed-in user).
       { path: 'profile', element: <ProfileScreen /> },
       { path: 'profile/edit', element: <EditProfileScreen /> },
       { path: 'profile/security', element: <SecurityScreen /> },
       { path: 'profile/notifications', element: <NotificationsScreen /> },
-
-      { path: '*', element: <Navigate to="/" replace /> },
     ],
   },
+
+  { path: '*', element: <Navigate to="/" replace /> },
 ];
 
 export const router = createBrowserRouter(routes);

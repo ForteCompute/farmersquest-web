@@ -37,9 +37,11 @@ export const spacing = {
     inputHeight: '2.875rem', // 46px, filled inputs
     buttonHeight: '3rem', // 48px, primary buttons
   },
-  // Layout. Mobile frames are 402px wide; the web scales up on a wider canvas.
+  // Layout. Mobile frames are 402px wide; the web scales up on a wider canvas. The storefront uses
+  // the wider content width below so product rows and grids fill more of a desktop screen.
   layout: {
     contentMaxWidth: '1120px',
+    storefrontMaxWidth: '1320px',
     navWidth: '240px',
     mobileWidth: '402px',
   },

@@ -1,0 +1,45 @@
+.bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 50;
+  display: flex;
+  justify-content: space-around;
+  align-items: stretch;
+  gap: var(--fq-space-1);
+  padding: var(--fq-space-1) var(--fq-space-2) calc(var(--fq-space-1) + env(safe-area-inset-bottom));
+  background-color: var(--fq-color-green-deep);
+}
+
+.tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  flex: 1;
+  min-height: 56px;
+  padding: var(--fq-space-1);
+  font-size: var(--fq-text-xs);
+  font-weight: var(--fq-weight-medium);
+  color: var(--fq-color-on-color);
+  text-decoration: none;
+  border-radius: var(--fq-radius-md);
+}
+
+.active {
+  color: var(--fq-color-green-deep);
+  background-color: var(--fq-color-surface);
+}
+
+.label {
+  line-height: 1;
+}
+
+/* Phones only. Tablet and desktop use the top header. */
+@media (min-width: 861px) {
+  .bar {
+    display: none;
+  }
+}

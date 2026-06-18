@@ -4,10 +4,15 @@ import { App } from './app/App';
 import { applyTheme } from './design-system';
 import './design-system/fonts.css';
 import './design-system/global.css';
+import './design-system/motion.css';
 
 // Project the design tokens onto the document as CSS custom properties before first paint, then
 // mount the app.
 applyTheme();
+
+// Mark that scripting is live. Reveal-on-scroll only hides its start state under this flag, so if
+// the script never runs the content stays fully visible instead of stuck invisible.
+document.documentElement.classList.add('fq-js');
 
 const container = document.getElementById('root');
 if (!container) {

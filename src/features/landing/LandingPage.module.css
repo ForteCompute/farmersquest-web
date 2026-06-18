@@ -1,0 +1,829 @@
+/* Landing page styles. Phone first, then grown for tablet and desktop. No blank white sections:
+   each major block has a designed background in our greens. */
+
+.section {
+  width: 100%;
+  max-width: var(--fq-layout-storefront-max-width);
+  margin: 0 auto;
+  padding: var(--fq-space-10) var(--fq-space-4);
+}
+.sectionHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--fq-space-4);
+  margin-bottom: var(--fq-space-6);
+}
+.h2 {
+  font-size: var(--fq-text-2xl);
+  font-weight: var(--fq-weight-bold);
+  color: var(--fq-color-ink);
+}
+.seeAll {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: var(--fq-text-md);
+  font-weight: var(--fq-weight-semibold);
+  color: var(--fq-color-green-action);
+  text-decoration: none;
+  white-space: nowrap;
+}
+.seeAll:hover {
+  text-decoration: underline;
+}
+.notice {
+  color: var(--fq-color-text-secondary);
+}
+
+/* Full-bleed tinted band with a centred inner column. Used to break long white runs so the page
+   has a clear rhythm of white and soft green. */
+.bandSoft {
+  width: 100%;
+  background-color: var(--fq-color-surface-green-soft);
+}
+.bandInner {
+  max-width: var(--fq-layout-storefront-max-width);
+  margin: 0 auto;
+  padding: var(--fq-space-10) var(--fq-space-4);
+}
+
+/* Hero */
+.hero {
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(90% 120% at 92% 0%, rgba(0, 128, 0, 0.35), transparent 55%),
+    radial-gradient(70% 90% at 0% 100%, rgba(0, 128, 0, 0.25), transparent 60%),
+    linear-gradient(150deg, var(--fq-color-green-deep), var(--fq-color-green-button));
+  color: var(--fq-color-on-color);
+}
+/* Subtle leaf-vein texture so the block is never a flat slab. */
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px);
+  background-size: 22px 22px;
+  opacity: 0.5;
+  pointer-events: none;
+}
+.heroGrid {
+  position: relative;
+  z-index: 1;
+  max-width: var(--fq-layout-storefront-max-width);
+  margin: 0 auto;
+  padding: var(--fq-space-12) var(--fq-space-4) calc(var(--fq-space-12) + 40px);
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--fq-space-8);
+  align-items: center;
+}
+/* Soft curve where the green hero meets the section below, so the page flows instead of stacking
+   flat blocks. The wave is filled with the page surface colour so it blends into the next section. */
+.heroCurve {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 64px;
+  line-height: 0;
+  pointer-events: none;
+}
+.heroCurve svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.heroCurve path {
+  fill: var(--fq-color-surface);
+}
+/* Hero copy animates in on load, staggered child by child so it feels alive rather than static. */
+.heroInner > * {
+  animation: fq-fade-up var(--fq-dur-slow) var(--fq-ease-out) both;
+}
+.heroInner > *:nth-child(1) {
+  animation-delay: 40ms;
+}
+.heroInner > *:nth-child(2) {
+  animation-delay: 110ms;
+}
+.heroInner > *:nth-child(3) {
+  animation-delay: 180ms;
+}
+.heroInner > *:nth-child(4) {
+  animation-delay: 250ms;
+}
+.heroInner > *:nth-child(5) {
+  animation-delay: 320ms;
+}
+
+/* Hero visual: a layered composition of real listings (no unlicensed stock; flagged in the TSX for
+   replacement with an owned hero photo). Hidden on phones where the hero is a single column. */
+.heroVisual {
+  display: none;
+}
+@media (min-width: 980px) {
+  .heroGrid {
+    grid-template-columns: 1.05fr 0.95fr;
+    gap: var(--fq-space-10);
+  }
+  .heroVisual {
+    position: relative;
+    display: block;
+    min-height: 420px;
+    animation: fq-fade-up var(--fq-dur-slow) var(--fq-ease-out) both;
+  }
+}
+.heroGlow {
+  position: absolute;
+  inset: 10% 8% 10% 8%;
+  background: radial-gradient(circle at 55% 45%, rgba(255, 255, 255, 0.2), transparent 70%);
+  filter: blur(8px);
+}
+/* Two cleanly staggered cards plus a trust badge. Widths and offsets keep every card inside the
+   column with room for its shadow, so nothing is sliced at the edges. */
+.heroTile {
+  position: absolute;
+  width: 46%;
+  background-color: var(--fq-color-surface);
+  border-radius: var(--fq-radius-lg);
+  box-shadow: 0 24px 50px -18px rgba(0, 30, 0, 0.55);
+  overflow: hidden;
+}
+.heroTileImg {
+  display: block;
+  width: 100%;
+  height: 124px;
+  object-fit: cover;
+}
+.heroTileBody {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: var(--fq-space-3);
+}
+.heroTileTitle {
+  font-size: var(--fq-text-sm);
+  font-weight: var(--fq-weight-bold);
+  color: var(--fq-color-ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.heroTileMeta {
+  font-size: var(--fq-text-xs);
+  color: var(--fq-color-text-secondary);
+}
+.heroTile1 {
+  top: 3%;
+  left: 2%;
+  transform: rotate(-2.5deg);
+  z-index: 2;
+}
+.heroTile2 {
+  top: 17%;
+  right: 2%;
+  transform: rotate(2.5deg);
+  z-index: 1;
+}
+/* Skeleton tiles keep a height while images load. */
+.heroTile.fq-skeleton {
+  height: 190px;
+}
+.heroTrust {
+  position: absolute;
+  left: 50%;
+  bottom: 3%;
+  transform: translateX(-50%);
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  gap: var(--fq-space-2);
+  padding: var(--fq-space-3) var(--fq-space-4);
+  background-color: var(--fq-color-surface);
+  border-radius: var(--fq-radius-md);
+  box-shadow: 0 18px 40px -16px rgba(0, 30, 0, 0.5);
+  color: var(--fq-color-green-deep);
+  white-space: nowrap;
+}
+.heroTrust strong {
+  display: block;
+  font-size: var(--fq-text-sm);
+  color: var(--fq-color-ink);
+}
+.heroTrustSub {
+  display: block;
+  font-size: var(--fq-text-xs);
+  color: var(--fq-color-text-secondary);
+}
+.heroEyebrow {
+  display: inline-block;
+  padding: var(--fq-space-1) var(--fq-space-3);
+  font-size: var(--fq-text-sm);
+  font-weight: var(--fq-weight-semibold);
+  background-color: rgba(255, 255, 255, 0.16);
+  border-radius: var(--fq-radius-pill);
+}
+.heroTitle {
+  max-width: 18ch;
+  margin-top: var(--fq-space-4);
+  font-size: clamp(2rem, 5vw, 3.25rem);
+  font-weight: var(--fq-weight-bold);
+  line-height: var(--fq-leading-tight);
+}
+.heroLead {
+  max-width: 52ch;
+  margin-top: var(--fq-space-3);
+  font-size: var(--fq-text-lg);
+  color: rgba(255, 255, 255, 0.9);
+}
+.heroSearch {
+  display: flex;
+  gap: 1px;
+  margin-top: var(--fq-space-6);
+  max-width: 760px;
+  background-color: var(--fq-color-surface);
+  border-radius: var(--fq-radius-md);
+  padding: var(--fq-space-1);
+}
+.heroField {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+.heroField select {
+  appearance: none;
+  font-family: inherit;
+  font-size: var(--fq-text-md);
+  color: var(--fq-color-ink);
+  background: transparent;
+  border: 0;
+  padding: 0 var(--fq-space-6) 0 var(--fq-space-3);
+  height: 48px;
+  cursor: pointer;
+}
+.heroField svg {
+  position: absolute;
+  right: var(--fq-space-2);
+  pointer-events: none;
+  color: var(--fq-color-text-secondary);
+}
+.heroInput {
+  flex: 1;
+  min-width: 0;
+  font-family: inherit;
+  font-size: var(--fq-text-md);
+  border: 0;
+  padding: 0 var(--fq-space-3);
+  color: var(--fq-color-ink);
+  background: transparent;
+}
+.heroSearchButton {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--fq-space-2);
+  padding: 0 var(--fq-space-6);
+  font-weight: var(--fq-weight-bold);
+  color: var(--fq-color-on-color);
+  background-color: var(--fq-color-green-button);
+  border: 0;
+  border-radius: var(--fq-radius-md);
+  cursor: pointer;
+}
+.heroSearchButton:hover {
+  background-color: var(--fq-color-green-deep);
+}
+.heroActions {
+  display: flex;
+  gap: var(--fq-space-3);
+  margin-top: var(--fq-space-5);
+}
+.heroPrimary,
+.heroSecondary {
+  display: inline-flex;
+  align-items: center;
+  min-height: 48px;
+  padding: 0 var(--fq-space-6);
+  font-weight: var(--fq-weight-bold);
+  border-radius: var(--fq-radius-md);
+  text-decoration: none;
+}
+.heroPrimary {
+  color: var(--fq-color-green-deep);
+  background-color: var(--fq-color-surface);
+}
+.heroSecondary {
+  color: var(--fq-color-on-color);
+  background-color: rgba(255, 255, 255, 0.16);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+/* Hot searches */
+.hotWrap {
+  display: flex;
+  align-items: center;
+  gap: var(--fq-space-3);
+  flex-wrap: wrap;
+  max-width: var(--fq-layout-storefront-max-width);
+  margin: 0 auto;
+  padding: var(--fq-space-5) var(--fq-space-4) 0;
+}
+.hotLabel {
+  font-size: var(--fq-text-sm);
+  font-weight: var(--fq-weight-semibold);
+  color: var(--fq-color-text-secondary);
+}
+.hotChips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--fq-space-2);
+}
+.hotChip {
+  padding: var(--fq-space-1) var(--fq-space-4);
+  font-size: var(--fq-text-sm);
+  font-weight: var(--fq-weight-semibold);
+  color: var(--fq-color-green-deep);
+  background-color: var(--fq-color-surface-green);
+  border-radius: var(--fq-radius-pill);
+  text-decoration: none;
+}
+.hotChip:hover {
+  background-color: var(--fq-color-border-muted);
+}
+
+/* Browse by category */
+.categoryGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--fq-space-4);
+}
+.categorySkeleton {
+  height: 76px;
+  border-radius: var(--fq-radius-md);
+}
+
+/* How it works */
+.howSection {
+  max-width: none;
+  background-color: var(--fq-color-surface-green-soft);
+}
+.howSection .h2 {
+  max-width: var(--fq-layout-storefront-max-width);
+  margin: 0 auto var(--fq-space-6);
+}
+.steps {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--fq-space-4);
+  max-width: var(--fq-layout-storefront-max-width);
+  margin: 0 auto;
+}
+.step {
+  display: flex;
+  flex-direction: column;
+  gap: var(--fq-space-2);
+  padding: var(--fq-space-5);
+  background-color: var(--fq-color-surface);
+  border-radius: var(--fq-radius-md);
+}
+.stepIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  color: var(--fq-color-on-color);
+  background-color: var(--fq-color-green-button);
+  border-radius: var(--fq-radius-circle);
+}
+.stepNumber {
+  font-size: var(--fq-text-xs);
+  font-weight: var(--fq-weight-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--fq-color-green-action);
+}
+.stepTitle {
+  font-size: var(--fq-text-lg);
+  font-weight: var(--fq-weight-bold);
+  color: var(--fq-color-ink);
+}
+.stepText {
+  font-size: var(--fq-text-md);
+  color: var(--fq-color-text-secondary);
+  line-height: var(--fq-leading-normal);
+}
+
+/* Value cards */
+.valueGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--fq-space-4);
+}
+.valueCard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--fq-space-2);
+  padding: var(--fq-space-5);
+  background-color: var(--fq-color-surface);
+  border: 1px solid var(--fq-color-input-fill-soft);
+  border-radius: var(--fq-radius-md);
+}
+.valueIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  color: var(--fq-color-green-deep);
+  background-color: var(--fq-color-surface-green);
+  border-radius: var(--fq-radius-md);
+}
+.valueTitle {
+  font-size: var(--fq-text-lg);
+  font-weight: var(--fq-weight-bold);
+  color: var(--fq-color-ink);
+}
+.valueText {
+  font-size: var(--fq-text-md);
+  color: var(--fq-color-text-secondary);
+  line-height: var(--fq-leading-normal);
+}
+
+/* Designed for the farmer */
+.farmerSection {
+  max-width: none;
+  background: linear-gradient(
+    180deg,
+    var(--fq-color-surface-green),
+    var(--fq-color-surface-green-soft)
+  );
+}
+.farmerInner {
+  max-width: var(--fq-layout-storefront-max-width);
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--fq-space-8);
+  align-items: center;
+}
+/* Supporting visual: a clean panel of platform highlights, no stock imagery or invented numbers. */
+.farmerVisual {
+  display: flex;
+  flex-direction: column;
+  gap: var(--fq-space-3);
+  padding: var(--fq-space-6);
+  background-color: var(--fq-color-surface);
+  border: 1px solid var(--fq-color-input-fill-soft);
+  border-radius: var(--fq-radius-lg);
+  box-shadow: var(--fq-shadow-sm);
+}
+.farmerBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--fq-space-2);
+  align-self: flex-start;
+  padding: var(--fq-space-2) var(--fq-space-4);
+  font-weight: var(--fq-weight-bold);
+  color: var(--fq-color-green-deep);
+  background-color: var(--fq-color-surface-green);
+  border-radius: var(--fq-radius-pill);
+}
+.farmerChips {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--fq-space-3);
+}
+.farmerChip {
+  display: flex;
+  align-items: center;
+  gap: var(--fq-space-3);
+  font-size: var(--fq-text-md);
+  font-weight: var(--fq-weight-semibold);
+  color: var(--fq-color-ink);
+}
+.farmerChipIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  color: var(--fq-color-green-deep);
+  background-color: var(--fq-color-surface-green);
+  border-radius: var(--fq-radius-md);
+}
+.farmerLead {
+  max-width: 56ch;
+  margin-top: var(--fq-space-3);
+  font-size: var(--fq-text-lg);
+  color: var(--fq-color-text-secondary);
+}
+.farmerPoints {
+  list-style: none;
+  margin: var(--fq-space-5) 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--fq-space-3);
+}
+.farmerPoint {
+  display: flex;
+  align-items: center;
+  gap: var(--fq-space-2);
+  font-size: var(--fq-text-md);
+  font-weight: var(--fq-weight-medium);
+  color: var(--fq-color-ink);
+}
+.farmerPoint svg {
+  color: var(--fq-color-green-action);
+  flex-shrink: 0;
+}
+
+/* Become a seller */
+.sellerSection {
+  position: relative;
+  max-width: none;
+  overflow: hidden;
+  background:
+    radial-gradient(80% 120% at 100% 0%, rgba(0, 128, 0, 0.45), transparent 55%),
+    linear-gradient(150deg, var(--fq-color-green-deep), var(--fq-color-green-button));
+  color: var(--fq-color-on-color);
+}
+/* Faint dotted texture so the green band is not a flat slab. */
+.sellerSection::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px);
+  background-size: 24px 24px;
+  opacity: 0.6;
+  pointer-events: none;
+}
+.sellerInner {
+  position: relative;
+  z-index: 1;
+  max-width: var(--fq-layout-storefront-max-width);
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--fq-space-8);
+  align-items: center;
+}
+/* Right-side steps panel that balances the band on desktop. */
+.sellerVisual {
+  padding: var(--fq-space-6);
+  background-color: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: var(--fq-radius-lg);
+}
+.sellerStepsTitle {
+  font-size: var(--fq-text-sm);
+  font-weight: var(--fq-weight-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: rgba(255, 255, 255, 0.85);
+  margin-bottom: var(--fq-space-4);
+}
+.sellerSteps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--fq-space-4);
+}
+.sellerStep {
+  display: flex;
+  align-items: center;
+  gap: var(--fq-space-3);
+  font-size: var(--fq-text-md);
+  font-weight: var(--fq-weight-medium);
+}
+.sellerStepNum {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  font-weight: var(--fq-weight-bold);
+  color: var(--fq-color-green-deep);
+  background-color: var(--fq-color-surface);
+  border-radius: var(--fq-radius-circle);
+}
+.sellerTitle {
+  max-width: 22ch;
+  font-size: var(--fq-text-2xl);
+  font-weight: var(--fq-weight-bold);
+}
+.sellerLead {
+  margin-top: var(--fq-space-3);
+  font-size: var(--fq-text-lg);
+  color: rgba(255, 255, 255, 0.9);
+}
+.sellerBenefits {
+  list-style: none;
+  margin: var(--fq-space-5) 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--fq-space-3);
+}
+.sellerBenefit {
+  display: flex;
+  align-items: center;
+  gap: var(--fq-space-2);
+  font-weight: var(--fq-weight-medium);
+}
+.sellerButton {
+  display: inline-flex;
+  align-items: center;
+  min-height: 48px;
+  padding: 0 var(--fq-space-6);
+  font-weight: var(--fq-weight-bold);
+  color: var(--fq-color-green-deep);
+  background-color: var(--fq-color-surface);
+  border-radius: var(--fq-radius-md);
+  text-decoration: none;
+}
+
+/* FAQ: two columns on desktop, the questions beside a short help panel so the section is full
+   rather than floating in white. */
+.faqGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--fq-space-6);
+  align-items: start;
+}
+.faqList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--fq-space-3);
+  margin: var(--fq-space-6) 0 0;
+}
+.faqHelp {
+  display: flex;
+  flex-direction: column;
+  gap: var(--fq-space-3);
+  padding: var(--fq-space-6);
+  background: linear-gradient(160deg, var(--fq-color-green-deep), var(--fq-color-green-button));
+  color: var(--fq-color-on-color);
+  border-radius: var(--fq-radius-lg);
+}
+.faqHelpIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  color: var(--fq-color-on-color);
+  background-color: rgba(255, 255, 255, 0.16);
+  border-radius: var(--fq-radius-md);
+}
+.faqHelpTitle {
+  font-size: var(--fq-text-lg);
+  font-weight: var(--fq-weight-bold);
+}
+.faqHelpText {
+  font-size: var(--fq-text-md);
+  line-height: var(--fq-leading-normal);
+  color: rgba(255, 255, 255, 0.9);
+}
+.faqHelpButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  margin-top: var(--fq-space-1);
+  padding: 0 var(--fq-space-5);
+  font-weight: var(--fq-weight-bold);
+  color: var(--fq-color-green-deep);
+  background-color: var(--fq-color-surface);
+  border-radius: var(--fq-radius-md);
+  text-decoration: none;
+}
+.faqHelpLink {
+  font-size: var(--fq-text-md);
+  font-weight: var(--fq-weight-semibold);
+  color: var(--fq-color-on-color);
+  text-decoration: underline;
+}
+.faqItem {
+  background-color: var(--fq-color-surface-green-soft);
+  border-radius: var(--fq-radius-md);
+  overflow: hidden;
+}
+.faqQ {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--fq-space-3);
+  padding: var(--fq-space-4) var(--fq-space-5);
+  font-size: var(--fq-text-md);
+  font-weight: var(--fq-weight-bold);
+  color: var(--fq-color-green-deep);
+  cursor: pointer;
+  list-style: none;
+}
+.faqQ::-webkit-details-marker {
+  display: none;
+}
+.faqItem[open] .faqQ svg {
+  transform: rotate(180deg);
+}
+.faqQ svg {
+  transition: transform var(--fq-dur-fast) var(--fq-ease-out);
+  flex-shrink: 0;
+}
+.faqA {
+  padding: 0 var(--fq-space-5) var(--fq-space-4);
+  font-size: var(--fq-text-md);
+  color: var(--fq-color-text-secondary);
+  line-height: var(--fq-leading-normal);
+}
+
+/* Tablet and up */
+@media (min-width: 700px) {
+  .categoryGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .steps {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  .valueGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .sellerBenefits {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+@media (min-width: 1000px) {
+  .categoryGrid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  .valueGrid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  /* Marketing bands become true two-column layouts so the right half is never left blank. */
+  .farmerInner {
+    grid-template-columns: 1.05fr 0.95fr;
+    gap: var(--fq-space-10);
+  }
+  .sellerInner {
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: var(--fq-space-10);
+  }
+  .sellerBenefits {
+    grid-template-columns: 1fr;
+  }
+  .faqGrid {
+    grid-template-columns: 1.7fr 1fr;
+    gap: var(--fq-space-10);
+  }
+}
+
+/* Hero search stacks on phones */
+@media (max-width: 700px) {
+  .heroSearch {
+    flex-direction: column;
+    gap: var(--fq-space-2);
+    padding: var(--fq-space-3);
+  }
+  .heroField select,
+  .heroInput {
+    width: 100%;
+    height: 44px;
+    border: 1px solid var(--fq-color-input-fill);
+    border-radius: var(--fq-radius-md);
+  }
+  .heroField {
+    display: flex;
+  }
+  .heroSearchButton {
+    width: 100%;
+    min-height: 44px;
+    justify-content: center;
+  }
+  .heroActions {
+    flex-direction: column;
+  }
+  .heroPrimary,
+  .heroSecondary {
+    justify-content: center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .heroInner > *,
+  .heroVisual {
+    animation: none !important;
+  }
+  .faqQ svg {
+    transition: none;
+  }
+}

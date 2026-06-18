@@ -1,0 +1,25 @@
+/* Skeleton primitives for placeholder content. The shimmer comes from the shared .fq-skeleton
+   utility in motion.css; these set the shapes. */
+
+.line {
+  display: block;
+  height: 0.85rem;
+  border-radius: var(--fq-radius-sm);
+}
+
+.line + .line {
+  margin-top: var(--fq-space-2);
+}
+
+.short {
+  width: 40%;
+}
+
+.price {
+  width: 55%;
+  height: 1rem;
+}
+
+.seller {
+  width: 60%;
+}
