@@ -463,7 +463,7 @@
                 "tags": [
                     "Catalog"
                 ],
-                "summary": "Search and browse products. Use featured=true for the featured list.",
+                "summary": "Search and browse products. Use featured=true for the featured list, or verifiedOnly=true for verified farmers only.",
                 "operationId": "ListProducts",
                 "parameters": [
                     {
@@ -512,6 +512,13 @@
                     },
                     {
                         "name": "featured",
+                        "in": "query",
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    },
+                    {
+                        "name": "verifiedOnly",
                         "in": "query",
                         "schema": {
                             "type": "boolean"
