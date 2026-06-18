@@ -4,6 +4,7 @@ import { StorefrontLayout } from '@/components/storefront';
 import { LandingPage } from '@/features/landing';
 import { BrowsePage } from '@/features/browse';
 import { CategoryPage } from '@/features/category';
+import { ProductDetailPage } from '@/features/product';
 import { BuyerHome } from '@/features/buyer';
 import { FarmerHome } from '@/features/farmer';
 import {
@@ -23,14 +24,13 @@ import {
 import { PlaceholderScreen } from '@/features/PlaceholderScreen';
 
 // Route table.
-// - The root is the public storefront landing, no login needed.
+// - The public storefront (landing, browse, category, product) needs no login.
 // - Account screens (sign up, sign in, password) sit outside the app shell.
 // - The signed-in app (role homes and account settings) is wrapped by the role-gated AppShell.
 // Exported so tests can mount it in a memory router.
 //
-// The storefront product page and the final /join and /account routes arrive in their own pull
-// requests per the build order; until then /product falls through to the catch-all, and /join and
-// /account alias the existing account screens.
+// The final /join and /account route names arrive with the auth rename; until then they alias the
+// existing account screens.
 export const routes: RouteObject[] = [
   // Public storefront landing.
   {
@@ -58,6 +58,16 @@ export const routes: RouteObject[] = [
     element: (
       <StorefrontLayout>
         <CategoryPage />
+      </StorefrontLayout>
+    ),
+  },
+
+  // Public storefront product detail.
+  {
+    path: '/product/:slug',
+    element: (
+      <StorefrontLayout>
+        <ProductDetailPage />
       </StorefrontLayout>
     ),
   },

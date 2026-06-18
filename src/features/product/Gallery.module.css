@@ -1,0 +1,59 @@
+.gallery {
+  display: flex;
+  flex-direction: column;
+  gap: var(--fq-space-3);
+}
+.main {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 30% 25%, rgba(255, 255, 255, 0.6), transparent 60%),
+    linear-gradient(150deg, var(--fq-color-surface-green), var(--fq-color-surface-green-soft));
+  border: 1px solid var(--fq-color-input-fill-soft);
+  border-radius: var(--fq-radius-lg);
+}
+.mainImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  color: var(--fq-color-green-button);
+}
+.thumbs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--fq-space-2);
+}
+.thumb {
+  width: 72px;
+  height: 72px;
+  padding: 0;
+  overflow: hidden;
+  background-color: var(--fq-color-surface-green-soft);
+  border: 2px solid transparent;
+  border-radius: var(--fq-radius-md);
+  cursor: pointer;
+}
+.thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.thumbActive {
+  border-color: var(--fq-color-green-button);
+}
+.thumbPlaceholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  color: var(--fq-color-green-button);
+}

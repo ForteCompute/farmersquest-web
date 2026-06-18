@@ -107,17 +107,27 @@ export async function getStates(): Promise<Result<StateRef[]>> {
   }
 }
 
-export async function getProduct(slug: string): Promise<Result<ProductDetail>> {
+// The product detail result carries a notFound flag so the page can show a distinct not-found state
+// for an unknown slug (HTTP 404) versus a generic load failure.
+export type ProductResult =
+  | { ok: true; data: ProductDetail }
+  | { ok: false; notFound: boolean; error: ParsedProblem };
+
+export async function getProduct(slug: string): Promise<ProductResult> {
   try {
-    const { data, error } = await apiClient.GET('/api/v1/catalog/products/{slug}', {
+    const { data, error, response } = await apiClient.GET('/api/v1/catalog/products/{slug}', {
       params: { path: { slug } },
     });
     if (error || !data) {
-      return failure(error);
+      return {
+        ok: false,
+        notFound: response?.status === 404,
+        error: parseProblemDetails(error, GENERIC_ERROR),
+      };
     }
     return { ok: true, data };
   } catch {
-    return failure(undefined);
+    return { ok: false, notFound: false, error: parseProblemDetails(undefined, GENERIC_ERROR) };
   }
 }
 

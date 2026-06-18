@@ -36,6 +36,7 @@ export {
   Search,
   ShieldCheck,
   ShoppingCart,
+  Sprout,
   Star,
   Store,
   TrendingUp,
