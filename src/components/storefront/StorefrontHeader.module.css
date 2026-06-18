@@ -11,7 +11,7 @@
   align-items: center;
   gap: var(--fq-space-4);
   width: 100%;
-  max-width: var(--fq-layout-content-max-width);
+  max-width: var(--fq-layout-storefront-max-width);
   margin: 0 auto;
   padding: var(--fq-space-3) var(--fq-space-4);
 }
@@ -129,7 +129,7 @@
   align-items: stretch;
   gap: 1px;
   width: 100%;
-  max-width: var(--fq-layout-content-max-width);
+  max-width: var(--fq-layout-storefront-max-width);
   margin: 0 auto;
   padding: 0 var(--fq-space-4) var(--fq-space-3);
 }

@@ -16,7 +16,7 @@
 @keyframes fq-fade-up {
   from {
     opacity: 0;
-    transform: translateY(14px);
+    transform: translateY(24px);
   }
   to {
     opacity: 1;

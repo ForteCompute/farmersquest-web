@@ -305,6 +305,11 @@ function Hero({
 
         <HeroVisual products={products} loading={loading} />
       </div>
+      <div className={styles.heroCurve} aria-hidden="true">
+        <svg viewBox="0 0 1440 90" preserveAspectRatio="none">
+          <path d="M0,90 L0,46 C260,96 520,96 720,60 C940,22 1200,22 1440,58 L1440,90 Z" />
+        </svg>
+      </div>
     </section>
   );
 }
@@ -540,17 +545,37 @@ function BecomeSeller() {
 function Faq() {
   return (
     <Reveal className={[styles.section, styles.faqSection].join(' ')}>
-      <h2 className={styles.h2}>Frequently asked questions</h2>
-      <div className={styles.faqList}>
-        {FAQ.map((item) => (
-          <details key={item.q} className={styles.faqItem}>
-            <summary className={styles.faqQ}>
-              {item.q}
-              <ChevronDown size={20} />
-            </summary>
-            <p className={styles.faqA}>{item.a}</p>
-          </details>
-        ))}
+      <div className={styles.faqGrid}>
+        <div className={styles.faqMain}>
+          <h2 className={styles.h2}>Frequently asked questions</h2>
+          <div className={styles.faqList}>
+            {FAQ.map((item) => (
+              <details key={item.q} className={styles.faqItem}>
+                <summary className={styles.faqQ}>
+                  {item.q}
+                  <ChevronDown size={20} />
+                </summary>
+                <p className={styles.faqA}>{item.a}</p>
+              </details>
+            ))}
+          </div>
+        </div>
+        <aside className={styles.faqHelp}>
+          <span className={styles.faqHelpIcon}>
+            <Handshake size={24} />
+          </span>
+          <h3 className={styles.faqHelpTitle}>Still have questions?</h3>
+          <p className={styles.faqHelpText}>
+            Our support team can help with buying, selling, payments, and delivery. Reach out and we
+            will get back to you quickly.
+          </p>
+          <Link to="/#how-it-works" className={styles.faqHelpButton}>
+            See how it works
+          </Link>
+          <a href="#" className={styles.faqHelpLink}>
+            Contact support
+          </a>
+        </aside>
       </div>
     </Reveal>
   );
