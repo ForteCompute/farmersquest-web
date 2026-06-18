@@ -1,0 +1,57 @@
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--fq-space-4);
+}
+
+.head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--fq-space-4);
+}
+.title {
+  font-size: var(--fq-text-xl);
+  font-weight: var(--fq-weight-bold);
+  color: var(--fq-color-ink);
+}
+.viewAll {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: var(--fq-text-md);
+  font-weight: var(--fq-weight-semibold);
+  color: var(--fq-color-green-action);
+  text-decoration: none;
+  white-space: nowrap;
+}
+.viewAll:hover {
+  text-decoration: underline;
+}
+
+.row {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(220px, 1fr);
+  gap: var(--fq-space-4);
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding-bottom: var(--fq-space-2);
+  scrollbar-width: thin;
+}
+.cell {
+  scroll-snap-align: start;
+  min-width: 0;
+}
+
+.error {
+  font-size: var(--fq-text-md);
+  color: var(--fq-color-text-secondary);
+}
+
+/* On wider screens, show four cards in the visible width before scrolling. */
+@media (min-width: 861px) {
+  .row {
+    grid-auto-columns: minmax(0, calc((100% - 3 * var(--fq-space-4)) / 4));
+  }
+}

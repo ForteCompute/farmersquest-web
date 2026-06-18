@@ -1,0 +1,68 @@
+/* Shared motion tokens and utilities, per the Motion and polish standards. Animate only transform
+   and opacity so the page never jumps. Durations sit between 150 and 350ms, gentle easing out for
+   things entering. Consistent values live here, not scattered per screen.
+
+   Accessibility: when the user asks the device to reduce motion, animation is turned off and content
+   is shown immediately. This is a must. */
+
+:root {
+  --fq-dur-fast: 150ms;
+  --fq-dur-base: 240ms;
+  --fq-dur-slow: 340ms;
+  --fq-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --fq-ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes fq-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes fq-shimmer {
+  from {
+    background-position: -150% 0;
+  }
+  to {
+    background-position: 250% 0;
+  }
+}
+
+/* Reveal on scroll: hidden until it enters the viewport, then fades and slides up once. */
+.fq-reveal {
+  opacity: 0;
+}
+.fq-reveal[data-revealed='true'] {
+  animation: fq-fade-up var(--fq-dur-slow) var(--fq-ease-out) both;
+}
+
+/* Soft shimmer for skeleton placeholders. */
+.fq-skeleton {
+  background-color: var(--fq-color-input-fill-soft);
+  background-image: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.65) 50%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  background-repeat: no-repeat;
+  animation: fq-shimmer 1.4s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fq-reveal,
+  .fq-reveal[data-revealed='true'] {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .fq-skeleton {
+    animation: none !important;
+  }
+}

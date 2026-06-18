@@ -1,0 +1,17 @@
+.shell {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+  background-color: var(--fq-color-surface);
+}
+
+.main {
+  flex: 1;
+}
+
+/* On phones, leave room for the fixed bottom tab bar so content is never hidden behind it. */
+@media (max-width: 860px) {
+  .shell {
+    padding-bottom: 72px;
+  }
+}

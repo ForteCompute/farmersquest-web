@@ -1,0 +1,207 @@
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--fq-color-surface);
+  border: 1px solid var(--fq-color-input-fill-soft);
+  border-radius: var(--fq-radius-md);
+  overflow: hidden;
+  transition:
+    transform var(--fq-dur-base) var(--fq-ease-out),
+    box-shadow var(--fq-dur-base) var(--fq-ease-out);
+}
+.card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--fq-shadow-md);
+}
+
+.media {
+  position: relative;
+  display: block;
+  aspect-ratio: 1 / 1;
+  background-color: var(--fq-color-surface-green-soft);
+  overflow: hidden;
+}
+.image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--fq-dur-slow) var(--fq-ease-out);
+}
+.card:hover .image {
+  transform: scale(1.05);
+}
+.imageFallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  color: var(--fq-color-border-muted);
+}
+
+.badges {
+  position: absolute;
+  top: var(--fq-space-2);
+  left: var(--fq-space-2);
+  display: flex;
+  gap: var(--fq-space-1);
+}
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 2px var(--fq-space-2);
+  font-size: var(--fq-text-2xs);
+  font-weight: var(--fq-weight-bold);
+  border-radius: var(--fq-radius-badge);
+}
+.badgeVerified {
+  color: var(--fq-color-on-color);
+  background-color: var(--fq-color-green-action);
+}
+.badgeFeatured {
+  color: var(--fq-color-green-deep);
+  background-color: var(--fq-color-surface-green);
+}
+
+.heart {
+  position: absolute;
+  top: var(--fq-space-2);
+  right: var(--fq-space-2);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  color: var(--fq-color-ink);
+  background-color: rgba(255, 255, 255, 0.92);
+  border: 0;
+  border-radius: var(--fq-radius-circle);
+  cursor: pointer;
+}
+.heart:hover {
+  color: var(--fq-color-danger);
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: var(--fq-space-3) var(--fq-space-3) var(--fq-space-4);
+}
+.location {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: var(--fq-text-xs);
+  color: var(--fq-color-text-secondary);
+}
+.title {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  font-size: var(--fq-text-md);
+  font-weight: var(--fq-weight-bold);
+  color: var(--fq-color-ink);
+  text-decoration: none;
+  min-height: 2.6em;
+}
+.title:hover {
+  text-decoration: underline;
+}
+.price {
+  font-size: var(--fq-text-md);
+  font-weight: var(--fq-weight-bold);
+  color: var(--fq-color-price);
+}
+.stock {
+  font-size: var(--fq-text-xs);
+}
+.stock_in {
+  color: var(--fq-color-text-secondary);
+}
+.stock_low {
+  color: var(--fq-color-logout);
+}
+.stock_out {
+  color: var(--fq-color-danger);
+}
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--fq-space-2);
+  margin-top: 2px;
+}
+.seller {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--fq-space-1);
+  min-width: 0;
+}
+.avatar,
+.avatarFallback {
+  width: 20px;
+  height: 20px;
+  border-radius: var(--fq-radius-circle);
+  object-fit: cover;
+  flex-shrink: 0;
+}
+.avatarFallback {
+  background-color: var(--fq-color-surface-green);
+}
+.sellerName {
+  font-size: var(--fq-text-xs);
+  color: var(--fq-color-text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.rating {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  font-size: var(--fq-text-xs);
+  font-weight: var(--fq-weight-semibold);
+  color: var(--fq-color-ink);
+  white-space: nowrap;
+}
+.rating svg {
+  color: #f5a623;
+}
+
+.add {
+  position: absolute;
+  right: var(--fq-space-3);
+  bottom: var(--fq-space-3);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  color: var(--fq-color-on-color);
+  background-color: var(--fq-color-green-action);
+  border: 2px solid var(--fq-color-surface);
+  border-radius: var(--fq-radius-circle);
+  cursor: pointer;
+  transition: background-color var(--fq-dur-fast) var(--fq-ease-out);
+}
+.add:hover {
+  background-color: var(--fq-color-green-button);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card,
+  .image,
+  .add {
+    transition: none;
+  }
+  .card:hover {
+    transform: none;
+  }
+  .card:hover .image {
+    transform: none;
+  }
+}

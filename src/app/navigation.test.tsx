@@ -15,7 +15,7 @@ function MountedRoutes() {
 function renderApp() {
   return render(
     <SessionProvider>
-      <MemoryRouter initialEntries={['/']}>
+      <MemoryRouter initialEntries={['/buyer']}>
         <MountedRoutes />
       </MemoryRouter>
     </SessionProvider>,
