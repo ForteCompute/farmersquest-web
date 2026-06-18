@@ -216,7 +216,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Search and browse products. Use featured=true for the featured list. */
+        /** Search and browse products. Use featured=true for the featured list, or verifiedOnly=true for verified farmers only. */
         get: operations["ListProducts"];
         put?: never;
         post?: never;
@@ -908,6 +908,7 @@ export interface operations {
                 maxPrice?: number;
                 sort?: string;
                 featured?: boolean;
+                verifiedOnly?: boolean;
                 page?: number;
                 pageSize?: number;
             };
