@@ -35,7 +35,7 @@ export const routes: RouteObject[] = [
   {
     path: '/',
     element: (
-      <StorefrontLayout>
+      <StorefrontLayout showHeaderSearch={false}>
         <LandingPage />
       </StorefrontLayout>
     ),

@@ -29,19 +29,46 @@
   text-decoration: underline;
 }
 
+/* Horizontal carousel: a consistent card width regardless of how many products are in the row, so
+   the rest scroll or swipe rather than cramming into one line. Card width is a share of the row, so
+   every row shows the same number of cards and they line up across rows. */
 .row {
-  display: grid;
-  grid-auto-flow: column;
-  grid-auto-columns: minmax(220px, 1fr);
+  display: flex;
   gap: var(--fq-space-4);
   overflow-x: auto;
   scroll-snap-type: x mandatory;
-  padding-bottom: var(--fq-space-2);
+  scroll-behavior: smooth;
+  padding-bottom: var(--fq-space-3);
   scrollbar-width: thin;
+  /* Cards are full height so they stretch to a common height inside the row. */
+  align-items: stretch;
 }
 .cell {
+  flex: 0 0 82%;
   scroll-snap-align: start;
   min-width: 0;
+}
+@media (min-width: 560px) {
+  .cell {
+    flex-basis: 45%;
+  }
+}
+@media (min-width: 900px) {
+  .cell {
+    flex-basis: 30%;
+  }
+}
+@media (min-width: 1200px) {
+  /* About four and a half cards visible, the rest scroll. */
+  .cell {
+    flex-basis: 22%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .row {
+    scroll-behavior: auto;
+  }
 }
 
 .error {
@@ -60,11 +87,4 @@
   background-color: var(--fq-color-surface-green-soft);
   border: 1px dashed var(--fq-color-border-muted);
   border-radius: var(--fq-radius-lg);
-}
-
-/* On wider screens, show four cards in the visible width before scrolling. */
-@media (min-width: 861px) {
-  .row {
-    grid-auto-columns: minmax(0, calc((100% - 3 * var(--fq-space-4)) / 4));
-  }
 }

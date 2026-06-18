@@ -9,11 +9,17 @@ import styles from './StorefrontLayout.module.css';
 // phones the bottom tab bar. Used by the landing, browse, category, and product pages so the header,
 // footer, and tabs are built once and reused. The sign-in prompt provider lives here so the gated
 // wishlist and cart controls behave the same on every storefront surface.
-export function StorefrontLayout({ children }: { children: ReactNode }) {
+export function StorefrontLayout({
+  children,
+  showHeaderSearch = true,
+}: {
+  children: ReactNode;
+  showHeaderSearch?: boolean;
+}) {
   return (
     <SignInPromptProvider>
       <div className={styles.shell}>
-        <StorefrontHeader />
+        <StorefrontHeader showSearchBar={showHeaderSearch} />
         <main className={styles.main}>{children}</main>
         <StorefrontFooter />
         <MobileTabBar />

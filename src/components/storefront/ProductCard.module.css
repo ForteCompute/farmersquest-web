@@ -2,16 +2,17 @@
   position: relative;
   display: flex;
   flex-direction: column;
+  height: 100%;
   background-color: var(--fq-color-surface);
   border: 1px solid var(--fq-color-input-fill-soft);
-  border-radius: var(--fq-radius-md);
+  border-radius: var(--fq-radius-lg);
   overflow: hidden;
   transition:
     transform var(--fq-dur-base) var(--fq-ease-out),
     box-shadow var(--fq-dur-base) var(--fq-ease-out);
 }
 .card:hover {
-  transform: translateY(-3px);
+  transform: translateY(-4px);
   box-shadow: var(--fq-shadow-md);
 }
 
@@ -31,13 +32,17 @@
 .card:hover .image {
   transform: scale(1.05);
 }
+/* Clean produce placeholder for a missing or broken photo. On-brand, never an unrelated image. */
 .imageFallback {
   display: flex;
   align-items: center;
   justify-content: center;
   width: 100%;
   height: 100%;
-  color: var(--fq-color-border-muted);
+  color: var(--fq-color-green-button);
+  background:
+    radial-gradient(circle at 30% 25%, rgba(255, 255, 255, 0.6), transparent 60%),
+    linear-gradient(150deg, var(--fq-color-surface-green), var(--fq-color-surface-green-soft));
 }
 
 .badges {
@@ -86,6 +91,7 @@
 
 .body {
   display: flex;
+  flex: 1;
   flex-direction: column;
   gap: 4px;
   padding: var(--fq-space-3) var(--fq-space-3) var(--fq-space-4);
@@ -104,17 +110,29 @@
   overflow: hidden;
   font-size: var(--fq-text-md);
   font-weight: var(--fq-weight-bold);
+  line-height: var(--fq-leading-tight);
   color: var(--fq-color-ink);
   text-decoration: none;
-  min-height: 2.6em;
+  /* Fixed two-line slot so every card aligns regardless of title length. */
+  height: calc(2 * var(--fq-leading-tight) * var(--fq-text-md));
 }
 .title:hover {
   text-decoration: underline;
+}
+.priceRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--fq-space-2);
+  margin-top: 2px;
 }
 .price {
   font-size: var(--fq-text-md);
   font-weight: var(--fq-weight-bold);
   color: var(--fq-color-price);
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .stock {
   font-size: var(--fq-text-xs);
@@ -133,7 +151,9 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--fq-space-2);
-  margin-top: 2px;
+  /* Pin to the bottom so seller and rating baselines line up across every card. */
+  margin-top: auto;
+  padding-top: var(--fq-space-2);
 }
 .seller {
   display: inline-flex;
@@ -172,24 +192,26 @@
   color: #f5a623;
 }
 
+/* Inline with the price so it never overlaps the seller or rating below. */
 .add {
-  position: absolute;
-  right: var(--fq-space-3);
-  bottom: var(--fq-space-3);
   display: inline-flex;
+  flex-shrink: 0;
   align-items: center;
   justify-content: center;
-  width: 36px;
-  height: 36px;
+  width: 34px;
+  height: 34px;
   color: var(--fq-color-on-color);
   background-color: var(--fq-color-green-action);
-  border: 2px solid var(--fq-color-surface);
+  border: 0;
   border-radius: var(--fq-radius-circle);
   cursor: pointer;
-  transition: background-color var(--fq-dur-fast) var(--fq-ease-out);
+  transition:
+    background-color var(--fq-dur-fast) var(--fq-ease-out),
+    transform var(--fq-dur-fast) var(--fq-ease-out);
 }
 .add:hover {
   background-color: var(--fq-color-green-button);
+  transform: scale(1.08);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -198,7 +220,8 @@
   .add {
     transition: none;
   }
-  .card:hover {
+  .card:hover,
+  .add:hover {
     transform: none;
   }
   .card:hover .image {

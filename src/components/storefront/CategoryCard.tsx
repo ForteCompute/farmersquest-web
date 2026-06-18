@@ -3,15 +3,14 @@ import { categoryIcon } from './iconMap';
 import type { CategoryNode } from '@/services/catalog';
 import styles from './CategoryCard.module.css';
 
-// A browse-by-category card: an icon, the category name, the live product count, and the first few
-// subcategories. The catalog has no category image field, so each category gets its own clear icon
-// keyed by slug (an icon is ours, not data). The count and subcategories are live from the catalog.
+// A browse-by-category tile: an icon, the category name, and the live product count. Used for both
+// top categories and subcategories in the landing grid. The catalog has no category image field, so
+// each category gets its own clear icon keyed by slug (an icon is ours, not data).
 export interface CategoryCardProps {
   category: CategoryNode;
 }
 
 export function CategoryCard({ category }: CategoryCardProps) {
-  const subs = (category.children ?? []).slice(0, 3);
   const count = category.productCount ?? 0;
   const Icon = categoryIcon(category.slug);
 
@@ -25,14 +24,6 @@ export function CategoryCard({ category }: CategoryCardProps) {
         <span className={styles.count}>
           {count} {count === 1 ? 'item' : 'items'}
         </span>
-        {subs.length > 0 && (
-          <span className={styles.subs}>
-            {subs
-              .map((s) => s.name)
-              .filter(Boolean)
-              .join(' · ')}
-          </span>
-        )}
       </span>
     </Link>
   );

@@ -19,7 +19,9 @@ const NAV = [
   { label: 'About', to: '/#about' },
 ];
 
-export function StorefrontHeader() {
+// showSearchBar controls the full search row under the top bar. The landing hides it because the
+// hero already carries the primary search; browse and category pages keep it for in-page filtering.
+export function StorefrontHeader({ showSearchBar = true }: { showSearchBar?: boolean }) {
   const navigate = useNavigate();
   const { isAuthenticated } = useSession();
   const { promptSignIn } = useSignInPrompt();
@@ -130,58 +132,60 @@ export function StorefrontHeader() {
         </div>
       </div>
 
-      <form
-        className={styles.search}
-        onSubmit={submitSearch}
-        role="search"
-        aria-labelledby={searchLabelId}
-      >
-        <span id={searchLabelId} className="sr-only">
-          Search products
-        </span>
-        <label className={styles.searchState}>
-          <span className="sr-only">State</span>
-          <select
-            value={stateCode}
-            onChange={(e) => setStateCode(e.target.value)}
-            aria-label="Search state"
-          >
-            <option value="">All Nigeria</option>
-            {states.map((s) => (
-              <option key={s.code ?? s.name ?? ''} value={s.code ?? ''}>
-                {s.name}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label className={styles.searchCategory}>
-          <span className="sr-only">Category</span>
-          <select
-            value={categorySlug}
-            onChange={(e) => setCategorySlug(e.target.value)}
-            aria-label="Search category"
-          >
-            <option value="">All categories</option>
-            {categories.map((c) => (
-              <option key={c.id} value={c.slug ?? ''}>
-                {c.name}
-              </option>
-            ))}
-          </select>
-        </label>
-        <input
-          className={styles.searchInput}
-          type="search"
-          placeholder="Search crops, livestock, equipment"
-          value={keyword}
-          onChange={(e) => setKeyword(e.target.value)}
-          aria-label="Search keyword"
-        />
-        <button type="submit" className={styles.searchButton} aria-label="Search">
-          <Search size={20} />
-          <span className={styles.searchButtonText}>Search</span>
-        </button>
-      </form>
+      {showSearchBar && (
+        <form
+          className={styles.search}
+          onSubmit={submitSearch}
+          role="search"
+          aria-labelledby={searchLabelId}
+        >
+          <span id={searchLabelId} className="sr-only">
+            Search products
+          </span>
+          <label className={styles.searchState}>
+            <span className="sr-only">State</span>
+            <select
+              value={stateCode}
+              onChange={(e) => setStateCode(e.target.value)}
+              aria-label="Search state"
+            >
+              <option value="">All Nigeria</option>
+              {states.map((s) => (
+                <option key={s.code ?? s.name ?? ''} value={s.code ?? ''}>
+                  {s.name}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label className={styles.searchCategory}>
+            <span className="sr-only">Category</span>
+            <select
+              value={categorySlug}
+              onChange={(e) => setCategorySlug(e.target.value)}
+              aria-label="Search category"
+            >
+              <option value="">All categories</option>
+              {categories.map((c) => (
+                <option key={c.id} value={c.slug ?? ''}>
+                  {c.name}
+                </option>
+              ))}
+            </select>
+          </label>
+          <input
+            className={styles.searchInput}
+            type="search"
+            placeholder="Search crops, livestock, equipment"
+            value={keyword}
+            onChange={(e) => setKeyword(e.target.value)}
+            aria-label="Search keyword"
+          />
+          <button type="submit" className={styles.searchButton} aria-label="Search">
+            <Search size={20} />
+            <span className={styles.searchButtonText}>Search</span>
+          </button>
+        </form>
+      )}
 
       {menuOpen && (
         <div className={styles.drawer} role="dialog" aria-label="Menu" aria-modal="true">

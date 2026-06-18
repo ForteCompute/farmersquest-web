@@ -78,8 +78,24 @@
   gap: var(--fq-space-8);
   align-items: center;
 }
-.heroInner {
+/* Hero copy animates in on load, staggered child by child so it feels alive rather than static. */
+.heroInner > * {
   animation: fq-fade-up var(--fq-dur-slow) var(--fq-ease-out) both;
+}
+.heroInner > *:nth-child(1) {
+  animation-delay: 40ms;
+}
+.heroInner > *:nth-child(2) {
+  animation-delay: 110ms;
+}
+.heroInner > *:nth-child(3) {
+  animation-delay: 180ms;
+}
+.heroInner > *:nth-child(4) {
+  animation-delay: 250ms;
+}
+.heroInner > *:nth-child(5) {
+  animation-delay: 320ms;
 }
 
 /* Hero visual: a layered composition of real listings (no unlicensed stock; flagged in the TSX for
@@ -101,13 +117,15 @@
 }
 .heroGlow {
   position: absolute;
-  inset: 12% 6% 12% 6%;
-  background: radial-gradient(circle at 60% 40%, rgba(255, 255, 255, 0.22), transparent 70%);
+  inset: 10% 8% 10% 8%;
+  background: radial-gradient(circle at 55% 45%, rgba(255, 255, 255, 0.2), transparent 70%);
   filter: blur(8px);
 }
+/* Two cleanly staggered cards plus a trust badge. Widths and offsets keep every card inside the
+   column with room for its shadow, so nothing is sliced at the edges. */
 .heroTile {
   position: absolute;
-  width: 220px;
+  width: 46%;
   background-color: var(--fq-color-surface);
   border-radius: var(--fq-radius-lg);
   box-shadow: 0 24px 50px -18px rgba(0, 30, 0, 0.55);
@@ -116,7 +134,7 @@
 .heroTileImg {
   display: block;
   width: 100%;
-  height: 130px;
+  height: 124px;
   object-fit: cover;
 }
 .heroTileBody {
@@ -138,32 +156,27 @@
   color: var(--fq-color-text-secondary);
 }
 .heroTile1 {
-  top: 0;
-  left: 4%;
-  transform: rotate(-4deg);
+  top: 3%;
+  left: 2%;
+  transform: rotate(-2.5deg);
   z-index: 2;
 }
 .heroTile2 {
-  top: 28%;
-  right: 0;
-  transform: rotate(3deg);
-  z-index: 3;
-}
-.heroTile3 {
-  bottom: 2%;
-  left: 16%;
-  transform: rotate(2deg);
+  top: 17%;
+  right: 2%;
+  transform: rotate(2.5deg);
   z-index: 1;
 }
 /* Skeleton tiles keep a height while images load. */
 .heroTile.fq-skeleton {
-  height: 180px;
+  height: 190px;
 }
 .heroTrust {
   position: absolute;
-  right: 2%;
-  bottom: 6%;
-  z-index: 4;
+  left: 50%;
+  bottom: 3%;
+  transform: translateX(-50%);
+  z-index: 3;
   display: flex;
   align-items: center;
   gap: var(--fq-space-2);
@@ -172,6 +185,7 @@
   border-radius: var(--fq-radius-md);
   box-shadow: 0 18px 40px -16px rgba(0, 30, 0, 0.5);
   color: var(--fq-color-green-deep);
+  white-space: nowrap;
 }
 .heroTrust strong {
   display: block;
@@ -429,6 +443,59 @@
 .farmerInner {
   max-width: var(--fq-layout-content-max-width);
   margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--fq-space-8);
+  align-items: center;
+}
+/* Supporting visual: a clean panel of platform highlights, no stock imagery or invented numbers. */
+.farmerVisual {
+  display: flex;
+  flex-direction: column;
+  gap: var(--fq-space-3);
+  padding: var(--fq-space-6);
+  background-color: var(--fq-color-surface);
+  border: 1px solid var(--fq-color-input-fill-soft);
+  border-radius: var(--fq-radius-lg);
+  box-shadow: var(--fq-shadow-sm);
+}
+.farmerBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--fq-space-2);
+  align-self: flex-start;
+  padding: var(--fq-space-2) var(--fq-space-4);
+  font-weight: var(--fq-weight-bold);
+  color: var(--fq-color-green-deep);
+  background-color: var(--fq-color-surface-green);
+  border-radius: var(--fq-radius-pill);
+}
+.farmerChips {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--fq-space-3);
+}
+.farmerChip {
+  display: flex;
+  align-items: center;
+  gap: var(--fq-space-3);
+  font-size: var(--fq-text-md);
+  font-weight: var(--fq-weight-semibold);
+  color: var(--fq-color-ink);
+}
+.farmerChipIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  color: var(--fq-color-green-deep);
+  background-color: var(--fq-color-surface-green);
+  border-radius: var(--fq-radius-md);
 }
 .farmerLead {
   max-width: 56ch;
@@ -466,6 +533,52 @@
 .sellerInner {
   max-width: var(--fq-layout-content-max-width);
   margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--fq-space-8);
+  align-items: center;
+}
+/* Right-side steps panel that balances the band on desktop. */
+.sellerVisual {
+  padding: var(--fq-space-6);
+  background-color: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: var(--fq-radius-lg);
+}
+.sellerStepsTitle {
+  font-size: var(--fq-text-sm);
+  font-weight: var(--fq-weight-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: rgba(255, 255, 255, 0.85);
+  margin-bottom: var(--fq-space-4);
+}
+.sellerSteps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--fq-space-4);
+}
+.sellerStep {
+  display: flex;
+  align-items: center;
+  gap: var(--fq-space-3);
+  font-size: var(--fq-text-md);
+  font-weight: var(--fq-weight-medium);
+}
+.sellerStepNum {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  font-weight: var(--fq-weight-bold);
+  color: var(--fq-color-green-deep);
+  background-color: var(--fq-color-surface);
+  border-radius: var(--fq-radius-circle);
 }
 .sellerTitle {
   max-width: 22ch;
@@ -567,6 +680,18 @@
   .valueGrid {
     grid-template-columns: repeat(4, 1fr);
   }
+  /* Marketing bands become true two-column layouts so the right half is never left blank. */
+  .farmerInner {
+    grid-template-columns: 1.05fr 0.95fr;
+    gap: var(--fq-space-10);
+  }
+  .sellerInner {
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: var(--fq-space-10);
+  }
+  .sellerBenefits {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* Hero search stacks on phones */
@@ -601,8 +726,9 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .heroInner {
-    animation: none;
+  .heroInner > *,
+  .heroVisual {
+    animation: none !important;
   }
   .faqQ svg {
     transition: none;

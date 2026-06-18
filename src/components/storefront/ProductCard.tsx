@@ -1,6 +1,7 @@
+import { useState } from 'react';
 import type { MouseEvent } from 'react';
 import { Link } from 'react-router-dom';
-import { BadgeCheck, Heart, Leaf, MapPin, Plus, Star } from './icons';
+import { BadgeCheck, Heart, MapPin, Plus, Sprout, Star } from './icons';
 import { useSession } from '@/app/session';
 import type { ProductSummary } from '@/services/catalog';
 import {
@@ -14,9 +15,11 @@ import styles from './ProductCard.module.css';
 
 // The one reusable product card used on the landing, browse, category, and related rows. Image,
 // data-driven badges (verified farmer, featured), location, title, price with unit or contact for
-// price, stock when present, seller, and rating. The whole card opens product detail. The heart and
-// add-to-cart are present but gated: signed out, they open the sign-in prompt (wishlist and cart
-// persistence land later). All content is real catalog data; nothing is invented.
+// price, the add control, stock when present, seller, and rating. The whole card opens product
+// detail. The heart and add-to-cart are present but gated: signed out, they open the sign-in prompt
+// (wishlist and cart persistence land later). All content is real catalog data; nothing is invented.
+// When a photo is missing or fails to load we show a clean produce placeholder, never an unrelated
+// image.
 export interface ProductCardProps {
   product: ProductSummary;
 }
@@ -24,6 +27,7 @@ export interface ProductCardProps {
 export function ProductCard({ product }: ProductCardProps) {
   const { isAuthenticated } = useSession();
   const { promptSignIn } = useSignInPrompt();
+  const [imageFailed, setImageFailed] = useState(false);
 
   const href = `/product/${product.slug ?? ''}`;
   const location = formatLocation(product.state);
@@ -33,6 +37,7 @@ export function ProductCard({ product }: ProductCardProps) {
   const verified = product.badges?.verifiedFarmer === true;
   const featured = product.badges?.featured === true;
   const title = product.title ?? 'Untitled product';
+  const showImage = Boolean(product.primaryImageUrl) && !imageFailed;
 
   function gated(reason: string) {
     return (e: MouseEvent) => {
@@ -47,18 +52,19 @@ export function ProductCard({ product }: ProductCardProps) {
   return (
     <article className={styles.card}>
       <Link to={href} className={styles.media} aria-label={title}>
-        {product.primaryImageUrl ? (
+        {showImage ? (
           <img
             className={styles.image}
-            src={product.primaryImageUrl}
+            src={product.primaryImageUrl ?? ''}
             alt={title}
             loading="lazy"
             width={320}
             height={320}
+            onError={() => setImageFailed(true)}
           />
         ) : (
           <span className={styles.imageFallback} aria-hidden="true">
-            <Leaf size={40} />
+            <Sprout size={40} />
           </span>
         )}
         {(verified || featured) && (
@@ -92,7 +98,17 @@ export function ProductCard({ product }: ProductCardProps) {
         <Link to={href} className={styles.title}>
           {title}
         </Link>
-        <p className={styles.price}>{price}</p>
+        <div className={styles.priceRow}>
+          <span className={styles.price}>{price}</span>
+          <button
+            type="button"
+            className={styles.add}
+            aria-label="Add to cart"
+            onClick={gated('add this to your cart')}
+          >
+            <Plus size={18} />
+          </button>
+        </div>
         {stock && (
           <p className={[styles.stock, styles[`stock_${stock.tone}`]].join(' ')}>{stock.label}</p>
         )}
@@ -104,8 +120,8 @@ export function ProductCard({ product }: ProductCardProps) {
                 src={product.seller.avatarUrl}
                 alt=""
                 loading="lazy"
-                width={20}
-                height={20}
+                width={22}
+                height={22}
               />
             ) : (
               <span className={styles.avatarFallback} aria-hidden="true" />
@@ -119,15 +135,6 @@ export function ProductCard({ product }: ProductCardProps) {
           )}
         </div>
       </div>
-
-      <button
-        type="button"
-        className={styles.add}
-        aria-label="Add to cart"
-        onClick={gated('add this to your cart')}
-      >
-        <Plus size={20} />
-      </button>
     </article>
   );
 }

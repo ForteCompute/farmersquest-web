@@ -7,9 +7,13 @@ import {
   ChevronDown,
   CircleCheck,
   CONTENT_ICONS,
+  Handshake,
   ProductRow,
   Search,
   ShieldCheck,
+  Store,
+  TrendingUp,
+  Truck,
   useReveal,
 } from '@/components/storefront';
 import {
@@ -310,13 +314,14 @@ function Hero({
 // their images, plus a verified-trust card. It gives the hero depth and fills the space.
 // TODO(design): replace with a real, owned hero photograph once one is available.
 function HeroVisual({ products, loading }: { products: ProductSummary[]; loading: boolean }) {
-  const tiles = products.slice(0, 3);
+  const tiles = products.slice(0, 2);
+  const showSkeletons = loading || tiles.length === 0;
 
   return (
     <div className={styles.heroVisual} aria-hidden="true">
       <div className={styles.heroGlow} />
-      {loading || tiles.length === 0
-        ? Array.from({ length: 3 }, (_, i) => (
+      {showSkeletons
+        ? Array.from({ length: 2 }, (_, i) => (
             <div
               key={i}
               className={[styles.heroTile, styles[`heroTile${i + 1}`], 'fq-skeleton'].join(' ')}
@@ -386,9 +391,12 @@ function CategoryGrid({ categories, status }: { categories: CategoryNode[]; stat
   if (categories.length === 0) {
     return <p className={styles.notice}>Categories are on the way. Check back soon.</p>;
   }
+  // A full grid: each top category followed by its subcategories, every tile with its own icon and
+  // live product count, so the section is dense like a real marketplace rather than two lone cards.
+  const tiles = categories.flatMap((c) => [c, ...(c.children ?? [])]);
   return (
     <div className={styles.categoryGrid}>
-      {categories.map((c) => (
+      {tiles.map((c) => (
         <CategoryCard key={c.id} category={c} />
       ))}
     </div>
@@ -441,11 +449,18 @@ function ValueCards() {
   );
 }
 
+const FARMER_HIGHLIGHTS = [
+  { Icon: Store, label: 'List your produce for free' },
+  { Icon: ShieldCheck, label: 'Verified buyers, payment in escrow' },
+  { Icon: Truck, label: 'Logistics support across Nigeria' },
+  { Icon: TrendingUp, label: 'Transparent, fair market prices' },
+];
+
 function DesignedForFarmer() {
   return (
     <Reveal className={[styles.section, styles.farmerSection].join(' ')}>
       <div className={styles.farmerInner} id="about">
-        <div>
+        <div className={styles.farmerCopy}>
           <h2 className={styles.h2}>Designed for the Nigerian farmer</h2>
           <p className={styles.farmerLead}>
             From the grain stores of Kano to the farms of Oyo, FarmersQuest helps you reach buyers
@@ -459,16 +474,38 @@ function DesignedForFarmer() {
             ))}
           </ul>
         </div>
+        <div className={styles.farmerVisual} aria-hidden="true">
+          <div className={styles.farmerBadge}>
+            <Handshake size={26} />
+            <span>Trusted marketplace</span>
+          </div>
+          <ul className={styles.farmerChips}>
+            {FARMER_HIGHLIGHTS.map(({ Icon, label }) => (
+              <li key={label} className={styles.farmerChip}>
+                <span className={styles.farmerChipIcon}>
+                  <Icon size={20} />
+                </span>
+                {label}
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
     </Reveal>
   );
 }
 
+const SELLER_STEPS = [
+  'List your produce for free in minutes',
+  'Connect with verified buyers nationwide',
+  'Get paid after the buyer confirms delivery',
+];
+
 function BecomeSeller() {
   return (
     <Reveal className={[styles.section, styles.sellerSection].join(' ')}>
       <div className={styles.sellerInner}>
-        <div>
+        <div className={styles.sellerCopy}>
           <h2 className={styles.sellerTitle}>Sell your harvest to buyers nationwide</h2>
           <p className={styles.sellerLead}>
             List your produce for free and get paid after the buyer confirms delivery.
@@ -483,6 +520,17 @@ function BecomeSeller() {
           <Link to="/join/farmer" className={styles.sellerButton}>
             Create seller account
           </Link>
+        </div>
+        <div className={styles.sellerVisual} aria-hidden="true">
+          <p className={styles.sellerStepsTitle}>Start in three steps</p>
+          <ol className={styles.sellerSteps}>
+            {SELLER_STEPS.map((step, i) => (
+              <li key={step} className={styles.sellerStep}>
+                <span className={styles.sellerStepNum}>{i + 1}</span>
+                <span>{step}</span>
+              </li>
+            ))}
+          </ol>
         </div>
       </div>
     </Reveal>
