@@ -103,15 +103,22 @@ afterEach(() => {
 });
 
 describe('ProfileScreen', () => {
-  it('shows the account details and a farmer pending-verification message', async () => {
+  it('prompts an unverified farmer to verify and shows no verified badge', async () => {
     await signInAndOpenProfile(
-      account({ role: 'Farmer', fullName: 'Musa Bello', verificationStatus: 'Pending' }),
+      account({ role: 'Farmer', fullName: 'Musa Bello', verificationStatus: 'NotSubmitted' }),
     );
 
     // The name shows both in the shell header and on the profile.
     expect(screen.getAllByText('Musa Bello').length).toBeGreaterThan(0);
     expect(screen.getByText('ada@example.com')).toBeInTheDocument();
     expect(screen.getByText(/verify your identity to start selling/i)).toBeInTheDocument();
+    expect(screen.queryByText('Verified farmer')).not.toBeInTheDocument();
+  });
+
+  it('shows pending review without the verify prompt once submitted', async () => {
+    await signInAndOpenProfile(account({ role: 'Farmer', verificationStatus: 'PendingReview' }));
+    expect(screen.getAllByText(/pending verification/i).length).toBeGreaterThan(0);
+    expect(screen.queryByText(/verify your identity to start selling/i)).not.toBeInTheDocument();
   });
 });
 

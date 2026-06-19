@@ -9,7 +9,8 @@
   border: 1px solid transparent;
 }
 
-.pending {
+.pending,
+.prompt {
   background-color: var(--fq-color-surface-green);
   border-color: var(--fq-color-border-muted);
 }

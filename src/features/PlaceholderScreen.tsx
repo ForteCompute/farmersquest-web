@@ -1,15 +1,11 @@
 import { Card, EmptyState } from '@/design-system';
 
-// A neutral placeholder for sections whose real screens arrive with feature tickets. It exists so
-// the role-gated navigation is fully walkable today without pretending a feature is built.
+// A clean, neutral placeholder for sections whose screens are not built yet. It keeps the navigation
+// walkable without exposing any developer or scaffolding language to users.
 export function PlaceholderScreen({ title, area }: { title: string; area: string }) {
   return (
     <Card title={title}>
-      <EmptyState
-        icon="🚧"
-        title={`${area} is on the way`}
-        description="This section is part of the foundation shell. Its screen lands with a future feature ticket."
-      />
+      <EmptyState title={`${area} will appear here`} description="This section is coming soon." />
     </Card>
   );
 }

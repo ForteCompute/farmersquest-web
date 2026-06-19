@@ -2,6 +2,7 @@ import { useState } from 'react';
 import type { FormEvent } from 'react';
 import { Link } from 'react-router-dom';
 import { Button, Input, PhoneIcon } from '@/design-system';
+import { CropMultiSelect } from '@/components';
 import { registerFarmer } from '@/services/auth';
 import { AuthLayout } from './AuthLayout';
 import { AuthLegal } from './AuthLegal';
@@ -10,17 +11,17 @@ import { useRegister } from './useRegister';
 import styles from './register.module.css';
 
 // The farmer registration form: First name, Surname, Email, Password, Confirm password, Phone
-// number, Farm name, and Your crops. No NIN: identity verification (KYC) happens later at
+// number, Farm name, and What you grow or raise. No NIN: identity verification (KYC) happens later at
 // /sell/verify. No username is collected; the API derives it from the email.
 //
-// Phone is required because the registration API requires it for farmers. Farm name and crops are
-// free text: the API accepts them as labels and has no reference list to choose from, so they are
-// captured as typed rather than invented. Crops are entered comma separated and sent as a list.
+// Phone is required because the registration API requires it for farmers. Farm name is a free-text
+// label. What you grow or raise is a multi-select sourced from the catalog category vocabulary, not
+// free text, and the selected values are sent.
 export function FarmerRegisterScreen() {
   const reg = useRegister('farmer', ['phoneNumber', 'farmName', 'crops']);
   const [phoneNumber, setPhoneNumber] = useState('');
   const [farmName, setFarmName] = useState('');
-  const [crops, setCrops] = useState('');
+  const [crops, setCrops] = useState<string[]>([]);
 
   const phoneFilled = phoneNumber.trim() !== '';
 
@@ -34,10 +35,7 @@ export function FarmerRegisterScreen() {
           password: core.password,
           phoneNumber: phoneNumber.trim(),
           farmName: farmName.trim() || null,
-          crops: crops
-            .split(',')
-            .map((c) => c.trim())
-            .filter(Boolean),
+          crops,
         }),
       { phoneNumber: phoneFilled ? '' : 'Enter your phone number.' },
     );
@@ -92,14 +90,12 @@ export function FarmerRegisterScreen() {
           }}
         />
 
-        <Input
-          label="Your crops"
-          placeholder="Maize, Cassava, Yam"
-          hint="Separate crops with a comma."
+        <CropMultiSelect
           value={crops}
           error={reg.shownErrors.crops || ''}
-          onChange={(e) => {
-            setCrops(e.target.value);
+          hint="Select all that apply. You can change this later."
+          onChange={(next) => {
+            setCrops(next);
             reg.clearFieldError('crops');
           }}
         />

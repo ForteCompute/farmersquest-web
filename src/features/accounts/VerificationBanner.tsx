@@ -3,42 +3,67 @@ import { getFarmerKyc } from '@/app/kyc';
 import type { AccountDto } from '@/services/auth';
 import styles from './VerificationBanner.module.css';
 
-// The persistent KYC banner for farmers, driven entirely by the account the API returns. A new
-// farmer registers Pending and sees this until the API reports the account Verified; a Suspended
-// farmer sees an attention variant. It links to the verification step at /sell/verify. The API is
-// the sole authority on verification and on what an unverified farmer may do; this only displays the
-// server's state and points to the next action.
+// The farmer verification banner, driven entirely by the account read model (verificationStatus and
+// verificationReason). It shows exactly one state at a time, so the prompt and "pending" never appear
+// together:
+//   NotSubmitted  -> prompt to verify, with a "Verify now" action.
+//   PendingReview -> "Pending verification", no action.
+//   Rejected      -> the reason, with a "Resubmit" action.
+//   Suspended     -> needs attention, with a "Review verification" action.
+//   Verified      -> nothing (the verified badge is shown elsewhere).
+// The API is the sole authority; this only reflects its state and points to the next action.
 export interface VerificationBannerProps {
   account: AccountDto | null | undefined;
 }
 
 export function VerificationBanner({ account }: VerificationBannerProps) {
   const kyc = getFarmerKyc(account);
-  if (!kyc.needsVerification) {
+
+  if (!kyc.isFarmer || kyc.isVerified) {
     return null;
   }
 
-  const attention = kyc.status === 'suspended';
+  if (kyc.isPendingReview) {
+    return (
+      <div className={[styles.banner, styles.pending].join(' ')} role="status">
+        <div className={styles.copy}>
+          <p className={styles.title}>Pending verification</p>
+          <p className={styles.text}>
+            Your details are under review. We will let you know once your farm is verified.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  const attention = kyc.isRejected || kyc.isSuspended;
+  const title = kyc.isRejected
+    ? 'Verification not approved'
+    : kyc.isSuspended
+      ? 'Your seller verification needs attention'
+      : 'Verify your identity to start selling';
+  const text =
+    (attention && kyc.reason) ||
+    (kyc.isSuspended
+      ? 'Your verification was withdrawn. Review your details to keep selling on FarmersQuest.'
+      : 'Add your details so buyers can trust your farm. You can browse now; selling unlocks once you are verified.');
+  const actionLabel = kyc.isRejected
+    ? 'Resubmit'
+    : kyc.isSuspended
+      ? 'Review verification'
+      : 'Verify now';
 
   return (
     <div
-      className={[styles.banner, attention ? styles.attention : styles.pending].join(' ')}
+      className={[styles.banner, attention ? styles.attention : styles.prompt].join(' ')}
       role="status"
     >
       <div className={styles.copy}>
-        <p className={styles.title}>
-          {attention
-            ? 'Your seller verification needs attention'
-            : 'Verify your identity to start selling'}
-        </p>
-        <p className={styles.text}>
-          {attention
-            ? 'Your verification was not approved. Review your details to sell on FarmersQuest.'
-            : 'Add your details so buyers can trust your farm. You can browse now; selling unlocks once you are verified.'}
-        </p>
+        <p className={styles.title}>{title}</p>
+        <p className={styles.text}>{text}</p>
       </div>
       <Link className={styles.action} to="/sell/verify">
-        {attention ? 'Review verification' : 'Verify now'}
+        {actionLabel}
       </Link>
     </div>
   );

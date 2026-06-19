@@ -20,6 +20,17 @@ export type NotificationPreferences = components['schemas']['NotificationPrefere
 export type UpdateNotificationPreferencesInput =
   components['schemas']['UpdateNotificationPreferencesCommand'];
 
+// The KYC submission carries binary files, so it is posted as multipart, not JSON. documentType is
+// the IdDocumentType enum (0 NIN, 1 Voter's Card, 2 Driver's License).
+export interface SubmitKycInput {
+  documentType: number;
+  nin: string;
+  dateOfBirth: string;
+  frontImage: File;
+  backImage: File;
+  photo: File;
+}
+
 export type Result<T> = { ok: true; data: T } | { ok: false; error: ParsedProblem };
 
 // A safe, generic fallback shown when the server gives no usable message or the request never
@@ -48,6 +59,33 @@ export async function registerFarmer(input: RegisterFarmerInput): Promise<Result
   try {
     const { data, error } = await apiClient.POST('/api/v1/accounts/register/farmer', {
       body: input,
+    });
+    if (error || !data) {
+      return failure(error);
+    }
+    return { ok: true, data };
+  } catch {
+    return failure(undefined);
+  }
+}
+
+// Submit the signed-in farmer's KYC. Sent as multipart/form-data because it carries image files; the
+// API returns the updated account (verificationStatus moves to PendingReview). Farmer-only and
+// re-checked server-side; the documents and NIN are encrypted at rest and never logged by the API.
+export async function submitKyc(input: SubmitKycInput): Promise<Result<AccountDto>> {
+  try {
+    const { data, error } = await apiClient.POST('/api/v1/accounts/me/kyc', {
+      body: input as unknown as components['schemas']['SubmitKycForm'],
+      bodySerializer: () => {
+        const formData = new FormData();
+        formData.append('documentType', String(input.documentType));
+        formData.append('nin', input.nin);
+        formData.append('dateOfBirth', input.dateOfBirth);
+        formData.append('frontImage', input.frontImage);
+        formData.append('backImage', input.backImage);
+        formData.append('photo', input.photo);
+        return formData;
+      },
     });
     if (error || !data) {
       return failure(error);
