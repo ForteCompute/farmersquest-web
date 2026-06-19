@@ -3,6 +3,7 @@ import type { FormEvent } from 'react';
 import { Link } from 'react-router-dom';
 import { Button, Input, PhoneIcon, UserIcon } from '@/design-system';
 import { ChevronDown } from '@/components/storefront';
+import { CropMultiSelect } from '@/components';
 import { useSession } from '@/app/session';
 import { updateProfile, type UpdateProfileInput } from '@/services/auth';
 import { getStates, type StateRef } from '@/services/catalog';
@@ -11,10 +12,11 @@ import { SettingsLayout } from './SettingsLayout';
 import form from './settingsForm.module.css';
 
 // Edit the signed-in user's own profile. Everyone can edit their name, phone, and location (state and
-// region); farmers can also edit their farm name and crops, the same onboarding fields collected at
-// signup. The State list comes from the catalog reference endpoint (no hardcoding); region and crops
-// stay free text, as in signup, because the API has no reference list for them yet. Posts to PUT /me
-// and refreshes the session account. The API owns who "me" is and re-validates every field. Live
+// region); farmers can also edit their farm name and what they grow or raise, the same onboarding
+// fields collected at signup. State and the crops vocabulary come from the catalog (no hardcoding);
+// region stays free text, as in signup, because the API has no reference list for it yet. Posts to
+// PUT /me and refreshes the session account. The API owns who "me" is and re-validates every field.
+// Live
 // validation, inline errors, and loading, success, and error states.
 const KNOWN_FIELDS = ['fullName', 'phoneNumber', 'state', 'region', 'farmName', 'crops'];
 
@@ -27,7 +29,7 @@ export function EditProfileScreen() {
   const [state, setState] = useState(account?.state ?? '');
   const [region, setRegion] = useState(account?.region ?? '');
   const [farmName, setFarmName] = useState(account?.farmName ?? '');
-  const [crops, setCrops] = useState((account?.crops ?? []).join(', '));
+  const [crops, setCrops] = useState<string[]>(account?.crops ?? []);
   const [states, setStates] = useState<StateRef[]>([]);
 
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -73,10 +75,7 @@ export function EditProfileScreen() {
     };
     if (isFarmer) {
       body.farmName = farmName.trim() || null;
-      body.crops = crops
-        .split(',')
-        .map((c) => c.trim())
-        .filter(Boolean);
+      body.crops = crops;
     }
 
     const result = await updateProfile(body);
@@ -194,14 +193,12 @@ export function EditProfileScreen() {
                 clearStatus();
               }}
             />
-            <Input
-              label="Your crops"
-              placeholder="Maize, Cassava, Yam"
-              hint="Separate crops with a comma."
+            <CropMultiSelect
               value={crops}
               error={errors.crops || ''}
-              onChange={(e) => {
-                setCrops(e.target.value);
+              hint="Select all that apply."
+              onChange={(next) => {
+                setCrops(next);
                 clearStatus();
               }}
             />

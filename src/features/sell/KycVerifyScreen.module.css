@@ -62,10 +62,152 @@
   line-height: var(--fq-leading-normal);
 }
 
+.stepLabel {
+  font-size: var(--fq-text-sm);
+  font-weight: var(--fq-weight-semibold);
+  color: var(--fq-color-green-action);
+}
+
 .form {
   display: flex;
   flex-direction: column;
   gap: var(--fq-space-5);
+}
+
+.banner {
+  padding: var(--fq-space-3) var(--fq-space-4);
+  font-size: var(--fq-text-sm);
+  border-radius: var(--fq-radius-md);
+  margin-bottom: var(--fq-space-5);
+}
+.bannerError {
+  color: var(--fq-color-danger);
+  background-color: var(--fq-color-danger-tint);
+}
+
+/* Labelled select matching the design system input. */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--fq-space-2);
+}
+.fieldLabel {
+  font-size: var(--fq-text-sm);
+  font-weight: var(--fq-weight-semibold);
+  color: var(--fq-color-ink);
+}
+.selectWrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.selectWrap select {
+  appearance: none;
+  width: 100%;
+  min-height: var(--fq-size-input-height);
+  padding: 0 var(--fq-space-7) 0 var(--fq-space-3);
+  font-family: inherit;
+  font-size: var(--fq-text-md);
+  color: var(--fq-color-ink);
+  background-color: var(--fq-color-surface);
+  border: 1px solid var(--fq-color-input-fill);
+  border-radius: var(--fq-radius-md);
+  cursor: pointer;
+}
+.selectWrap select:focus-visible {
+  outline: 2px solid var(--fq-color-green-button);
+  outline-offset: 1px;
+}
+.selectWrap svg {
+  position: absolute;
+  right: var(--fq-space-3);
+  pointer-events: none;
+  color: var(--fq-color-text-secondary);
+}
+
+/* File upload field with a preview. */
+.fileField {
+  display: flex;
+  flex-direction: column;
+  gap: var(--fq-space-2);
+}
+.fileHint {
+  font-size: var(--fq-text-xs);
+  color: var(--fq-color-text-secondary);
+}
+.fileDrop {
+  display: flex;
+  align-items: center;
+  gap: var(--fq-space-3);
+  padding: var(--fq-space-3) var(--fq-space-4);
+  background-color: var(--fq-color-surface-green-soft);
+  border: 1px dashed var(--fq-color-input-fill);
+  border-radius: var(--fq-radius-md);
+  cursor: pointer;
+}
+.fileDrop:hover {
+  border-color: var(--fq-color-green-button);
+}
+.fileDrop:focus-within {
+  outline: 2px solid var(--fq-color-green-button);
+  outline-offset: 2px;
+}
+.fileDropError {
+  border-color: var(--fq-color-danger);
+}
+.fileIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+  color: var(--fq-color-green-deep);
+  background-color: var(--fq-color-surface-green);
+  border-radius: var(--fq-radius-md);
+}
+.fileThumb {
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+  object-fit: cover;
+  border-radius: var(--fq-radius-md);
+}
+.fileText {
+  flex: 1;
+  min-width: 0;
+  font-size: var(--fq-text-md);
+  color: var(--fq-color-ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.fileInput {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+.fileError {
+  font-size: var(--fq-text-sm);
+  color: var(--fq-color-danger);
+}
+
+.backButton {
+  align-self: center;
+  font-size: var(--fq-text-md);
+  font-weight: var(--fq-weight-semibold);
+  color: var(--fq-color-green-action);
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+.backButton:hover {
+  text-decoration: underline;
 }
 
 .state {

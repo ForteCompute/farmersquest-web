@@ -14,6 +14,26 @@ export type Review = components['schemas']['ReviewDto'];
 export type ProductPage = components['schemas']['ProductSummaryDtoCatalogPage'];
 export type ReviewPage = components['schemas']['ReviewDtoCatalogPage'];
 
+// The vocabulary of things a farmer grows or raises, sourced from the catalog category tree (the
+// same data the storefront browse uses). It is the leaf categories (the specific produce and
+// livestock), in catalog order, deduplicated. Nothing is hardcoded; an empty tree yields an empty
+// list. Used by the farmer registration and profile "What you grow or raise" selector.
+export function cropVocabulary(nodes: CategoryNode[]): string[] {
+  const names: string[] = [];
+  const walk = (list: CategoryNode[]) => {
+    for (const node of list) {
+      const children = node.children ?? [];
+      if (children.length > 0) {
+        walk(children);
+      } else if (node.name && node.name.trim()) {
+        names.push(node.name.trim());
+      }
+    }
+  };
+  walk(nodes);
+  return [...new Set(names)];
+}
+
 // The products endpoint validates sort against a fixed set of tokens (newest, price_asc,
 // price_desc); anything else returns a 400. These are the labels the browse and category pages show.
 export const PRODUCT_SORTS = [

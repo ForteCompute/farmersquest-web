@@ -83,8 +83,10 @@ export function ProfileScreen() {
             {isFarmer &&
               (kyc.isVerified ? (
                 <Badge tone="success">Verified farmer</Badge>
-              ) : (
+              ) : kyc.isPendingReview ? (
                 <Badge tone="neutral">Pending verification</Badge>
+              ) : (
+                <Badge tone="neutral">Not verified</Badge>
               ))}
           </div>
           <p className={styles.role}>

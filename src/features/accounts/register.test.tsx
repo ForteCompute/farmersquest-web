@@ -17,11 +17,11 @@ vi.mock('@/services/auth', () => ({
 }));
 vi.mock('@/services/catalog', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@/services/catalog')>();
-  return { ...actual, getStates: vi.fn() };
+  return { ...actual, getStates: vi.fn(), getCategories: vi.fn() };
 });
 
 import { getMe, login, registerBuyer, registerFarmer } from '@/services/auth';
-import { getStates } from '@/services/catalog';
+import { getCategories, getStates } from '@/services/catalog';
 
 const mockRegisterBuyer = vi.mocked(registerBuyer);
 const mockRegisterFarmer = vi.mocked(registerFarmer);
@@ -87,6 +87,21 @@ beforeEach(() => {
       { code: 'OY', name: 'Oyo' },
     ],
   });
+  // The crops multi-select sources its options from the catalog category vocabulary (leaf names).
+  vi.mocked(getCategories).mockResolvedValue({
+    ok: true,
+    data: [
+      {
+        id: 'c1',
+        slug: 'crops',
+        name: 'Crops',
+        children: [
+          { id: 'c2', slug: 'grains', name: 'Grains and Cereals' },
+          { id: 'c3', slug: 'tubers', name: 'Tubers and Roots' },
+        ],
+      },
+    ],
+  });
 });
 
 afterEach(() => vi.clearAllMocks());
@@ -144,19 +159,21 @@ describe('BuyerRegisterScreen', () => {
 });
 
 describe('FarmerRegisterScreen', () => {
-  it('shows the farmer fields and no NIN or username field', () => {
+  it('shows the farmer fields, a crops multi-select from the catalog, and no NIN or username', async () => {
     renderAt('/register/farmer');
     expect(screen.getByLabelText('Phone number')).toBeInTheDocument();
     expect(screen.getByLabelText('Farm name')).toBeInTheDocument();
-    expect(screen.getByLabelText('Your crops')).toBeInTheDocument();
     expect(screen.getByPlaceholderText('Re-enter your password')).toBeInTheDocument();
+    // "What you grow or raise" is a catalog-sourced multi-select, not a free-text field.
+    expect(screen.getByText('What you grow or raise')).toBeInTheDocument();
+    expect(await screen.findByRole('button', { name: 'Grains and Cereals' })).toBeInTheDocument();
     expect(screen.queryByLabelText(/NIN/i)).not.toBeInTheDocument();
     expect(screen.queryByLabelText(/username/i)).not.toBeInTheDocument();
   });
 
-  it('registers a farmer with phone and crops, no username or NIN, and lands on the farmer home', async () => {
+  it('registers a farmer with phone and selected crops, no username or NIN, and lands on the farmer home', async () => {
     const user = userEvent.setup();
-    const farmer = account({ role: 'Farmer', verificationStatus: 'Pending' });
+    const farmer = account({ role: 'Farmer', verificationStatus: 'NotSubmitted' });
     mockRegisterFarmer.mockResolvedValue({ ok: true, data: farmer });
     mockLogin.mockResolvedValue({ ok: true, data: authResult(farmer) });
 
@@ -164,7 +181,7 @@ describe('FarmerRegisterScreen', () => {
     await fillCore(user);
     await user.type(screen.getByLabelText('Phone number'), '08030000000');
     await user.type(screen.getByLabelText('Farm name'), 'Obi Farms');
-    await user.type(screen.getByLabelText('Your crops'), 'Maize, Yam');
+    await user.click(await screen.findByRole('button', { name: 'Grains and Cereals' }));
     await user.click(screen.getByRole('button', { name: /create account/i }));
 
     expect(await screen.findByText(/verify your identity to start selling/i)).toBeInTheDocument();
@@ -175,7 +192,7 @@ describe('FarmerRegisterScreen', () => {
       password: 'password123',
       phoneNumber: '08030000000',
       farmName: 'Obi Farms',
-      crops: ['Maize', 'Yam'],
+      crops: ['Grains and Cereals'],
     });
     expect(body).not.toHaveProperty('username');
     expect(body).not.toHaveProperty('nin');

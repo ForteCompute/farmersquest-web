@@ -3,3 +3,5 @@
 export { AppShell } from './AppShell';
 export { RoleGuard } from './RoleGuard';
 export { RoleSwitcher } from './RoleSwitcher';
+export { CropMultiSelect } from './CropMultiSelect';
+export type { CropMultiSelectProps } from './CropMultiSelect';
