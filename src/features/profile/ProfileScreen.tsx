@@ -1,21 +1,19 @@
 import { useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Button, FigmaIcon, PhoneIcon } from '@/design-system';
+import { Badge, Button, Card, FigmaIcon, PhoneIcon } from '@/design-system';
 import { useSession } from '@/app/session';
+import { getFarmerKyc } from '@/app/kyc';
 import { ROLE_LABELS } from '@/app/roles';
 import { VerificationBanner } from '@/features/accounts';
 import { getMe, logout } from '@/services/auth';
 import styles from './ProfileScreen.module.css';
 
-// The Account screen, reproduced from the PROFILE frame: the account header with avatar and
-// verification status, the account details, the Settings and Security list, and Log Out. Data comes
-// from GET /me (seeded from the signed-in session so it renders immediately and refreshes when the
-// call returns). The wallet shown in the second frame is out of scope (a future feature).
-//
-// Only fields the contract returns are shown. The frame's Farm Name, Location, and Primary Crops
-// have no account fields yet; tracked as the same API gap noted for registration. Editing is reached
-// through the avatar pen, matching the frame (Settings holds no Edit Profile row).
+// The account screen, in the storefront chrome. It reads the signed-in account from GET /me (seeded
+// from the session so it renders at once and refreshes when the call returns), shows the identity,
+// account details, farm details for a farmer, and links to the settings sub-screens. Farmer KYC is
+// driven by getFarmerKyc: verified shows the badge, unverified shows the pending banner with a link
+// to /sell/verify. Only fields the contract returns are shown; nothing is hardcoded.
 function initials(name: string | null | undefined): string {
   const parts = (name ?? '').trim().split(/\s+/).filter(Boolean);
   if (parts.length === 0) {
@@ -57,57 +55,51 @@ export function ProfileScreen() {
     setSigningOut(true);
     await logout();
     signOut();
-    navigate('/sign-in', { replace: true });
+    navigate('/', { replace: true });
   }
 
+  // The account layout guards access, so a signed-in account is always present here.
   if (!account) {
-    return (
-      <div className={styles.empty}>
-        <p>You are not signed in.</p>
-        <Link className={styles.link} to="/sign-in">
-          Go to sign in
-        </Link>
-      </div>
-    );
+    return null;
   }
 
+  const kyc = getFarmerKyc(account);
   const isFarmer = role === 'farmer';
-  const verification = account.verificationStatus?.trim().toLowerCase();
-  const isVerified = verification === 'verified' || verification === 'approved';
   const memberSince = formatMemberSince(account.createdAtUtc);
+  const location = [account.region, account.state].filter(Boolean).join(', ');
+  const crops = (account.crops ?? []).filter(Boolean).join(', ');
 
   return (
     <div className={styles.page}>
-      <h1 className={styles.heading}>Account</h1>
+      <h1 className={styles.heading}>Your account</h1>
 
-      <header className={styles.identity}>
-        <div className={styles.avatarWrap}>
-          <span className={styles.avatar} aria-hidden="true">
-            {initials(account.fullName)}
-          </span>
-          <Link className={styles.avatarEdit} to="/profile/edit" aria-label="Edit profile">
-            <FigmaIcon name="pen" size={16} />
-          </Link>
+      <div className={styles.identity}>
+        <span className={styles.avatar} aria-hidden="true">
+          {initials(account.fullName)}
+        </span>
+        <div className={styles.identityBody}>
+          <div className={styles.nameRow}>
+            <span className={styles.name}>{account.fullName ?? 'Your account'}</span>
+            {isFarmer &&
+              (kyc.isVerified ? (
+                <Badge tone="success">Verified farmer</Badge>
+              ) : (
+                <Badge tone="neutral">Pending verification</Badge>
+              ))}
+          </div>
+          <p className={styles.role}>
+            {ROLE_LABELS[role]}
+            {memberSince ? ` · Member since ${memberSince}` : ''}
+          </p>
         </div>
-        <div className={styles.nameRow}>
-          <span className={styles.name}>{account.fullName ?? 'Your account'}</span>
-          {isFarmer &&
-            (isVerified ? (
-              <span className={styles.verifiedPill}>
-                <FigmaIcon name="verified" size={16} />
-                VERIFIED
-              </span>
-            ) : (
-              <span className={styles.pendingPill}>Pending</span>
-            ))}
-        </div>
-        <p className={styles.subtitle}>{ROLE_LABELS[role]}</p>
-      </header>
+        <Link to="/profile/edit" className={styles.editLink}>
+          <FigmaIcon name="pen" size={16} /> Edit profile
+        </Link>
+      </div>
 
-      {isFarmer && !isVerified && <VerificationBanner account={account} />}
+      <VerificationBanner account={account} />
 
-      <section className={styles.section}>
-        <h2 className={styles.sectionTitle}>Account Details</h2>
+      <Card title="Account details">
         <dl className={styles.details}>
           <Detail icon={<FigmaIcon name="email" size={22} />} label="Email" value={account.email} />
           <Detail icon={<PhoneIcon size={22} />} label="Phone" value={account.phoneNumber} />
@@ -116,18 +108,32 @@ export function ProfileScreen() {
             label="Username"
             value={account.username}
           />
-          {memberSince && (
+        </dl>
+      </Card>
+
+      {isFarmer && (
+        <Card title="Farm details">
+          <dl className={styles.details}>
             <Detail
               icon={<FigmaIcon name="person" size={22} />}
-              label="Member since"
-              value={memberSince}
+              label="Farm name"
+              value={account.farmName}
             />
-          )}
-        </dl>
-      </section>
+            <Detail
+              icon={<FigmaIcon name="person" size={22} />}
+              label="Location"
+              value={location || null}
+            />
+            <Detail
+              icon={<FigmaIcon name="person" size={22} />}
+              label="Primary crops"
+              value={crops || null}
+            />
+          </dl>
+        </Card>
+      )}
 
-      <section className={styles.section}>
-        <h2 className={styles.sectionTitle}>Settings &amp; Security</h2>
+      <Card title="Settings and security" flush>
         <nav className={styles.rows}>
           <SettingsRow
             to="/profile/security"
@@ -139,25 +145,19 @@ export function ProfileScreen() {
             icon={<FigmaIcon name="bell" size={24} />}
             label="Notifications"
           />
-          <div className={[styles.row, styles.rowDisabled].join(' ')} aria-disabled="true">
-            <span className={styles.rowIcon}>
-              <FigmaIcon name="support" size={24} />
-            </span>
-            <span className={styles.rowLabel}>Support</span>
-            <FigmaIcon name="chevron" size={20} />
-          </div>
         </nav>
-      </section>
+      </Card>
 
       <Button
         className={styles.logout}
         variant="ghost"
         fullWidth
         onClick={handleSignOut}
-        disabled={signingOut}
+        loading={signingOut}
+        loadingLabel="Signing out"
       >
         <span className={styles.logoutInner}>
-          <FigmaIcon name="logout" size={24} /> Log Out
+          <FigmaIcon name="logout" size={22} /> Log out
         </span>
       </Button>
     </div>

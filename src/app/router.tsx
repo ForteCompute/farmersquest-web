@@ -16,6 +16,7 @@ import {
 import { KycVerifyScreen } from '@/features/sell';
 import { PrivacyPage, TermsPage } from '@/features/legal';
 import {
+  AccountLayout,
   EditProfileScreen,
   NotificationsScreen,
   ProfileScreen,
@@ -101,6 +102,17 @@ export const routes: RouteObject[] = [
   // Farmer identity verification (KYC), inside the app. Guards to signed-in farmers.
   { path: '/sell/verify', element: <KycVerifyScreen /> },
 
+  // Account area: the profile and its settings, in the storefront chrome behind a sign-in guard.
+  {
+    element: <AccountLayout />,
+    children: [
+      { path: '/profile', element: <ProfileScreen /> },
+      { path: '/profile/edit', element: <EditProfileScreen /> },
+      { path: '/profile/security', element: <SecurityScreen /> },
+      { path: '/profile/notifications', element: <NotificationsScreen /> },
+    ],
+  },
+
   // Aliases for the confirmed route names, pointing at the current screens until the auth rename.
   { path: '/join', element: <Navigate to="/register" replace /> },
   { path: '/join/buyer', element: <Navigate to="/register/buyer" replace /> },
@@ -159,10 +171,6 @@ export const routes: RouteObject[] = [
           </RoleGuard>
         ),
       },
-      { path: 'profile', element: <ProfileScreen /> },
-      { path: 'profile/edit', element: <EditProfileScreen /> },
-      { path: 'profile/security', element: <SecurityScreen /> },
-      { path: 'profile/notifications', element: <NotificationsScreen /> },
     ],
   },
 

@@ -1,9 +1,10 @@
 import { useEffect, useId, useState } from 'react';
 import type { FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ChevronDown, Heart, Leaf, Menu, Search, ShoppingCart, X } from './icons';
+import { ChevronDown, Heart, Leaf, Menu, Search, ShoppingCart, User, X } from './icons';
 import { config } from '@/services/config';
 import { getCategories, getStates, type CategoryNode, type StateRef } from '@/services/catalog';
+import { logout } from '@/services/auth';
 import { useSession } from '@/app/session';
 import { useSignInPrompt } from './SignInPrompt';
 import styles from './StorefrontHeader.module.css';
@@ -23,7 +24,7 @@ const NAV = [
 // hero already carries the primary search; browse and category pages keep it for in-page filtering.
 export function StorefrontHeader({ showSearchBar = true }: { showSearchBar?: boolean }) {
   const navigate = useNavigate();
-  const { isAuthenticated } = useSession();
+  const { isAuthenticated, signOut } = useSession();
   const { promptSignIn } = useSignInPrompt();
   const [states, setStates] = useState<StateRef[]>([]);
   const [categories, setCategories] = useState<CategoryNode[]>([]);
@@ -60,6 +61,14 @@ export function StorefrontHeader({ showSearchBar = true }: { showSearchBar?: boo
     return () => {
       if (!isAuthenticated) promptSignIn(reason);
     };
+  }
+
+  async function handleSignOut() {
+    // Revoke the token server-side, then clear locally regardless so sign out never gets stuck.
+    await logout();
+    signOut();
+    setMenuOpen(false);
+    navigate('/');
   }
 
   return (
@@ -123,12 +132,25 @@ export function StorefrontHeader({ showSearchBar = true }: { showSearchBar?: boo
             <ShoppingCart size={22} />
           </button>
 
-          <Link to="/sign-in" className={styles.signIn}>
-            Sign in
-          </Link>
-          <Link to="/join" className={styles.register}>
-            Register
-          </Link>
+          {isAuthenticated ? (
+            <>
+              <Link to="/profile" className={styles.signIn}>
+                <User size={18} /> Account
+              </Link>
+              <button type="button" className={styles.register} onClick={handleSignOut}>
+                Sign out
+              </button>
+            </>
+          ) : (
+            <>
+              <Link to="/sign-in" className={styles.signIn}>
+                Sign in
+              </Link>
+              <Link to="/join" className={styles.register}>
+                Register
+              </Link>
+            </>
+          )}
         </div>
       </div>
 
@@ -218,12 +240,25 @@ export function StorefrontHeader({ showSearchBar = true }: { showSearchBar?: boo
               ))}
             </nav>
             <div className={styles.drawerAuth}>
-              <Link to="/sign-in" className={styles.signIn} onClick={() => setMenuOpen(false)}>
-                Sign in
-              </Link>
-              <Link to="/join" className={styles.register} onClick={() => setMenuOpen(false)}>
-                Register
-              </Link>
+              {isAuthenticated ? (
+                <>
+                  <Link to="/profile" className={styles.signIn} onClick={() => setMenuOpen(false)}>
+                    <User size={18} /> Account
+                  </Link>
+                  <button type="button" className={styles.register} onClick={handleSignOut}>
+                    Sign out
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Link to="/sign-in" className={styles.signIn} onClick={() => setMenuOpen(false)}>
+                    Sign in
+                  </Link>
+                  <Link to="/join" className={styles.register} onClick={() => setMenuOpen(false)}>
+                    Register
+                  </Link>
+                </>
+              )}
             </div>
           </div>
         </div>

@@ -19,6 +19,26 @@
   color: var(--fq-color-green-deep);
   background-color: var(--fq-color-surface-green);
 }
+.bannerLink {
+  color: var(--fq-color-green-action);
+  font-weight: var(--fq-weight-bold);
+  text-decoration: none;
+}
+.bannerLink:hover {
+  text-decoration: underline;
+}
+
+/* Two fields side by side on wider viewports (for example State and Region). */
+.row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--fq-space-4);
+}
+@media (min-width: 480px) {
+  .row {
+    grid-template-columns: 1fr 1fr;
+  }
+}
 
 .toggles {
   display: flex;
