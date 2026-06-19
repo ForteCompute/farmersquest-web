@@ -101,9 +101,16 @@
 }
 
 .signIn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: inherit;
   font-size: var(--fq-text-md);
   font-weight: var(--fq-weight-semibold);
   color: var(--fq-color-green-button);
+  background: none;
+  border: 0;
+  cursor: pointer;
   text-decoration: none;
   white-space: nowrap;
 }
@@ -112,11 +119,14 @@
   align-items: center;
   min-height: 40px;
   padding: 0 var(--fq-space-5);
+  font-family: inherit;
   font-size: var(--fq-text-md);
   font-weight: var(--fq-weight-bold);
   color: var(--fq-color-on-color);
   background-color: var(--fq-color-green-button);
+  border: 0;
   border-radius: var(--fq-radius-md);
+  cursor: pointer;
   text-decoration: none;
   white-space: nowrap;
 }

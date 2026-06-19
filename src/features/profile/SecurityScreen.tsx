@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import type { FormEvent } from 'react';
-import { Button, ConfirmDialog, LockIcon, PasswordInput, Spinner } from '@/design-system';
+import { Button, ConfirmDialog, LockIcon, PasswordInput } from '@/design-system';
 import { changePassword } from '@/services/auth';
 import { mapServerToFields } from './mapServerToFields';
 import { SettingsLayout } from './SettingsLayout';
@@ -105,8 +105,8 @@ export function SecurityScreen() {
           error={errors.confirmNew || ''}
           onChange={(e) => setConfirmNew(e.target.value)}
         />
-        <Button type="submit" fullWidth disabled={submitting}>
-          {submitting ? <Spinner label="Saving" /> : 'Change password'}
+        <Button type="submit" fullWidth loading={submitting} loadingLabel="Saving">
+          {submitting ? 'Saving' : 'Change password'}
         </Button>
       </form>
 

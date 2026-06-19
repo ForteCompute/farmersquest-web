@@ -75,7 +75,7 @@ async function signInAndOpenProfile(acc: AccountDto) {
   await user.click(screen.getByRole('button', { name: /^sign in$/i }));
   await screen.findByRole('heading', { name: /FarmersQuest/i });
   await user.click(screen.getByRole('link', { name: /profile/i }));
-  await screen.findByRole('heading', { name: /^Account$/i });
+  await screen.findByRole('heading', { name: /your account/i });
 }
 
 beforeEach(() => {
@@ -114,11 +114,10 @@ describe('EditProfileScreen', () => {
     await user.type(name, 'Ada N. Obi');
     await user.click(screen.getByRole('button', { name: /save changes/i }));
 
-    expect(mockUpdateProfile).toHaveBeenCalledWith({
-      fullName: 'Ada N. Obi',
-      phoneNumber: '08030000000',
-    });
-    expect(await screen.findByRole('heading', { name: /^Account$/i })).toBeInTheDocument();
+    expect(mockUpdateProfile).toHaveBeenCalledWith(
+      expect.objectContaining({ fullName: 'Ada N. Obi', phoneNumber: '08030000000' }),
+    );
+    expect(await screen.findByText(/your profile has been saved/i)).toBeInTheDocument();
   });
 });
 

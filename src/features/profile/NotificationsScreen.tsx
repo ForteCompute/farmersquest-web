@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import type { FormEvent } from 'react';
-import { Button, Checkbox, Spinner } from '@/design-system';
+import { Button, Checkbox } from '@/design-system';
 import { useSession } from '@/app/session';
 import { updateNotificationPreferences } from '@/services/auth';
 import { SettingsLayout } from './SettingsLayout';
@@ -73,8 +73,8 @@ export function NotificationsScreen() {
             <span className={form.toggleHint}>Messages on WhatsApp.</span>
           </div>
         </div>
-        <Button type="submit" fullWidth disabled={submitting}>
-          {submitting ? <Spinner label="Saving" /> : 'Save preferences'}
+        <Button type="submit" fullWidth loading={submitting} loadingLabel="Saving">
+          {submitting ? 'Saving' : 'Save preferences'}
         </Button>
       </form>
     </SettingsLayout>
