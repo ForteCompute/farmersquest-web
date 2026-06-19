@@ -356,6 +356,56 @@
                 }
             }
         },
+        "/api/v1/accounts/me/kyc": {
+            "post": {
+                "tags": [
+                    "Accounts"
+                ],
+                "summary": "Submit KYC: a government ID type, front and back images, a farmer photo, a date of birth, and the NIN.",
+                "operationId": "SubmitKyc",
+                "requestBody": {
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/SubmitKycForm"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AccountDto"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/problem+json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "content": {
+                            "application/problem+json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProblemDetails"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/accounts/admin/farmers/pending": {
             "get": {
                 "tags": [
@@ -383,18 +433,25 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK"
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PendingFarmerDtoPagedResult"
+                                }
+                            }
+                        }
                     }
                 }
             }
         },
-        "/api/v1/accounts/admin/farmers/{farmerId}/approve": {
-            "post": {
+        "/api/v1/accounts/admin/farmers/{farmerId}/kyc": {
+            "get": {
                 "tags": [
                     "Accounts (admin)"
                 ],
-                "summary": "Approve a farmer's KYC. Flips them to verified and emits an event.",
-                "operationId": "ApproveFarmer",
+                "summary": "Review a farmer's KYC submission, with the decrypted NIN and date of birth. Admin only.",
+                "operationId": "GetKycReview",
                 "parameters": [
                     {
                         "name": "farmerId",
@@ -407,8 +464,58 @@
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": "No Content"
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/KycReviewDto"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "application/problem+json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProblemDetails"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/accounts/admin/farmers/{farmerId}/kyc/documents/{slot}": {
+            "get": {
+                "tags": [
+                    "Accounts (admin)"
+                ],
+                "summary": "Fetch one KYC document image (front, back, or photo) for review. Admin only.",
+                "operationId": "GetKycDocument",
+                "parameters": [
+                    {
+                        "name": "farmerId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    },
+                    {
+                        "name": "slot",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
                     },
                     "404": {
                         "description": "Not Found",
@@ -428,7 +535,7 @@
                 "tags": [
                     "Accounts (admin)"
                 ],
-                "summary": "Suspend a farmer so they can no longer sell.",
+                "summary": "Suspend a farmer so they can no longer sell. An optional reason is recorded.",
                 "operationId": "SuspendFarmer",
                 "parameters": [
                     {
@@ -441,9 +548,127 @@
                         }
                     }
                 ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/SuspendFarmerRequest"
+                            }
+                        }
+                    }
+                },
                 "responses": {
                     "204": {
                         "description": "No Content"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/problem+json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "application/problem+json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProblemDetails"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/accounts/admin/farmers/{farmerId}/approve": {
+            "post": {
+                "tags": [
+                    "Accounts (admin)"
+                ],
+                "summary": "Approve a farmer's KYC, moving them to verified. An optional note is recorded.",
+                "operationId": "ApproveFarmer",
+                "parameters": [
+                    {
+                        "name": "farmerId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ApproveFarmerRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "application/problem+json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProblemDetails"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/accounts/admin/farmers/{farmerId}/reject": {
+            "post": {
+                "tags": [
+                    "Accounts (admin)"
+                ],
+                "summary": "Reject a farmer's KYC with a reason, so they can fix it and resubmit.",
+                "operationId": "RejectFarmer",
+                "parameters": [
+                    {
+                        "name": "farmerId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/RejectFarmerRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/problem+json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                                }
+                            }
+                        }
                     },
                     "404": {
                         "description": "Not Found",
@@ -972,6 +1197,10 @@
                         "type": "string",
                         "nullable": true
                     },
+                    "verificationReason": {
+                        "type": "string",
+                        "nullable": true
+                    },
                     "notificationPreferences": {
                         "$ref": "#/components/schemas/NotificationPreferencesDto"
                     },
@@ -1011,6 +1240,16 @@
                     "quantity": {
                         "type": "integer",
                         "format": "int32"
+                    }
+                },
+                "additionalProperties": false
+            },
+            "ApproveFarmerRequest": {
+                "type": "object",
+                "properties": {
+                    "reason": {
+                        "type": "string",
+                        "nullable": true
                     }
                 },
                 "additionalProperties": false
@@ -1203,6 +1442,78 @@
                 },
                 "additionalProperties": {}
             },
+            "IdDocumentType": {
+                "enum": [
+                    0,
+                    1,
+                    2
+                ],
+                "type": "integer",
+                "format": "int32"
+            },
+            "KycDocumentRefDto": {
+                "type": "object",
+                "properties": {
+                    "slot": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "contentType": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "url": {
+                        "type": "string",
+                        "nullable": true
+                    }
+                },
+                "additionalProperties": false
+            },
+            "KycReviewDto": {
+                "type": "object",
+                "properties": {
+                    "farmerId": {
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "fullName": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "documentType": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "nin": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "dateOfBirth": {
+                        "type": "string",
+                        "format": "date"
+                    },
+                    "submittedAtUtc": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "verificationStatus": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "verificationReason": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "documents": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/KycDocumentRefDto"
+                        },
+                        "nullable": true
+                    }
+                },
+                "additionalProperties": false
+            },
             "LoginCommand": {
                 "type": "object",
                 "properties": {
@@ -1228,6 +1539,70 @@
                     },
                     "whatsApp": {
                         "type": "boolean"
+                    }
+                },
+                "additionalProperties": false
+            },
+            "PendingFarmerDto": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "email": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "fullName": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "phoneNumber": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "registeredAtUtc": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "additionalProperties": false
+            },
+            "PendingFarmerDtoPagedResult": {
+                "type": "object",
+                "properties": {
+                    "items": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/PendingFarmerDto"
+                        },
+                        "nullable": true
+                    },
+                    "page": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "pageSize": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "totalCount": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "totalPages": {
+                        "type": "integer",
+                        "format": "int32",
+                        "readOnly": true
+                    },
+                    "hasPrevious": {
+                        "type": "boolean",
+                        "readOnly": true
+                    },
+                    "hasNext": {
+                        "type": "boolean",
+                        "readOnly": true
                     }
                 },
                 "additionalProperties": false
@@ -1528,10 +1903,6 @@
                         "type": "string",
                         "nullable": true
                     },
-                    "nin": {
-                        "type": "string",
-                        "nullable": true
-                    },
                     "farmName": {
                         "type": "string",
                         "nullable": true
@@ -1548,6 +1919,16 @@
                         "nullable": true
                     },
                     "region": {
+                        "type": "string",
+                        "nullable": true
+                    }
+                },
+                "additionalProperties": false
+            },
+            "RejectFarmerRequest": {
+                "type": "object",
+                "properties": {
+                    "reason": {
                         "type": "string",
                         "nullable": true
                     }
@@ -1668,6 +2049,48 @@
                         "nullable": true
                     },
                     "name": {
+                        "type": "string",
+                        "nullable": true
+                    }
+                },
+                "additionalProperties": false
+            },
+            "SubmitKycForm": {
+                "type": "object",
+                "properties": {
+                    "documentType": {
+                        "$ref": "#/components/schemas/IdDocumentType"
+                    },
+                    "nin": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "dateOfBirth": {
+                        "type": "string",
+                        "format": "date"
+                    },
+                    "frontImage": {
+                        "type": "string",
+                        "format": "binary",
+                        "nullable": true
+                    },
+                    "backImage": {
+                        "type": "string",
+                        "format": "binary",
+                        "nullable": true
+                    },
+                    "photo": {
+                        "type": "string",
+                        "format": "binary",
+                        "nullable": true
+                    }
+                },
+                "additionalProperties": false
+            },
+            "SuspendFarmerRequest": {
+                "type": "object",
+                "properties": {
+                    "reason": {
                         "type": "string",
                         "nullable": true
                     }
