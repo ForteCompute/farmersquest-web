@@ -30,7 +30,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Register a farmer account with KYC. The farmer starts unverified. */
+        /** Register a farmer account. NIN and KYC are completed later at verification. The farmer starts unverified. */
         post: operations["RegisterFarmer"];
         delete?: never;
         options?: never;
