@@ -209,6 +209,59 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/cart": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** View my cart, with each line validated and priced live from the catalog. */
+        get: operations["GetCart"];
+        put?: never;
+        post?: never;
+        /** Empty my cart. */
+        delete: operations["ClearCart"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/cart/items": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Add a product to my cart, or increase its quantity when already present. */
+        post: operations["AddCartItem"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/cart/items/{productId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Set the quantity of a line in my cart. */
+        put: operations["UpdateCartItem"];
+        post?: never;
+        /** Remove a line from my cart. */
+        delete: operations["RemoveCartItem"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/catalog/products": {
         parameters: {
             query?: never;
@@ -316,6 +369,12 @@ export interface components {
             /** Format: date-time */
             createdAtUtc?: string;
         };
+        AddCartItemRequest: {
+            /** Format: uuid */
+            productId?: string;
+            /** Format: int32 */
+            quantity?: number;
+        };
         AuthResultDto: {
             accessToken?: string | null;
             tokenType?: string | null;
@@ -326,6 +385,32 @@ export interface components {
         BadgesDto: {
             verifiedFarmer?: boolean;
             featured?: boolean;
+        };
+        CartDto: {
+            items?: components["schemas"]["CartItemDto"][] | null;
+            /** Format: int32 */
+            itemCount?: number;
+            /** Format: double */
+            total?: number;
+            currency?: string | null;
+            hasInvalidItems?: boolean;
+        };
+        CartItemDto: {
+            /** Format: uuid */
+            productId?: string;
+            title?: string | null;
+            unitLabel?: string | null;
+            /** Format: int32 */
+            quantity?: number;
+            /** Format: double */
+            unitPrice?: number | null;
+            /** Format: double */
+            lineTotal?: number | null;
+            seller?: components["schemas"]["SellerRefDto"];
+            /** Format: int32 */
+            availableStock?: number | null;
+            isValid?: boolean;
+            issue?: string | null;
         };
         CategoryNodeDto: {
             /** Format: uuid */
@@ -488,9 +573,18 @@ export interface components {
             avatarUrl?: string | null;
             verified?: boolean;
         };
+        SellerRefDto: {
+            /** Format: uuid */
+            id?: string;
+            name?: string | null;
+        };
         StateDto: {
             code?: string | null;
             name?: string | null;
+        };
+        UpdateCartItemRequest: {
+            /** Format: int32 */
+            quantity?: number;
         };
         UpdateNotificationPreferencesCommand: {
             email?: boolean;
@@ -886,6 +980,181 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+        };
+    };
+    GetCart: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CartDto"];
+                };
+            };
+        };
+    };
+    ClearCart: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CartDto"];
+                };
+            };
+        };
+    };
+    AddCartItem: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AddCartItemRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CartDto"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["HttpValidationProblemDetails"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+        };
+    };
+    UpdateCartItem: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                productId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateCartItemRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CartDto"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["HttpValidationProblemDetails"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+        };
+    };
+    RemoveCartItem: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                productId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CartDto"];
+                };
             };
             /** @description Not Found */
             404: {
