@@ -7,19 +7,21 @@ import { routes } from '@/app/router';
 import type { AccountDto, AuthResultDto } from '@/services/auth';
 
 // The screen talks to the API only through the auth service, so we mock that service and assert the
-// screen's behaviour: inline validation, field-error surfacing, and the register then sign-in then
-// route-home flow. Mounting the real route table lets us assert the navigation outcome.
+// screen's behaviour: inline validation, field-error surfacing, NIN never being collected, and the
+// register then sign-in then route-home flow. Mounting the real route table asserts navigation.
 vi.mock('@/services/auth', () => ({
   registerBuyer: vi.fn(),
   registerFarmer: vi.fn(),
   login: vi.fn(),
+  getMe: vi.fn(),
 }));
 
-import { login, registerBuyer, registerFarmer } from '@/services/auth';
+import { getMe, login, registerBuyer, registerFarmer } from '@/services/auth';
 
 const mockRegisterBuyer = vi.mocked(registerBuyer);
 const mockRegisterFarmer = vi.mocked(registerFarmer);
 const mockLogin = vi.mocked(login);
+const mockGetMe = vi.mocked(getMe);
 
 function account(overrides: Partial<AccountDto> = {}): AccountDto {
   return {
@@ -59,11 +61,11 @@ function renderAt(path: string) {
   );
 }
 
-async function fillBuyer(user: ReturnType<typeof userEvent.setup>) {
-  await user.type(screen.getByPlaceholderText('First Name'), 'Ada');
+async function fill(user: ReturnType<typeof userEvent.setup>) {
+  await user.type(screen.getByPlaceholderText('First name'), 'Ada');
   await user.type(screen.getByPlaceholderText('Surname'), 'Obi');
-  await user.type(screen.getByPlaceholderText('E-mail'), 'ada@example.com');
-  await user.type(screen.getByPlaceholderText('Password'), 'password123');
+  await user.type(screen.getByPlaceholderText('you@example.com'), 'ada@example.com');
+  await user.type(screen.getByPlaceholderText('At least 8 characters'), 'password123');
 }
 
 beforeEach(() => {
@@ -72,6 +74,7 @@ beforeEach(() => {
   } catch {
     // Best effort in the test environment.
   }
+  mockGetMe.mockResolvedValue({ ok: false, error: { message: 'x', fieldErrors: {} } });
 });
 
 afterEach(() => {
@@ -79,35 +82,35 @@ afterEach(() => {
 });
 
 describe('RegisterScreen', () => {
-  it('shows buyer fields without a NIN field', () => {
+  it('shows the account fields and never a NIN field, for buyer or farmer', () => {
     renderAt('/register/buyer');
-    expect(screen.getByPlaceholderText('First Name')).toBeInTheDocument();
-    expect(screen.getByPlaceholderText('E-mail')).toBeInTheDocument();
-    expect(screen.getByPlaceholderText('Password')).toBeInTheDocument();
-    expect(screen.queryByPlaceholderText('NIN')).not.toBeInTheDocument();
+    expect(screen.getByPlaceholderText('First name')).toBeInTheDocument();
+    expect(screen.getByPlaceholderText('you@example.com')).toBeInTheDocument();
+    expect(screen.getByPlaceholderText('At least 8 characters')).toBeInTheDocument();
+    expect(screen.queryByLabelText(/NIN/i)).not.toBeInTheDocument();
   });
 
-  it('shows the required NIN field for farmers', () => {
+  it('does not show a NIN field for farmers', () => {
     renderAt('/register/farmer');
-    expect(screen.getByPlaceholderText('NIN')).toBeInTheDocument();
+    expect(screen.queryByLabelText(/NIN/i)).not.toBeInTheDocument();
   });
 
-  it('keeps Continue disabled until the required fields are filled', () => {
+  it('keeps the submit disabled until the form is valid', () => {
     renderAt('/register/buyer');
-    expect(screen.getByRole('button', { name: /continue/i })).toBeDisabled();
+    expect(screen.getByRole('button', { name: /create account/i })).toBeDisabled();
   });
 
-  it('validates inline and does not call the API for invalid input', async () => {
+  it('shows an inline email error and does not call the API for invalid input', async () => {
     const user = userEvent.setup();
     renderAt('/register/buyer');
 
-    await user.type(screen.getByPlaceholderText('First Name'), 'Ada');
-    await user.type(screen.getByPlaceholderText('Surname'), 'Obi');
-    await user.type(screen.getByPlaceholderText('E-mail'), 'nope');
-    await user.type(screen.getByPlaceholderText('Password'), 'short');
-    await user.click(screen.getByRole('button', { name: /continue/i }));
+    await user.type(screen.getByPlaceholderText('First name'), 'Ada');
+    await user.type(screen.getByPlaceholderText('you@example.com'), 'nope');
+    // Move focus away from the email field to trigger its blur validation.
+    await user.click(screen.getByPlaceholderText('Surname'));
 
     expect(await screen.findByText('Enter a valid email address.')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /create account/i })).toBeDisabled();
     expect(mockRegisterBuyer).not.toHaveBeenCalled();
   });
 
@@ -117,8 +120,8 @@ describe('RegisterScreen', () => {
     mockLogin.mockResolvedValue({ ok: true, data: authResult(account()) });
 
     renderAt('/register/buyer');
-    await fillBuyer(user);
-    await user.click(screen.getByRole('button', { name: /continue/i }));
+    await fill(user);
+    await user.click(screen.getByRole('button', { name: /create account/i }));
 
     expect(
       await screen.findByRole('heading', { name: /Welcome to FarmersQuest/i }),
@@ -142,30 +145,28 @@ describe('RegisterScreen', () => {
     });
 
     renderAt('/register/buyer');
-    await fillBuyer(user);
-    await user.click(screen.getByRole('button', { name: /continue/i }));
+    await fill(user);
+    await user.click(screen.getByRole('button', { name: /create account/i }));
 
     expect(await screen.findByText('Email is already registered.')).toBeInTheDocument();
     expect(mockLogin).not.toHaveBeenCalled();
   });
 
-  it('lands a new farmer on the farmer home with the verification-pending message', async () => {
+  it('registers a farmer without a NIN and lands on the farmer home with the KYC banner', async () => {
     const user = userEvent.setup();
     const farmer = account({ role: 'Farmer', verificationStatus: 'Pending' });
     mockRegisterFarmer.mockResolvedValue({ ok: true, data: farmer });
     mockLogin.mockResolvedValue({ ok: true, data: authResult(farmer) });
 
     renderAt('/register/farmer');
-    await fillBuyer(user);
-    await user.type(screen.getByPlaceholderText('NIN'), '12345678901');
-    await user.click(screen.getByRole('button', { name: /continue/i }));
+    await fill(user);
+    await user.click(screen.getByRole('button', { name: /create account/i }));
 
-    expect(await screen.findByText(/pending verification/i)).toBeInTheDocument();
+    expect(await screen.findByText(/verify your identity to start selling/i)).toBeInTheDocument();
     expect(mockRegisterFarmer).toHaveBeenCalledWith({
       email: 'ada@example.com',
       fullName: 'Ada Obi',
       password: 'password123',
-      nin: '12345678901',
     });
   });
 });

@@ -1,0 +1,1 @@
+export { KycVerifyScreen } from './KycVerifyScreen';

@@ -1,20 +1,19 @@
 import { useState } from 'react';
 import type { FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Button, Checkbox, FigmaIcon, Input, PasswordInput, Spinner } from '@/design-system';
+import { Button, Checkbox, FigmaIcon, Input, PasswordInput } from '@/design-system';
 import { useSession } from '@/app/session';
 import { homePathForRole } from '@/app/navigation';
 import { mapApiRole } from '@/app/roles';
 import { login as loginRequest } from '@/services/auth';
 import { AuthLayout } from './AuthLayout';
+import { AuthLegal } from './AuthLegal';
 import styles from './SignInScreen.module.css';
 
-// The Sign In To Your Account screen, reproduced from the SIGN IN frames. Posts to the login
-// endpoint with the email-or-username and password, then routes to the role home. On bad
-// credentials it shows one generic message and never reveals which field was wrong.
-//
-// A generic message is intentional: the API does not tell us, and we would not surface it if it did.
-const GENERIC_CREDENTIALS_ERROR = 'Incorrect username or password. Try again';
+// The sign-in screen. Posts the email-or-username and password to the login endpoint, then routes to
+// the role home. On bad credentials it shows one generic message and never reveals which field was
+// wrong: the API does not say, and we would not surface it if it did.
+const GENERIC_CREDENTIALS_ERROR = 'Incorrect username or password. Please try again.';
 
 export function SignInScreen() {
   const navigate = useNavigate();
@@ -26,13 +25,11 @@ export function SignInScreen() {
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
-  const canSubmit = loginValue.trim() !== '' && password !== '' && !submitting;
+  const isValid = loginValue.trim() !== '' && password !== '';
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!canSubmit) {
-      return;
-    }
+    if (!isValid || submitting) return;
 
     setSubmitting(true);
     setError(null);
@@ -53,15 +50,20 @@ export function SignInScreen() {
   return (
     <AuthLayout>
       <header className={styles.header}>
-        <h1 className={styles.title}>Sign In To Your Account</h1>
-        <p className={styles.subtitle}>To sign in you must enter your email and password below</p>
+        <h1 className={styles.title}>Sign in to your account</h1>
+        <p className={styles.subtitle}>Enter your email and password to continue.</p>
       </header>
 
       <form className={styles.form} onSubmit={handleSubmit} noValidate>
+        {error && (
+          <p className={styles.banner} role="alert">
+            {error}
+          </p>
+        )}
+
         <Input
           label="Email or username"
-          labelHidden
-          placeholder="Email or username"
+          placeholder="you@example.com"
           autoComplete="username"
           leadingIcon={<FigmaIcon name="email" size={24} />}
           value={loginValue}
@@ -71,21 +73,17 @@ export function SignInScreen() {
           }}
         />
 
-        <div className={styles.passwordGroup}>
-          <PasswordInput
-            label="Password"
-            labelHidden
-            placeholder="Password"
-            autoComplete="current-password"
-            leadingIcon={<FigmaIcon name="password" size={24} />}
-            value={password}
-            error={error || ''}
-            onChange={(e) => {
-              setPassword(e.target.value);
-              if (error) setError(null);
-            }}
-          />
-        </div>
+        <PasswordInput
+          label="Password"
+          placeholder="Your password"
+          autoComplete="current-password"
+          leadingIcon={<FigmaIcon name="password" size={24} />}
+          value={password}
+          onChange={(e) => {
+            setPassword(e.target.value);
+            if (error) setError(null);
+          }}
+        />
 
         <div className={styles.row}>
           <Checkbox
@@ -94,35 +92,30 @@ export function SignInScreen() {
             onChange={(e) => setRemember(e.target.checked)}
           />
           <Link className={styles.link} to="/forgot-password">
-            Forgot Password?
+            Forgot password?
           </Link>
         </div>
 
-        <Button className={styles.submit} type="submit" fullWidth disabled={!canSubmit}>
-          {submitting ? <Spinner label="Signing in" /> : 'Continue'}
+        <Button
+          className={styles.submit}
+          type="submit"
+          fullWidth
+          disabled={!isValid}
+          loading={submitting}
+          loadingLabel="Signing in"
+        >
+          {submitting ? 'Signing in' : 'Sign in'}
         </Button>
       </form>
 
-      <div className={styles.social} aria-hidden="true">
-        <button type="button" className={styles.socialButton} disabled title="Coming soon">
-          <FigmaIcon name="google" size={30} />
-        </button>
-        <button type="button" className={styles.socialButton} disabled title="Coming soon">
-          <FigmaIcon name="facebook" size={30} />
-        </button>
-      </div>
-
       <p className={styles.signUpRow}>
         Don&rsquo;t have an account?{' '}
-        <Link className={styles.link} to="/register/buyer">
+        <Link className={styles.link} to="/register">
           Create one
         </Link>
       </p>
 
-      <p className={styles.terms}>
-        By clicking &ldquo;Continue&rdquo;, I have read and agree with the{' '}
-        <span className={styles.termsLink}>Term Sheet and Privacy Policy</span>
-      </p>
+      <AuthLegal action="signing in" />
     </AuthLayout>
   );
 }

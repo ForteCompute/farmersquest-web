@@ -1,23 +1,27 @@
 .page {
   display: flex;
-  flex-direction: column;
   justify-content: center;
-  align-items: center;
-  min-height: 100dvh;
-  padding: var(--fq-space-8) 0;
-  background-color: var(--fq-color-surface);
+  align-items: flex-start;
+  width: 100%;
+  padding: var(--fq-space-10) var(--fq-space-4) var(--fq-space-12);
 }
 
-/* Mobile-first column at the frame width, centred on larger viewports. The page padding sits inside
-   the column (border-box) so the total never exceeds the frame width and nothing clips at 402px. */
-.column {
+/* The auth card: a clean white surface on the page texture, never a grey box on flat white. */
+.card {
   position: relative;
   display: flex;
   flex-direction: column;
   width: 100%;
-  max-width: var(--fq-layout-mobile-width);
+  max-width: 460px;
   min-width: 0;
-  padding: 0 var(--fq-space-6);
+  padding: var(--fq-space-8) var(--fq-space-6);
+  background-color: var(--fq-color-surface);
+  border: 1px solid var(--fq-color-input-fill-soft);
+  border-radius: var(--fq-radius-lg);
+  box-shadow: var(--fq-shadow-md);
+}
+.wide {
+  max-width: 760px;
 }
 
 .back {
@@ -33,8 +37,16 @@
   border-radius: var(--fq-radius-sm);
   cursor: pointer;
 }
-
+.back:hover {
+  color: var(--fq-color-green-deep);
+}
 .back:focus-visible {
   outline: 2px solid var(--fq-color-green-button);
   outline-offset: 2px;
+}
+
+@media (min-width: 560px) {
+  .card {
+    padding: var(--fq-space-10) var(--fq-space-8);
+  }
 }

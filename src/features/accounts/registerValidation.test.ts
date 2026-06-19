@@ -6,7 +6,6 @@ const valid = {
   surname: 'Obi',
   email: 'ada@example.com',
   password: 'password123',
-  nin: '12345678901',
 };
 
 describe('buildFullName', () => {
@@ -25,34 +24,26 @@ describe('isValidEmail', () => {
 });
 
 describe('validateRegister', () => {
-  it('passes a complete buyer form with no NIN required', () => {
-    expect(validateRegister({ ...valid, nin: '' }, { requireNin: false })).toEqual({});
+  it('passes a complete form', () => {
+    expect(validateRegister(valid)).toEqual({});
   });
 
-  it('flags every missing required buyer field', () => {
-    const errors = validateRegister(
-      { firstName: '', surname: '', email: '', password: '', nin: '' },
-      { requireNin: false },
-    );
+  it('flags every missing required field', () => {
+    const errors = validateRegister({ firstName: '', surname: '', email: '', password: '' });
     expect(errors.firstName).toBeDefined();
     expect(errors.surname).toBeDefined();
     expect(errors.email).toBeDefined();
     expect(errors.password).toBeDefined();
-    expect(errors.nin).toBeUndefined();
   });
 
   it('rejects an invalid email and a short password', () => {
-    const errors = validateRegister(
-      { ...valid, email: 'nope', password: 'short' },
-      { requireNin: false },
-    );
+    const errors = validateRegister({ ...valid, email: 'nope', password: 'short' });
     expect(errors.email).toBeDefined();
     expect(errors.password).toBeDefined();
   });
 
-  it('requires an 11-digit NIN for farmers', () => {
-    expect(validateRegister({ ...valid, nin: '' }, { requireNin: true }).nin).toBeDefined();
-    expect(validateRegister({ ...valid, nin: '123' }, { requireNin: true }).nin).toBeDefined();
-    expect(validateRegister(valid, { requireNin: true })).toEqual({});
+  it('does not collect or require a NIN', () => {
+    // NIN is not part of registration; verification happens later at /sell/verify.
+    expect('nin' in validateRegister({ ...valid, email: '' })).toBe(false);
   });
 });

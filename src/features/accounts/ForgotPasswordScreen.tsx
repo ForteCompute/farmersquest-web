@@ -1,17 +1,16 @@
 import { useEffect, useState } from 'react';
 import type { FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button, FigmaIcon, Input, OtpInput, PasswordInput, Spinner } from '@/design-system';
+import { Button, FigmaIcon, Input, OtpInput, PasswordInput } from '@/design-system';
 import { requestPasswordReset, resetPassword } from '@/services/auth';
-import { isValidEmail } from './registerValidation';
+import { isValidEmail, MIN_PASSWORD_LENGTH } from './registerValidation';
 import { AuthLayout } from './AuthLayout';
 import { AuthSuccess } from './AuthSuccess';
 import styles from './ForgotPasswordScreen.module.css';
 
-// The forgot-password flow from the FORGOT PASSWORD frames, stepping request -> confirm -> sign-in
-// prompt:
+// The forgot-password flow, stepping request -> code -> new password -> done:
 //  1. request:  enter email, post password-reset/request to send a code.
-//  2. code:     enter the 5-digit code (the reset token); resend is gated by a countdown.
+//  2. code:     enter the reset code (the token); resend is gated by a countdown.
 //  3. password: set the new password, post password-reset/confirm with the token.
 //  4. done:     success, with a Back To Sign In action.
 // The code step advances locally because the contract has no verify-only endpoint; the token is
@@ -20,7 +19,6 @@ type Step = 'request' | 'code' | 'password' | 'done';
 
 const CODE_LENGTH = 5;
 const RESEND_SECONDS = 34;
-const MIN_PASSWORD_LENGTH = 8;
 
 function formatCountdown(seconds: number): string {
   const mm = String(Math.floor(seconds / 60)).padStart(2, '0');
@@ -118,9 +116,9 @@ export function ForgotPasswordScreen() {
     return (
       <AuthLayout>
         <AuthSuccess
-          title="Password Changed"
-          message="Your password has successfully been changed!"
-          actionLabel="Back To Sign In"
+          title="Password changed"
+          message="Your password has been changed successfully."
+          actionLabel="Back to sign in"
           onAction={goToSignIn}
         />
       </AuthLayout>
@@ -131,18 +129,17 @@ export function ForgotPasswordScreen() {
     return (
       <AuthLayout onBack={goToSignIn}>
         <header className={styles.header}>
-          <h1 className={styles.title}>Forgot Password?</h1>
+          <h1 className={styles.title}>Forgot password?</h1>
           <p className={styles.subtitle}>
-            Please type your email to get a confirmation code to set a new password
+            Enter your email and we will send a code to reset your password.
           </p>
         </header>
         <form className={styles.form} onSubmit={handleRequest} noValidate>
           <Input
-            label="E-mail"
-            labelHidden
+            label="Email address"
             type="email"
             inputMode="email"
-            placeholder="E-mail"
+            placeholder="you@example.com"
             autoComplete="email"
             leadingIcon={<FigmaIcon name="email" size={24} />}
             value={email}
@@ -156,9 +153,11 @@ export function ForgotPasswordScreen() {
             className={styles.submit}
             type="submit"
             fullWidth
-            disabled={email.trim() === '' || submitting}
+            disabled={email.trim() === ''}
+            loading={submitting}
+            loadingLabel="Sending code"
           >
-            {submitting ? <Spinner label="Sending" /> : 'Confirm Email'}
+            {submitting ? 'Sending code' : 'Send reset code'}
           </Button>
         </form>
       </AuthLayout>
@@ -169,9 +168,9 @@ export function ForgotPasswordScreen() {
     return (
       <AuthLayout onBack={() => setStep('request')}>
         <header className={styles.header}>
-          <h1 className={styles.title}>Verify Your Email</h1>
+          <h1 className={styles.title}>Verify your email</h1>
           <p className={styles.subtitle}>
-            Verification code has been sent to <span className={styles.email}>{email}</span>
+            We sent a code to <span className={styles.email}>{email}</span>
           </p>
         </header>
         <div className={styles.form}>
@@ -191,7 +190,7 @@ export function ForgotPasswordScreen() {
             disabled={code.length < CODE_LENGTH}
             onClick={handleConfirmCode}
           >
-            Confirm Code
+            Confirm code
           </Button>
           <p className={styles.resendRow}>
             <span className={styles.countdown}>{formatCountdown(secondsLeft)}</span>{' '}
@@ -201,7 +200,7 @@ export function ForgotPasswordScreen() {
               onClick={handleResend}
               disabled={secondsLeft > 0}
             >
-              Resend Confirmation Code
+              Resend code
             </button>
           </p>
         </div>
@@ -213,8 +212,8 @@ export function ForgotPasswordScreen() {
   return (
     <AuthLayout onBack={() => setStep('code')}>
       <header className={styles.header}>
-        <h1 className={styles.title}>New Password</h1>
-        <p className={styles.subtitle}>Type your new password in the boxes below</p>
+        <h1 className={styles.title}>New password</h1>
+        <p className={styles.subtitle}>Choose a new password for your account.</p>
       </header>
       <form className={styles.form} onSubmit={handleSetPassword} noValidate>
         {error && (
@@ -223,21 +222,20 @@ export function ForgotPasswordScreen() {
           </p>
         )}
         <PasswordInput
-          label="Password"
-          labelHidden
-          placeholder="Password"
+          label="New password"
+          placeholder="At least 8 characters"
           autoComplete="new-password"
           leadingIcon={<FigmaIcon name="password" size={24} />}
           value={password}
+          hint="Use at least 8 characters."
           onChange={(e) => {
             setPassword(e.target.value);
             if (error) setError(null);
           }}
         />
         <PasswordInput
-          label="Confirm Password"
-          labelHidden
-          placeholder="Confirm Password"
+          label="Confirm password"
+          placeholder="Re-enter your password"
           autoComplete="new-password"
           leadingIcon={<FigmaIcon name="password" size={24} />}
           value={confirm}
@@ -250,9 +248,11 @@ export function ForgotPasswordScreen() {
           className={styles.submit}
           type="submit"
           fullWidth
-          disabled={password === '' || confirm === '' || submitting}
+          disabled={password === '' || confirm === ''}
+          loading={submitting}
+          loadingLabel="Saving"
         >
-          {submitting ? <Spinner label="Saving" /> : 'Confirm'}
+          {submitting ? 'Saving' : 'Change password'}
         </Button>
       </form>
     </AuthLayout>

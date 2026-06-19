@@ -70,9 +70,9 @@ async function signInAndOpenProfile(acc: AccountDto) {
       </MemoryRouter>
     </SessionProvider>,
   );
-  await user.type(screen.getByPlaceholderText('Email or username'), 'ada');
-  await user.type(screen.getByPlaceholderText('Password'), 'password123');
-  await user.click(screen.getByRole('button', { name: /continue/i }));
+  await user.type(screen.getByLabelText('Email or username'), 'ada');
+  await user.type(screen.getByLabelText('Password'), 'password123');
+  await user.click(screen.getByRole('button', { name: /^sign in$/i }));
   await screen.findByRole('heading', { name: /FarmersQuest/i });
   await user.click(screen.getByRole('link', { name: /profile/i }));
   await screen.findByRole('heading', { name: /^Account$/i });
@@ -99,7 +99,7 @@ describe('ProfileScreen', () => {
     // The name shows both in the shell header and on the profile.
     expect(screen.getAllByText('Musa Bello').length).toBeGreaterThan(0);
     expect(screen.getByText('ada@example.com')).toBeInTheDocument();
-    expect(screen.getByText(/pending verification/i)).toBeInTheDocument();
+    expect(screen.getByText(/verify your identity to start selling/i)).toBeInTheDocument();
   });
 });
 
