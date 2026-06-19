@@ -1,17 +1,21 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { FormEvent } from 'react';
 import { Link } from 'react-router-dom';
 import { Button, Input, PhoneIcon, UserIcon } from '@/design-system';
+import { ChevronDown } from '@/components/storefront';
 import { useSession } from '@/app/session';
 import { updateProfile, type UpdateProfileInput } from '@/services/auth';
+import { getStates, type StateRef } from '@/services/catalog';
 import { mapServerToFields } from './mapServerToFields';
 import { SettingsLayout } from './SettingsLayout';
 import form from './settingsForm.module.css';
 
-// Edit the signed-in user's own profile. Everyone can edit their name, phone, and location; farmers
-// can also edit their farm name and primary crops. Posts to PUT /me and refreshes the session
-// account. The API owns who "me" is and re-validates every field, so a user only ever edits their
-// own profile. Live validation, inline errors, and loading, success, and error states.
+// Edit the signed-in user's own profile. Everyone can edit their name, phone, and location (state and
+// region); farmers can also edit their farm name and crops, the same onboarding fields collected at
+// signup. The State list comes from the catalog reference endpoint (no hardcoding); region and crops
+// stay free text, as in signup, because the API has no reference list for them yet. Posts to PUT /me
+// and refreshes the session account. The API owns who "me" is and re-validates every field. Live
+// validation, inline errors, and loading, success, and error states.
 const KNOWN_FIELDS = ['fullName', 'phoneNumber', 'state', 'region', 'farmName', 'crops'];
 
 export function EditProfileScreen() {
@@ -24,11 +28,22 @@ export function EditProfileScreen() {
   const [region, setRegion] = useState(account?.region ?? '');
   const [farmName, setFarmName] = useState(account?.farmName ?? '');
   const [crops, setCrops] = useState((account?.crops ?? []).join(', '));
+  const [states, setStates] = useState<StateRef[]>([]);
 
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [general, setGeneral] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+
+  useEffect(() => {
+    let active = true;
+    void getStates().then((r) => {
+      if (active && r.ok) setStates(r.data);
+    });
+    return () => {
+      active = false;
+    };
+  }, []);
 
   const isValid = fullName.trim() !== '';
 
@@ -135,16 +150,27 @@ export function EditProfileScreen() {
           }}
         />
         <div className={form.row}>
-          <Input
-            label="State"
-            autoComplete="address-level1"
-            value={state}
-            error={errors.state || ''}
-            onChange={(e) => {
-              setState(e.target.value);
-              clearStatus();
-            }}
-          />
+          <label className={form.field}>
+            <span className={form.fieldLabel}>State</span>
+            <span className={form.selectWrap}>
+              <select
+                value={state}
+                onChange={(e) => {
+                  setState(e.target.value);
+                  clearStatus();
+                }}
+              >
+                <option value="">Select your state</option>
+                {states.map((s) => (
+                  <option key={s.code ?? s.name ?? ''} value={s.name ?? ''}>
+                    {s.name}
+                  </option>
+                ))}
+              </select>
+              <ChevronDown size={18} />
+            </span>
+            {errors.state && <span className={form.fieldError}>{errors.state}</span>}
+          </label>
           <Input
             label="Region or town"
             autoComplete="address-level2"
@@ -169,7 +195,7 @@ export function EditProfileScreen() {
               }}
             />
             <Input
-              label="Primary crops"
+              label="Your crops"
               placeholder="Maize, Cassava, Yam"
               hint="Separate crops with a comma."
               value={crops}

@@ -40,6 +40,50 @@
   }
 }
 
+/* A labelled select that matches the design system Input (height, radius, border), as in signup. */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--fq-space-2);
+}
+.fieldLabel {
+  font-size: var(--fq-text-sm);
+  font-weight: var(--fq-weight-semibold);
+  color: var(--fq-color-ink);
+}
+.selectWrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.selectWrap select {
+  appearance: none;
+  width: 100%;
+  min-height: var(--fq-size-input-height);
+  padding: 0 var(--fq-space-7) 0 var(--fq-space-3);
+  font-family: inherit;
+  font-size: var(--fq-text-md);
+  color: var(--fq-color-ink);
+  background-color: var(--fq-color-surface);
+  border: 1px solid var(--fq-color-input-fill);
+  border-radius: var(--fq-radius-md);
+  cursor: pointer;
+}
+.selectWrap select:focus-visible {
+  outline: 2px solid var(--fq-color-green-button);
+  outline-offset: 1px;
+}
+.selectWrap svg {
+  position: absolute;
+  right: var(--fq-space-3);
+  pointer-events: none;
+  color: var(--fq-color-text-secondary);
+}
+.fieldError {
+  font-size: var(--fq-text-sm);
+  color: var(--fq-color-danger);
+}
+
 .toggles {
   display: flex;
   flex-direction: column;
