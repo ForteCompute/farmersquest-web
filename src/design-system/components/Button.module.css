@@ -17,8 +17,13 @@
 }
 
 .button:disabled {
-  opacity: 0.55;
   cursor: not-allowed;
+}
+
+/* Loading keeps the button at its active brand colour (it is working, not disabled) and shows a
+   wait cursor. */
+.button.loading {
+  cursor: progress;
 }
 
 .fullWidth {
@@ -49,12 +54,16 @@
 .primary:hover:not(:disabled) {
   background-color: var(--fq-color-green-deep);
 }
-/* Disabled primary matches the frames: the brand green at 35% opacity (the light-green Continue on
-   an incomplete form). */
+/* Disabled primary reads as a clearly inactive control (muted neutral), not a faded brand button,
+   so an incomplete form never looks like a broken green button. */
 .primary:disabled {
+  background-color: var(--fq-color-input-fill);
+  color: var(--fq-color-text-secondary);
+}
+/* While loading, restore the brand colour: the action is in progress, not disabled. */
+.primary.loading:disabled {
   background-color: var(--fq-color-green-button);
   color: var(--fq-color-on-color);
-  opacity: 0.35;
 }
 
 .secondary {

@@ -104,7 +104,7 @@ export function ProfileScreen() {
         <p className={styles.subtitle}>{ROLE_LABELS[role]}</p>
       </header>
 
-      {isFarmer && !isVerified && <VerificationBanner status={account.verificationStatus} />}
+      {isFarmer && !isVerified && <VerificationBanner account={account} />}
 
       <section className={styles.section}>
         <h2 className={styles.sectionTitle}>Account Details</h2>

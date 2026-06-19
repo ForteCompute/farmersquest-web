@@ -13,14 +13,16 @@ vi.mock('@/services/auth', () => ({
   logout: vi.fn(),
   requestPasswordReset: vi.fn(),
   resetPassword: vi.fn(),
+  getMe: vi.fn(),
 }));
 
-import { login, logout, requestPasswordReset, resetPassword } from '@/services/auth';
+import { getMe, login, logout, requestPasswordReset, resetPassword } from '@/services/auth';
 
 const mockLogin = vi.mocked(login);
 const mockLogout = vi.mocked(logout);
 const mockRequestReset = vi.mocked(requestPasswordReset);
 const mockResetPassword = vi.mocked(resetPassword);
+const mockGetMe = vi.mocked(getMe);
 
 function account(overrides: Partial<AccountDto> = {}): AccountDto {
   return {
@@ -66,6 +68,7 @@ beforeEach(() => {
   } catch {
     // Best effort in the test environment.
   }
+  mockGetMe.mockResolvedValue({ ok: false, error: { message: 'x', fieldErrors: {} } });
 });
 
 afterEach(() => {
@@ -81,12 +84,12 @@ describe('SignInScreen', () => {
     });
 
     renderAt('/sign-in');
-    await user.type(screen.getByPlaceholderText('Email or username'), 'ada@example.com');
-    await user.type(screen.getByPlaceholderText('Password'), 'wrong-pass');
-    await user.click(screen.getByRole('button', { name: /continue/i }));
+    await user.type(screen.getByLabelText('Email or username'), 'ada@example.com');
+    await user.type(screen.getByLabelText('Password'), 'wrong-pass');
+    await user.click(screen.getByRole('button', { name: /^sign in$/i }));
 
     expect(
-      await screen.findByText('Incorrect username or password. Try again'),
+      await screen.findByText('Incorrect username or password. Please try again.'),
     ).toBeInTheDocument();
     expect(screen.queryByText(/No such user/i)).not.toBeInTheDocument();
     expect(screen.queryByText(/User not found/i)).not.toBeInTheDocument();
@@ -97,9 +100,9 @@ describe('SignInScreen', () => {
     mockLogin.mockResolvedValue({ ok: true, data: authResult(account()) });
 
     renderAt('/sign-in');
-    await user.type(screen.getByPlaceholderText('Email or username'), 'ada');
-    await user.type(screen.getByPlaceholderText('Password'), 'password123');
-    await user.click(screen.getByRole('button', { name: /continue/i }));
+    await user.type(screen.getByLabelText('Email or username'), 'ada');
+    await user.type(screen.getByLabelText('Password'), 'password123');
+    await user.click(screen.getByRole('button', { name: /^sign in$/i }));
 
     expect(
       await screen.findByRole('heading', { name: /Welcome to FarmersQuest/i }),
@@ -116,15 +119,15 @@ describe('sign out', () => {
 
     // Sign in first so the session is authenticated, then sign out from the shell.
     renderAt('/sign-in');
-    await user.type(screen.getByPlaceholderText('Email or username'), 'ada');
-    await user.type(screen.getByPlaceholderText('Password'), 'password123');
-    await user.click(screen.getByRole('button', { name: /continue/i }));
+    await user.type(screen.getByLabelText('Email or username'), 'ada');
+    await user.type(screen.getByLabelText('Password'), 'password123');
+    await user.click(screen.getByRole('button', { name: /^sign in$/i }));
     await screen.findByRole('heading', { name: /Welcome to FarmersQuest/i });
 
     await user.click(await screen.findByRole('button', { name: /sign out/i }));
 
     expect(
-      await screen.findByRole('heading', { name: /Sign In To Your Account/i }),
+      await screen.findByRole('heading', { name: /Sign in to your account/i }),
     ).toBeInTheDocument();
     expect(mockLogout).toHaveBeenCalled();
   });
@@ -139,8 +142,8 @@ describe('ForgotPasswordScreen', () => {
     renderAt('/forgot-password');
 
     // Step 1: request a code.
-    await user.type(screen.getByPlaceholderText('E-mail'), 'ada@example.com');
-    await user.click(screen.getByRole('button', { name: /confirm email/i }));
+    await user.type(screen.getByLabelText('Email address'), 'ada@example.com');
+    await user.click(screen.getByRole('button', { name: /send reset code/i }));
     expect(mockRequestReset).toHaveBeenCalledWith({ email: 'ada@example.com' });
 
     // Step 2: enter the 5-digit code.
@@ -152,13 +155,13 @@ describe('ForgotPasswordScreen', () => {
     await user.click(screen.getByRole('button', { name: /confirm code/i }));
 
     // Step 3: set the new password.
-    expect(await screen.findByRole('heading', { name: /New Password/i })).toBeInTheDocument();
-    await user.type(screen.getByPlaceholderText('Password'), 'newpassword1');
-    await user.type(screen.getByPlaceholderText('Confirm Password'), 'newpassword1');
-    await user.click(screen.getByRole('button', { name: /^confirm$/i }));
+    expect(await screen.findByRole('heading', { name: /New password/i })).toBeInTheDocument();
+    await user.type(screen.getByLabelText('New password'), 'newpassword1');
+    await user.type(screen.getByLabelText('Confirm password'), 'newpassword1');
+    await user.click(screen.getByRole('button', { name: /change password/i }));
 
     // Step 4: success.
-    expect(await screen.findByRole('heading', { name: /Password Changed/i })).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: /Password changed/i })).toBeInTheDocument();
     expect(mockResetPassword).toHaveBeenCalledWith({ token: '12345', newPassword: 'newpassword1' });
   });
 
@@ -167,8 +170,8 @@ describe('ForgotPasswordScreen', () => {
     mockRequestReset.mockResolvedValue({ ok: true, data: null });
 
     renderAt('/forgot-password');
-    await user.type(screen.getByPlaceholderText('E-mail'), 'ada@example.com');
-    await user.click(screen.getByRole('button', { name: /confirm email/i }));
+    await user.type(screen.getByLabelText('Email address'), 'ada@example.com');
+    await user.click(screen.getByRole('button', { name: /send reset code/i }));
 
     const group = await screen.findByRole('group', { name: /verification code/i });
     const boxes = within(group).getAllByRole('textbox');
@@ -177,10 +180,10 @@ describe('ForgotPasswordScreen', () => {
     }
     await user.click(screen.getByRole('button', { name: /confirm code/i }));
 
-    await screen.findByRole('heading', { name: /New Password/i });
-    await user.type(screen.getByPlaceholderText('Password'), 'newpassword1');
-    await user.type(screen.getByPlaceholderText('Confirm Password'), 'different1');
-    await user.click(screen.getByRole('button', { name: /^confirm$/i }));
+    await screen.findByRole('heading', { name: /New password/i });
+    await user.type(screen.getByLabelText('New password'), 'newpassword1');
+    await user.type(screen.getByLabelText('Confirm password'), 'different1');
+    await user.click(screen.getByRole('button', { name: /change password/i }));
 
     expect(await screen.findByText('Passwords do not match.')).toBeInTheDocument();
     expect(mockResetPassword).not.toHaveBeenCalled();

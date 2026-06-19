@@ -45,9 +45,9 @@ const COLUMNS = [
   {
     title: 'Legal',
     links: [
-      { label: 'Terms of service', to: '#' },
-      { label: 'Privacy policy', to: '#' },
-      { label: 'Seller guidelines', to: '#' },
+      { label: 'Terms of service', to: '/terms' },
+      { label: 'Privacy policy', to: '/privacy' },
+      { label: 'Seller guidelines', to: '/terms' },
     ],
   },
 ];
@@ -81,7 +81,7 @@ export function StorefrontFooter() {
         ) : (
           <form className={styles.newsletterForm} onSubmit={subscribe} noValidate>
             <label htmlFor="newsletter-email" className="sr-only">
-              Email address
+              Email address for our newsletter
             </label>
             <input
               id="newsletter-email"

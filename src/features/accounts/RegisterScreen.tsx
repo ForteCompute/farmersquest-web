@@ -1,29 +1,30 @@
 import { useState } from 'react';
 import type { FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Button, FigmaIcon, IdCardIcon, Input, PasswordInput } from '@/design-system';
+import { Button, FigmaIcon, Input, PasswordInput } from '@/design-system';
 import { useSession } from '@/app/session';
 import { homePathForRole } from '@/app/navigation';
-import { mapApiRole, type Role } from '@/app/roles';
+import { mapApiRole, ROLE_LABELS, type Role } from '@/app/roles';
 import { login as loginRequest, registerBuyer, registerFarmer } from '@/services/auth';
 import type { FieldErrors } from '@/services/problemDetails';
 import { AuthLayout } from './AuthLayout';
+import { AuthLegal } from './AuthLegal';
 import { buildFullName, validateRegister, type RegisterValues } from './registerValidation';
 import styles from './RegisterScreen.module.css';
 
-// The Create Your Account screen, reproduced from the CREATE ACCOUNT frame. One component serves the
-// buyer and farmer variants: the farmer adds the required NIN field. It posts to the matching
-// register endpoint, then signs the new account in and routes to the role home; a new farmer lands
-// unverified and sees the verification-pending message on their home.
+// The create-account screen. One component serves the buyer and farmer variants. It posts to the
+// matching register endpoint, then signs the new account in and routes to the role home.
 //
-// Per the contract, only fields the register commands accept are collected. The frame's Farm Name,
-// Your Crops, State and Region have no endpoint fields yet (tracked as an API gap), so they are not
-// shown. The social buttons and terms link are non-functional, matching the frame chrome.
+// NIN is NOT collected here: a farmer registers without it and completes identity verification (KYC)
+// later, inside the app at /sell/verify. A new farmer lands Pending and is prompted to verify.
+//
+// Only fields the register commands accept are collected. The legal line links the real Terms and
+// Privacy pages. Social sign-up is not offered until it has a backend.
 export interface RegisterScreenProps {
   role: Role;
 }
 
-const EMPTY: RegisterValues = { firstName: '', surname: '', email: '', password: '', nin: '' };
+const EMPTY: RegisterValues = { firstName: '', surname: '', email: '', password: '' };
 
 // Maps API problem-details field keys to this form's fields, folding anything we do not render into
 // a general message so no server error is silently dropped.
@@ -34,7 +35,7 @@ function mapServerErrors(serverErrors: FieldErrors): {
   const errors: FieldErrors = {};
   const leftover: string[] = [];
   for (const [key, value] of Object.entries(serverErrors)) {
-    if (key === 'email' || key === 'password' || key === 'nin') {
+    if (key === 'email' || key === 'password') {
       errors[key] = value;
     } else if (key === 'fullName') {
       errors.firstName = value;
@@ -51,52 +52,49 @@ export function RegisterScreen({ role }: RegisterScreenProps) {
   const { signIn } = useSession();
 
   const [values, setValues] = useState<RegisterValues>(EMPTY);
-  const [errors, setErrors] = useState<FieldErrors>({});
+  const [shownErrors, setShownErrors] = useState<FieldErrors>({});
   const [generalError, setGeneralError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
+  const liveErrors = validateRegister(values);
+  const isValid = Object.keys(liveErrors).length === 0;
+
   function update<K extends keyof RegisterValues>(field: K, value: string) {
     setValues((prev) => ({ ...prev, [field]: value }));
-    setErrors((prev) => (prev[field] ? { ...prev, [field]: '' } : prev));
-    if (generalError) {
-      setGeneralError(null);
-    }
+    setShownErrors((prev) => (prev[field] ? { ...prev, [field]: '' } : prev));
+    if (generalError) setGeneralError(null);
   }
 
-  const requiredFilled =
-    values.firstName.trim() !== '' &&
-    values.surname.trim() !== '' &&
-    values.email.trim() !== '' &&
-    values.password !== '' &&
-    (!isFarmer || values.nin.trim() !== '');
+  // Surface a field's error once the user leaves it, for fast inline feedback.
+  function blur<K extends keyof RegisterValues>(field: K) {
+    setShownErrors((prev) => ({ ...prev, [field]: liveErrors[field] ?? '' }));
+  }
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (submitting) {
-      return;
-    }
+    if (submitting) return;
 
-    const clientErrors = validateRegister(values, { requireNin: isFarmer });
-    if (Object.keys(clientErrors).length > 0) {
-      setErrors(clientErrors);
+    if (!isValid) {
+      setShownErrors(liveErrors);
       return;
     }
 
     setSubmitting(true);
-    setErrors({});
+    setShownErrors({});
     setGeneralError(null);
 
     const fullName = buildFullName(values.firstName, values.surname);
     const email = values.email.trim();
 
+    // Farmers register without a NIN; KYC is collected later at /sell/verify.
     const registration = isFarmer
-      ? await registerFarmer({ email, fullName, password: values.password, nin: values.nin.trim() })
+      ? await registerFarmer({ email, fullName, password: values.password })
       : await registerBuyer({ email, fullName, password: values.password });
 
     if (!registration.ok) {
       setSubmitting(false);
       const mapped = mapServerErrors(registration.error.fieldErrors);
-      setErrors(mapped.errors);
+      setShownErrors(mapped.errors);
       setGeneralError(
         mapped.general ??
           (Object.keys(mapped.errors).length === 0 ? registration.error.message : null),
@@ -104,7 +102,7 @@ export function RegisterScreen({ role }: RegisterScreenProps) {
       return;
     }
 
-    // Account created; sign the user in so they land in the app, per the ticket.
+    // Account created; sign the user in so they land in the app.
     const auth = await loginRequest({ login: email, password: values.password });
     if (!auth.ok) {
       setSubmitting(false);
@@ -120,8 +118,12 @@ export function RegisterScreen({ role }: RegisterScreenProps) {
   return (
     <AuthLayout>
       <header className={styles.header}>
-        <h1 className={styles.title}>Create Your Account</h1>
-        <p className={styles.subtitle}>You must enter your information in the boxes below</p>
+        <h1 className={styles.title}>Create your {ROLE_LABELS[role].toLowerCase()} account</h1>
+        <p className={styles.subtitle}>
+          {isFarmer
+            ? 'Start selling your crops and livestock to buyers across Nigeria.'
+            : 'Buy fresh produce and livestock direct from verified farmers.'}
+        </p>
       </header>
 
       <form className={styles.form} onSubmit={handleSubmit} noValidate>
@@ -133,82 +135,65 @@ export function RegisterScreen({ role }: RegisterScreenProps) {
 
         <div className={styles.nameRow}>
           <Input
-            label="First Name"
-            labelHidden
-            placeholder="First Name"
+            label="First name"
+            placeholder="First name"
             autoComplete="given-name"
             value={values.firstName}
-            error={errors.firstName || ''}
+            error={shownErrors.firstName || ''}
             onChange={(e) => update('firstName', e.target.value)}
+            onBlur={() => blur('firstName')}
           />
           <Input
             label="Surname"
-            labelHidden
             placeholder="Surname"
             autoComplete="family-name"
             value={values.surname}
-            error={errors.surname || ''}
+            error={shownErrors.surname || ''}
             onChange={(e) => update('surname', e.target.value)}
+            onBlur={() => blur('surname')}
           />
         </div>
 
         <Input
-          label="E-mail"
-          labelHidden
+          label="Email address"
           type="email"
           inputMode="email"
-          placeholder="E-mail"
+          placeholder="you@example.com"
           autoComplete="email"
           leadingIcon={<FigmaIcon name="email" size={24} />}
           value={values.email}
-          error={errors.email || ''}
+          error={shownErrors.email || ''}
           onChange={(e) => update('email', e.target.value)}
+          onBlur={() => blur('email')}
         />
 
         <PasswordInput
           label="Password"
-          labelHidden
-          placeholder="Password"
+          placeholder="At least 8 characters"
           autoComplete="new-password"
           leadingIcon={<FigmaIcon name="password" size={24} />}
           value={values.password}
-          error={errors.password || ''}
+          error={shownErrors.password || ''}
+          hint="Use at least 8 characters."
           onChange={(e) => update('password', e.target.value)}
+          onBlur={() => blur('password')}
         />
 
-        {isFarmer && (
-          <Input
-            label="NIN (National Identification Number)"
-            labelHidden
-            inputMode="numeric"
-            placeholder="NIN"
-            autoComplete="off"
-            leadingIcon={<IdCardIcon size={24} />}
-            value={values.nin}
-            error={errors.nin || ''}
-            hint="Your 11-digit National Identification Number. Used to verify your farm."
-            onChange={(e) => update('nin', e.target.value)}
-          />
-        )}
-
-        <Button type="submit" fullWidth disabled={!requiredFilled || submitting}>
-          {submitting ? 'Creating account...' : 'Continue'}
+        <Button
+          type="submit"
+          fullWidth
+          disabled={!isValid}
+          loading={submitting}
+          loadingLabel="Creating account"
+        >
+          {submitting ? 'Creating account' : 'Create account'}
         </Button>
       </form>
-
-      <div className={styles.social} aria-hidden="true">
-        <button type="button" className={styles.socialButton} disabled title="Coming soon">
-          <FigmaIcon name="google" size={30} />
-        </button>
-        <button type="button" className={styles.socialButton} disabled title="Coming soon">
-          <FigmaIcon name="facebook" size={30} />
-        </button>
-      </div>
 
       <p className={styles.signInRow}>
         Already have an account?{' '}
         <Link className={styles.link} to="/sign-in">
-          Sign-In Instead
+          Sign in
         </Link>
       </p>
 
@@ -230,10 +215,7 @@ export function RegisterScreen({ role }: RegisterScreenProps) {
         )}
       </p>
 
-      <p className={styles.terms}>
-        By clicking &ldquo;Continue&rdquo;, I have read and agree with the{' '}
-        <span className={styles.termsLink}>Term Sheet and Privacy Policy</span>
-      </p>
+      <AuthLegal action="creating an account" />
     </AuthLayout>
   );
 }

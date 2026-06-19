@@ -8,13 +8,13 @@ import { ProductDetailPage } from '@/features/product';
 import { BuyerHome } from '@/features/buyer';
 import { FarmerHome } from '@/features/farmer';
 import {
+  AccountTypeScreen,
   ForgotPasswordScreen,
   RegisterScreen,
   SignInScreen,
-  UploadIdScreen,
-  VerifyIdentityScreen,
-  VerifyPhoneScreen,
 } from '@/features/accounts';
+import { KycVerifyScreen } from '@/features/sell';
+import { PrivacyPage, TermsPage } from '@/features/legal';
 import {
   EditProfileScreen,
   NotificationsScreen,
@@ -72,15 +72,34 @@ export const routes: RouteObject[] = [
     ),
   },
 
-  // Account screens (onboarding, auth).
-  { path: '/register', element: <Navigate to="/register/buyer" replace /> },
+  // Legal pages (linked from the auth forms and the footer).
+  {
+    path: '/terms',
+    element: (
+      <StorefrontLayout showHeaderSearch={false}>
+        <TermsPage />
+      </StorefrontLayout>
+    ),
+  },
+  {
+    path: '/privacy',
+    element: (
+      <StorefrontLayout showHeaderSearch={false}>
+        <PrivacyPage />
+      </StorefrontLayout>
+    ),
+  },
+
+  // Account screens. /register is the account-type chooser; each role has its own form. These wrap
+  // themselves in the storefront chrome via AuthLayout.
+  { path: '/register', element: <AccountTypeScreen /> },
   { path: '/register/buyer', element: <RegisterScreen role="buyer" /> },
   { path: '/register/farmer', element: <RegisterScreen role="farmer" /> },
-  { path: '/register/verify-phone', element: <VerifyPhoneScreen /> },
-  { path: '/register/verify-identity', element: <VerifyIdentityScreen /> },
-  { path: '/register/upload-id', element: <UploadIdScreen /> },
   { path: '/sign-in', element: <SignInScreen /> },
   { path: '/forgot-password', element: <ForgotPasswordScreen /> },
+
+  // Farmer identity verification (KYC), inside the app. Guards to signed-in farmers.
+  { path: '/sell/verify', element: <KycVerifyScreen /> },
 
   // Aliases for the confirmed route names, pointing at the current screens until the auth rename.
   { path: '/join', element: <Navigate to="/register" replace /> },

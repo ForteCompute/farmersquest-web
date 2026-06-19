@@ -1,8 +1,10 @@
 .banner {
   display: flex;
-  flex-direction: column;
-  gap: var(--fq-space-1);
-  padding: var(--fq-space-4);
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--fq-space-3);
+  padding: var(--fq-space-4) var(--fq-space-5);
   border-radius: var(--fq-radius-md);
   border: 1px solid transparent;
 }
@@ -17,9 +19,16 @@
   border-color: var(--fq-color-danger);
 }
 
+.copy {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
 .title {
   font-size: var(--fq-text-md);
-  font-weight: var(--fq-weight-semibold);
+  font-weight: var(--fq-weight-bold);
   color: var(--fq-color-ink);
 }
 
@@ -27,4 +36,21 @@
   font-size: var(--fq-text-sm);
   color: var(--fq-color-text-secondary);
   line-height: var(--fq-leading-normal);
+}
+
+.action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  min-height: 44px;
+  padding: 0 var(--fq-space-5);
+  font-weight: var(--fq-weight-bold);
+  color: var(--fq-color-on-color);
+  background-color: var(--fq-color-green-button);
+  border-radius: var(--fq-radius-md);
+  text-decoration: none;
+}
+.action:hover {
+  background-color: var(--fq-color-green-deep);
 }

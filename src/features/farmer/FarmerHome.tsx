@@ -1,30 +1,42 @@
+import { useNavigate } from 'react-router-dom';
 import { Badge, Button, Card } from '@/design-system';
 import { config } from '@/services/config';
 import { useSession } from '@/app/session';
+import { getFarmerKyc } from '@/app/kyc';
 import { VerificationBanner } from '@/features/accounts';
 import styles from './FarmerHome.module.css';
 
-// The farmer landing placeholder. It mirrors the buyer home for the farmer role to prove role-gated
-// navigation. Listings, orders, and payouts arrive with their feature tickets. A newly registered
-// farmer lands here unverified and sees the verification-pending message, driven by the account
-// status the API returns.
+// The farmer landing. A newly registered farmer lands here Pending and sees the persistent KYC
+// banner. The verified badge and the path to create a listing are gated on the account's
+// verification flags: an unverified farmer is sent to finish KYC first, and shows no verified badge.
+// The API is the sole authority and enforces the real limits; the client only reacts to the flags.
 export function FarmerHome() {
+  const navigate = useNavigate();
   const { account } = useSession();
+  const kyc = getFarmerKyc(account);
 
   return (
     <div className={styles.page}>
-      <VerificationBanner status={account?.verificationStatus} />
+      <VerificationBanner account={account} />
 
       <Card>
         <div className={styles.hero}>
-          <Badge tone="success">Farmer</Badge>
+          {kyc.isVerified ? (
+            <Badge tone="success">Verified farmer</Badge>
+          ) : (
+            <Badge tone="neutral">Pending verification</Badge>
+          )}
           <h1 className={styles.title}>Your farm on {config.appName}</h1>
           <p className={styles.lead}>
             Sell your crops and livestock to buyers across Nigeria. Listings, orders, and payouts
             will appear here as those features are built.
           </p>
           <div className={styles.actions}>
-            <Button disabled>Create a listing</Button>
+            {kyc.canSell ? (
+              <Button disabled>Create a listing</Button>
+            ) : (
+              <Button onClick={() => navigate('/sell/verify')}>Verify to start selling</Button>
+            )}
             <Button variant="ghost" disabled>
               View orders
             </Button>

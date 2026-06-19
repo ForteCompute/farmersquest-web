@@ -1,0 +1,15 @@
+.legal {
+  margin-top: var(--fq-space-5);
+  font-size: var(--fq-text-sm);
+  color: var(--fq-color-text-secondary);
+  text-align: center;
+  line-height: var(--fq-leading-normal);
+}
+.link {
+  color: var(--fq-color-green-action);
+  font-weight: var(--fq-weight-semibold);
+  text-decoration: none;
+}
+.link:hover {
+  text-decoration: underline;
+}

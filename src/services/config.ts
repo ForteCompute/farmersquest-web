@@ -12,6 +12,8 @@ export interface AppConfig {
   appName: string;
   /** Environment label (Development, Staging, Production). */
   environment: string;
+  /** Public support/contact email shown in the footer and legal pages. */
+  supportEmail: string;
 }
 
 function required(name: string, value: string | undefined): string {
@@ -31,4 +33,5 @@ export const config: AppConfig = {
   apiBaseUrl: stripTrailingSlash(required('VITE_API_BASE_URL', import.meta.env.VITE_API_BASE_URL)),
   appName: import.meta.env.VITE_APP_NAME?.trim() || 'FarmersQuest',
   environment: import.meta.env.VITE_APP_ENVIRONMENT?.trim() || 'Development',
+  supportEmail: import.meta.env.VITE_SUPPORT_EMAIL?.trim() || 'support@farmersquest.ng',
 };
