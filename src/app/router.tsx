@@ -9,8 +9,9 @@ import { BuyerHome } from '@/features/buyer';
 import { FarmerHome } from '@/features/farmer';
 import {
   AccountTypeScreen,
+  BuyerRegisterScreen,
+  FarmerRegisterScreen,
   ForgotPasswordScreen,
-  RegisterScreen,
   SignInScreen,
 } from '@/features/accounts';
 import { KycVerifyScreen } from '@/features/sell';
@@ -94,8 +95,8 @@ export const routes: RouteObject[] = [
   // Account screens. /register is the account-type chooser; each role has its own form. These wrap
   // themselves in the storefront chrome via AuthLayout.
   { path: '/register', element: <AccountTypeScreen /> },
-  { path: '/register/buyer', element: <RegisterScreen role="buyer" /> },
-  { path: '/register/farmer', element: <RegisterScreen role="farmer" /> },
+  { path: '/register/buyer', element: <BuyerRegisterScreen /> },
+  { path: '/register/farmer', element: <FarmerRegisterScreen /> },
   { path: '/sign-in', element: <SignInScreen /> },
   { path: '/forgot-password', element: <ForgotPasswordScreen /> },
 

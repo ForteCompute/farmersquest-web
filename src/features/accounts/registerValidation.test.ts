@@ -1,11 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { buildFullName, isValidEmail, validateRegister } from './registerValidation';
+import { buildFullName, isValidEmail, validateRegisterCore } from './registerValidation';
 
 const valid = {
   firstName: 'Ada',
   surname: 'Obi',
   email: 'ada@example.com',
   password: 'password123',
+  confirmPassword: 'password123',
 };
 
 describe('buildFullName', () => {
@@ -23,27 +24,46 @@ describe('isValidEmail', () => {
   });
 });
 
-describe('validateRegister', () => {
+describe('validateRegisterCore', () => {
   it('passes a complete form', () => {
-    expect(validateRegister(valid)).toEqual({});
+    expect(validateRegisterCore(valid)).toEqual({});
   });
 
   it('flags every missing required field', () => {
-    const errors = validateRegister({ firstName: '', surname: '', email: '', password: '' });
+    const errors = validateRegisterCore({
+      firstName: '',
+      surname: '',
+      email: '',
+      password: '',
+      confirmPassword: '',
+    });
     expect(errors.firstName).toBeDefined();
     expect(errors.surname).toBeDefined();
     expect(errors.email).toBeDefined();
     expect(errors.password).toBeDefined();
+    expect(errors.confirmPassword).toBeDefined();
   });
 
   it('rejects an invalid email and a short password', () => {
-    const errors = validateRegister({ ...valid, email: 'nope', password: 'short' });
+    const errors = validateRegisterCore({
+      ...valid,
+      email: 'nope',
+      password: 'short',
+      confirmPassword: 'short',
+    });
     expect(errors.email).toBeDefined();
     expect(errors.password).toBeDefined();
   });
 
-  it('does not collect or require a NIN', () => {
-    // NIN is not part of registration; verification happens later at /sell/verify.
-    expect('nin' in validateRegister({ ...valid, email: '' })).toBe(false);
+  it('requires the confirmation to match the password', () => {
+    expect(validateRegisterCore({ ...valid, confirmPassword: 'different' }).confirmPassword).toBe(
+      'Passwords do not match.',
+    );
+  });
+
+  it('does not collect or require a NIN or username', () => {
+    const errors = validateRegisterCore(valid);
+    expect('nin' in errors).toBe(false);
+    expect('username' in errors).toBe(false);
   });
 });
