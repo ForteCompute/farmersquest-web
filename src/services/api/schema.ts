@@ -158,6 +158,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/accounts/me/kyc": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Submit KYC: a government ID type, front and back images, a farmer photo, a date of birth, and the NIN. */
+        post: operations["SubmitKyc"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/accounts/admin/farmers/pending": {
         parameters: {
             query?: never;
@@ -175,17 +192,34 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/accounts/admin/farmers/{farmerId}/approve": {
+    "/api/v1/accounts/admin/farmers/{farmerId}/kyc": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        get?: never;
+        /** Review a farmer's KYC submission, with the decrypted NIN and date of birth. Admin only. */
+        get: operations["GetKycReview"];
         put?: never;
-        /** Approve a farmer's KYC. Flips them to verified and emits an event. */
-        post: operations["ApproveFarmer"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/accounts/admin/farmers/{farmerId}/kyc/documents/{slot}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Fetch one KYC document image (front, back, or photo) for review. Admin only. */
+        get: operations["GetKycDocument"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -201,8 +235,42 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Suspend a farmer so they can no longer sell. */
+        /** Suspend a farmer so they can no longer sell. An optional reason is recorded. */
         post: operations["SuspendFarmer"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/accounts/admin/farmers/{farmerId}/approve": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Approve a farmer's KYC, moving them to verified. An optional note is recorded. */
+        post: operations["ApproveFarmer"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/accounts/admin/farmers/{farmerId}/reject": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Reject a farmer's KYC with a reason, so they can fix it and resubmit. */
+        post: operations["RejectFarmer"];
         delete?: never;
         options?: never;
         head?: never;
@@ -361,6 +429,7 @@ export interface components {
             phoneNumber?: string | null;
             status?: string | null;
             verificationStatus?: string | null;
+            verificationReason?: string | null;
             notificationPreferences?: components["schemas"]["NotificationPreferencesDto"];
             state?: string | null;
             region?: string | null;
@@ -374,6 +443,9 @@ export interface components {
             productId?: string;
             /** Format: int32 */
             quantity?: number;
+        };
+        ApproveFarmerRequest: {
+            reason?: string | null;
         };
         AuthResultDto: {
             accessToken?: string | null;
@@ -438,6 +510,30 @@ export interface components {
         } & {
             [key: string]: unknown;
         };
+        /**
+         * Format: int32
+         * @enum {integer}
+         */
+        IdDocumentType: 0 | 1 | 2;
+        KycDocumentRefDto: {
+            slot?: string | null;
+            contentType?: string | null;
+            url?: string | null;
+        };
+        KycReviewDto: {
+            /** Format: uuid */
+            farmerId?: string;
+            fullName?: string | null;
+            documentType?: string | null;
+            nin?: string | null;
+            /** Format: date */
+            dateOfBirth?: string;
+            /** Format: date-time */
+            submittedAtUtc?: string;
+            verificationStatus?: string | null;
+            verificationReason?: string | null;
+            documents?: components["schemas"]["KycDocumentRefDto"][] | null;
+        };
         LoginCommand: {
             login?: string | null;
             password?: string | null;
@@ -446,6 +542,28 @@ export interface components {
             email?: boolean;
             sms?: boolean;
             whatsApp?: boolean;
+        };
+        PendingFarmerDto: {
+            /** Format: uuid */
+            id?: string;
+            email?: string | null;
+            fullName?: string | null;
+            phoneNumber?: string | null;
+            /** Format: date-time */
+            registeredAtUtc?: string;
+        };
+        PendingFarmerDtoPagedResult: {
+            items?: components["schemas"]["PendingFarmerDto"][] | null;
+            /** Format: int32 */
+            page?: number;
+            /** Format: int32 */
+            pageSize?: number;
+            /** Format: int64 */
+            totalCount?: number;
+            /** Format: int32 */
+            readonly totalPages?: number;
+            readonly hasPrevious?: boolean;
+            readonly hasNext?: boolean;
         };
         ProblemDetails: {
             type?: string | null;
@@ -536,11 +654,13 @@ export interface components {
             fullName?: string | null;
             password?: string | null;
             phoneNumber?: string | null;
-            nin?: string | null;
             farmName?: string | null;
             crops?: string[] | null;
             state?: string | null;
             region?: string | null;
+        };
+        RejectFarmerRequest: {
+            reason?: string | null;
         };
         RequestPasswordResetCommand: {
             email?: string | null;
@@ -581,6 +701,21 @@ export interface components {
         StateDto: {
             code?: string | null;
             name?: string | null;
+        };
+        SubmitKycForm: {
+            documentType?: components["schemas"]["IdDocumentType"];
+            nin?: string | null;
+            /** Format: date */
+            dateOfBirth?: string;
+            /** Format: binary */
+            frontImage?: string | null;
+            /** Format: binary */
+            backImage?: string | null;
+            /** Format: binary */
+            photo?: string | null;
+        };
+        SuspendFarmerRequest: {
+            reason?: string | null;
         };
         UpdateCartItemRequest: {
             /** Format: int32 */
@@ -913,6 +1048,48 @@ export interface operations {
             };
         };
     };
+    SubmitKyc: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "multipart/form-data": components["schemas"]["SubmitKycForm"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AccountDto"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["HttpValidationProblemDetails"];
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+        };
+    };
     GetPendingFarmers: {
         parameters: {
             query?: {
@@ -930,11 +1107,13 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["PendingFarmerDtoPagedResult"];
+                };
             };
         };
     };
-    ApproveFarmer: {
+    GetKycReview: {
         parameters: {
             query?: never;
             header?: never;
@@ -945,8 +1124,40 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description No Content */
-            204: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["KycReviewDto"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+        };
+    };
+    GetKycDocument: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                farmerId: string;
+                slot: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -972,7 +1183,11 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["SuspendFarmerRequest"];
+            };
+        };
         responses: {
             /** @description No Content */
             204: {
@@ -980,6 +1195,90 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["HttpValidationProblemDetails"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+        };
+    };
+    ApproveFarmer: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                farmerId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["ApproveFarmerRequest"];
+            };
+        };
+        responses: {
+            /** @description No Content */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+        };
+    };
+    RejectFarmer: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                farmerId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RejectFarmerRequest"];
+            };
+        };
+        responses: {
+            /** @description No Content */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["HttpValidationProblemDetails"];
+                };
             };
             /** @description Not Found */
             404: {
