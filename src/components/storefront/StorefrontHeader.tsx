@@ -90,11 +90,11 @@ export function StorefrontHeader({ showSearchBar = true }: { showSearchBar?: boo
 
         <div className={styles.actions}>
           <label className={styles.stateSelect}>
-            <span className="sr-only">Choose a state</span>
+            <span className="sr-only">Filter by state</span>
             <select
               value={stateCode}
               onChange={(e) => setStateCode(e.target.value)}
-              aria-label="State"
+              aria-label="Filter by state"
             >
               <option value="">All Nigeria</option>
               {states.map((s) => (

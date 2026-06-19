@@ -1,0 +1,89 @@
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--fq-space-1);
+  text-align: center;
+}
+.title {
+  font-size: var(--fq-text-2xl);
+  font-weight: var(--fq-weight-bold);
+  color: var(--fq-color-ink);
+}
+.subtitle {
+  max-width: 36ch;
+  font-size: var(--fq-text-sm);
+  color: var(--fq-color-text-secondary);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--fq-space-5);
+  margin-top: var(--fq-space-7);
+}
+.banner {
+  padding: var(--fq-space-3) var(--fq-space-4);
+  font-size: var(--fq-text-sm);
+  color: var(--fq-color-danger);
+  background-color: var(--fq-color-danger-tint);
+  border-radius: var(--fq-radius-md);
+}
+
+/* A labelled select that matches the design system Input (height, radius, border). */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--fq-space-2);
+}
+.fieldLabel {
+  font-size: var(--fq-text-sm);
+  font-weight: var(--fq-weight-semibold);
+  color: var(--fq-color-ink);
+}
+.selectWrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.selectWrap select {
+  appearance: none;
+  width: 100%;
+  min-height: var(--fq-size-input-height);
+  padding: 0 var(--fq-space-7) 0 var(--fq-space-3);
+  font-family: inherit;
+  font-size: var(--fq-text-md);
+  color: var(--fq-color-ink);
+  background-color: var(--fq-color-surface);
+  border: 1px solid var(--fq-color-input-fill);
+  border-radius: var(--fq-radius-md);
+  cursor: pointer;
+}
+.selectWrap select:focus-visible {
+  outline: 2px solid var(--fq-color-green-button);
+  outline-offset: 1px;
+}
+.selectWrap svg {
+  position: absolute;
+  right: var(--fq-space-3);
+  pointer-events: none;
+  color: var(--fq-color-text-secondary);
+}
+
+.signInRow {
+  margin-top: var(--fq-space-4);
+  font-size: var(--fq-text-md);
+  color: var(--fq-color-ink);
+  text-align: center;
+}
+.switchRow {
+  margin-top: var(--fq-space-2);
+  font-size: var(--fq-text-sm);
+  color: var(--fq-color-text-secondary);
+  text-align: center;
+}
+.link {
+  color: var(--fq-color-green-action);
+  font-weight: var(--fq-weight-semibold);
+  text-decoration: underline;
+}

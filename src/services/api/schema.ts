@@ -13,7 +13,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Register a buyer account. */
+        /** Register a buyer account. Username is optional and derived from the email when omitted. */
         post: operations["RegisterBuyer"];
         delete?: never;
         options?: never;
@@ -30,7 +30,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Register a farmer account. NIN and KYC are completed later at verification. The farmer starts unverified. */
+        /** Register a farmer account. Username is optional and derived from the email when omitted. NIN and KYC are completed later at verification. The farmer starts unverified. */
         post: operations["RegisterFarmer"];
         delete?: never;
         options?: never;
