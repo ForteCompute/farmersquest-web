@@ -11,7 +11,7 @@
                 "tags": [
                     "Accounts"
                 ],
-                "summary": "Register a buyer account.",
+                "summary": "Register a buyer account. Username is optional and derived from the email when omitted.",
                 "operationId": "RegisterBuyer",
                 "requestBody": {
                     "content": {
@@ -62,7 +62,7 @@
                 "tags": [
                     "Accounts"
                 ],
-                "summary": "Register a farmer account. NIN and KYC are completed later at verification. The farmer starts unverified.",
+                "summary": "Register a farmer account. Username is optional and derived from the email when omitted. NIN and KYC are completed later at verification. The farmer starts unverified.",
                 "operationId": "RegisterFarmer",
                 "requestBody": {
                     "content": {
