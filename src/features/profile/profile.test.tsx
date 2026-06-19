@@ -14,6 +14,10 @@ vi.mock('@/services/auth', () => ({
   changePassword: vi.fn(),
   updateNotificationPreferences: vi.fn(),
 }));
+vi.mock('@/services/catalog', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/services/catalog')>();
+  return { ...actual, getStates: vi.fn() };
+});
 
 import {
   changePassword,
@@ -22,6 +26,7 @@ import {
   updateNotificationPreferences,
   updateProfile,
 } from '@/services/auth';
+import { getStates } from '@/services/catalog';
 
 const mockLogin = vi.mocked(login);
 const mockGetMe = vi.mocked(getMe);
@@ -84,6 +89,13 @@ beforeEach(() => {
   } catch {
     // Best effort.
   }
+  vi.mocked(getStates).mockResolvedValue({
+    ok: true,
+    data: [
+      { code: 'LA', name: 'Lagos' },
+      { code: 'OY', name: 'Oyo' },
+    ],
+  });
 });
 
 afterEach(() => {
@@ -112,10 +124,16 @@ describe('EditProfileScreen', () => {
     const name = await screen.findByLabelText('Full name');
     await user.clear(name);
     await user.type(name, 'Ada N. Obi');
+    // State is a select fed by the catalog reference endpoint, not a free-text field.
+    await user.selectOptions(await screen.findByLabelText('State'), 'Lagos');
     await user.click(screen.getByRole('button', { name: /save changes/i }));
 
     expect(mockUpdateProfile).toHaveBeenCalledWith(
-      expect.objectContaining({ fullName: 'Ada N. Obi', phoneNumber: '08030000000' }),
+      expect.objectContaining({
+        fullName: 'Ada N. Obi',
+        phoneNumber: '08030000000',
+        state: 'Lagos',
+      }),
     );
     expect(await screen.findByText(/your profile has been saved/i)).toBeInTheDocument();
   });

@@ -108,6 +108,11 @@ export function ProfileScreen() {
             label="Username"
             value={account.username}
           />
+          <Detail
+            icon={<FigmaIcon name="person" size={22} />}
+            label="Location"
+            value={location || null}
+          />
         </dl>
       </Card>
 
@@ -121,12 +126,7 @@ export function ProfileScreen() {
             />
             <Detail
               icon={<FigmaIcon name="person" size={22} />}
-              label="Location"
-              value={location || null}
-            />
-            <Detail
-              icon={<FigmaIcon name="person" size={22} />}
-              label="Primary crops"
+              label="Your crops"
               value={crops || null}
             />
           </dl>
