@@ -1,16 +1,17 @@
 name: CI
 
-# Pull requests into develop or main run the full gate. A push to develop (a merged PR) deploys to
-# the development environment. A version tag promotes the release through staging then production.
-# Direct pushes to main do not happen under the branching policy; main moves by merging a release
-# branch and then tagging.
+# Pull requests into develop or main run the full gate. A push to develop (a merged PR) is handled by
+# the dev deploy workflow, which reuses this gate (workflow_call) before building and deploying. A
+# version tag promotes the release through staging then production. Direct pushes to main do not
+# happen under the branching policy; main moves by merging a release branch and then tagging.
 on:
   pull_request:
     branches: [develop, main]
   push:
-    branches: [develop]
     tags:
       - 'v*'
+  # Reusable by the dev deploy workflow, so the gate has a single definition.
+  workflow_call:
 
 permissions:
   contents: read
@@ -81,18 +82,6 @@ jobs:
       # browser bundle; keep it current separately.
       - name: Audit dependencies
         run: npm audit --omit=dev --audit-level=high
-
-  deploy-development:
-    name: Deploy to development (stub)
-    runs-on: ubuntu-latest
-    needs: [build-test, lint, secret-scan, dependency-scan]
-    if: github.event_name == 'push' && github.ref == 'refs/heads/develop'
-    steps:
-      - uses: actions/checkout@v4
-      # TODO(infra): wire the real development deploy once hosting is chosen (static host or
-      # container). Kept as a gated stub so merges into develop have a deploy step to grow into.
-      - name: Deploy placeholder
-        run: echo "Deploy to the development environment would run here. Target to be configured when hosting is chosen."
 
   deploy-staging:
     name: Deploy to staging (stub)

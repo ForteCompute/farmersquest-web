@@ -1,0 +1,16 @@
+# Keep the build context small and the image clean. node_modules is reinstalled with npm ci inside
+# the build stage, and local env files must never reach the image so the build argument is the only
+# source of VITE_API_BASE_URL.
+node_modules
+dist
+coverage
+.git
+.github
+.env
+.env.*
+*.local
+npm-debug.log*
+.vscode
+.DS_Store
+Dockerfile
+.dockerignore
