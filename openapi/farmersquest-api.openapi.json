@@ -411,7 +411,7 @@
                 "tags": [
                     "Accounts (admin)"
                 ],
-                "summary": "List farmers awaiting verification, oldest first. Admin only in production.",
+                "summary": "List farmers awaiting verification, oldest first. Admin only.",
                 "operationId": "GetPendingFarmers",
                 "parameters": [
                     {
@@ -450,7 +450,7 @@
                 "tags": [
                     "Accounts (admin)"
                 ],
-                "summary": "Review a farmer's KYC submission, with the decrypted NIN and date of birth. Admin only in production.",
+                "summary": "Review a farmer's KYC submission, with the decrypted NIN and date of birth. Admin only.",
                 "operationId": "GetKycReview",
                 "parameters": [
                     {
@@ -492,7 +492,7 @@
                 "tags": [
                     "Accounts (admin)"
                 ],
-                "summary": "Fetch one KYC document image (front, back, or photo) for review. Admin only in production.",
+                "summary": "Fetch one KYC document image (front, back, or photo) for review. Admin only.",
                 "operationId": "GetKycDocument",
                 "parameters": [
                     {
