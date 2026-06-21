@@ -182,7 +182,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** List farmers awaiting verification, oldest first. Admin only in production. */
+        /** List farmers awaiting verification, oldest first. Admin only. */
         get: operations["GetPendingFarmers"];
         put?: never;
         post?: never;
@@ -199,7 +199,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Review a farmer's KYC submission, with the decrypted NIN and date of birth. Admin only in production. */
+        /** Review a farmer's KYC submission, with the decrypted NIN and date of birth. Admin only. */
         get: operations["GetKycReview"];
         put?: never;
         post?: never;
@@ -216,7 +216,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Fetch one KYC document image (front, back, or photo) for review. Admin only in production. */
+        /** Fetch one KYC document image (front, back, or photo) for review. Admin only. */
         get: operations["GetKycDocument"];
         put?: never;
         post?: never;
