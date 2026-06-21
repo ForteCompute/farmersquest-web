@@ -13,7 +13,7 @@ export interface NavEntry {
 const buyerNav: NavEntry[] = [
   { key: 'buyer-home', label: 'Home', path: '/buyer', icon: '🏠' },
   { key: 'buyer-browse', label: 'Browse', path: '/buyer/browse', icon: '🛒' },
-  { key: 'buyer-orders', label: 'Orders', path: '/buyer/orders', icon: '📦' },
+  { key: 'buyer-orders', label: 'Orders', path: '/orders', icon: '📦' },
   { key: 'profile', label: 'Profile', path: '/profile', icon: '👤' },
 ];
 

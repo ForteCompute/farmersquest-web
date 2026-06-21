@@ -127,7 +127,9 @@ export function StorefrontHeader({ showSearchBar = true }: { showSearchBar?: boo
             type="button"
             className={styles.iconButton}
             aria-label="Cart"
-            onClick={gatedCount('use your cart')}
+            onClick={() =>
+              isAuthenticated ? navigate('/checkout') : promptSignIn('use your cart')
+            }
           >
             <ShoppingCart size={22} />
           </button>

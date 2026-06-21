@@ -142,6 +142,50 @@
 .wishlist:hover {
   background-color: var(--fq-color-surface-green);
 }
+.quantity {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--fq-color-input-fill);
+  border-radius: var(--fq-radius-md);
+  overflow: hidden;
+}
+.quantity button {
+  width: 2.75rem;
+  min-height: 48px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--fq-text-lg);
+  line-height: 1;
+  color: var(--fq-color-green-deep);
+  background-color: var(--fq-color-surface);
+  border: 0;
+  cursor: pointer;
+}
+.quantity button:disabled {
+  color: var(--fq-color-text-secondary-soft);
+  cursor: not-allowed;
+}
+.quantity span {
+  min-width: 2.5rem;
+  text-align: center;
+  font-weight: var(--fq-weight-bold);
+  color: var(--fq-color-ink);
+}
+.cartNote {
+  margin-top: var(--fq-space-3);
+  font-size: var(--fq-text-sm);
+  color: var(--fq-color-green-deepest);
+}
+.cartNoteLink {
+  color: var(--fq-color-green-action);
+  font-weight: var(--fq-weight-semibold);
+}
+.cartError {
+  margin-top: var(--fq-space-3);
+  font-size: var(--fq-text-sm);
+  color: var(--fq-color-danger);
+}
 
 .seller {
   display: flex;
