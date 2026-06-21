@@ -6,10 +6,14 @@
 // arithmetic: we only render what the API decided.
 
 export interface MoneyView {
-  /** The exact amount as provided by the API. */
-  amount: number;
+  /**
+   * The exact amount as provided by the API. The generated contract types every amount as optional,
+   * so this is tolerant: a missing amount formats as zero rather than failing. The API always sends
+   * the real amount on the screens that show money.
+   */
+  amount?: number | null | undefined;
   /** ISO currency code, for example NGN. Defaults to NGN, the platform currency. */
-  currency?: string | null;
+  currency?: string | null | undefined;
 }
 
 const DEFAULT_CURRENCY = 'NGN';
@@ -19,5 +23,5 @@ export function formatMoney(money: MoneyView, locale = 'en-NG'): string {
   return new Intl.NumberFormat(locale, {
     style: 'currency',
     currency,
-  }).format(money.amount);
+  }).format(money.amount ?? 0);
 }

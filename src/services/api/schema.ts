@@ -415,6 +415,176 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/orders/checkout": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Check my cart out into an order. Send an Idempotency-Key header so a retry is safe. */
+        post: operations["Checkout"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/orders": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List my orders, newest first. */
+        get: operations["ListMyOrders"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/orders/{orderId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** View one of my orders, with each sub-order's status. */
+        get: operations["GetMyOrder"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/orders/{orderId}/sub-orders/{subOrderId}/deliver": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Mark a shipped sub-order as delivered. */
+        post: operations["DeliverSubOrder"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/orders/{orderId}/simulate-payment": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Development only: simulate payment to move an order to Paid and decrement stock. */
+        post: operations["SimulatePayment"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/orders/{orderId}/sub-orders/{subOrderId}/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Cancel a sub-order before it ships, as the owning buyer or farmer. */
+        post: operations["CancelSubOrder"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/farmer/orders": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List my incoming orders, newest first. */
+        get: operations["ListFarmerOrders"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/farmer/orders/{orderId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** View one of my incoming sub-orders, with the actions I can take now. */
+        get: operations["GetFarmerOrder"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/farmer/orders/{orderId}/sub-orders/{subOrderId}/prepare": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Mark a paid sub-order as preparing. */
+        post: operations["PrepareSubOrder"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/farmer/orders/{orderId}/sub-orders/{subOrderId}/ship": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Mark a preparing sub-order as shipped. */
+        post: operations["ShipSubOrder"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -497,6 +667,66 @@ export interface components {
             currentPassword?: string | null;
             newPassword?: string | null;
         };
+        CheckoutRequest: {
+            contactName?: string | null;
+            contactPhone?: string | null;
+            addressLine?: string | null;
+            city?: string | null;
+            state?: string | null;
+            /** Format: date */
+            expectedDate?: string;
+        };
+        DeliveryDto: {
+            contactName?: string | null;
+            contactPhone?: string | null;
+            addressLine?: string | null;
+            city?: string | null;
+            state?: string | null;
+            /** Format: date */
+            expectedDate?: string;
+        };
+        FarmerOrderDetailDto: {
+            /** Format: uuid */
+            orderId?: string;
+            /** Format: uuid */
+            subOrderId?: string;
+            status?: string | null;
+            /** Format: double */
+            subtotal?: number;
+            currency?: string | null;
+            delivery?: components["schemas"]["DeliveryDto"];
+            /** Format: date-time */
+            placedAtUtc?: string;
+            items?: components["schemas"]["OrderItemDto"][] | null;
+            allowedActions?: string[] | null;
+        };
+        FarmerOrderSummaryDto: {
+            /** Format: uuid */
+            orderId?: string;
+            /** Format: uuid */
+            subOrderId?: string;
+            status?: string | null;
+            /** Format: double */
+            subtotal?: number;
+            currency?: string | null;
+            /** Format: int32 */
+            itemCount?: number;
+            /** Format: date-time */
+            placedAtUtc?: string;
+        };
+        FarmerOrderSummaryDtoPagedResult: {
+            items?: components["schemas"]["FarmerOrderSummaryDto"][] | null;
+            /** Format: int32 */
+            page?: number;
+            /** Format: int32 */
+            pageSize?: number;
+            /** Format: int64 */
+            totalCount?: number;
+            /** Format: int32 */
+            readonly totalPages?: number;
+            readonly hasPrevious?: boolean;
+            readonly hasNext?: boolean;
+        };
         HttpValidationProblemDetails: {
             type?: string | null;
             title?: string | null;
@@ -542,6 +772,57 @@ export interface components {
             email?: boolean;
             sms?: boolean;
             whatsApp?: boolean;
+        };
+        OrderDetailDto: {
+            /** Format: uuid */
+            orderId?: string;
+            status?: string | null;
+            /** Format: double */
+            total?: number;
+            currency?: string | null;
+            delivery?: components["schemas"]["DeliveryDto"];
+            /** Format: date-time */
+            placedAtUtc?: string;
+            /** Format: date-time */
+            reservationExpiresAtUtc?: string;
+            subOrders?: components["schemas"]["SubOrderDto"][] | null;
+        };
+        OrderItemDto: {
+            /** Format: uuid */
+            productId?: string;
+            productName?: string | null;
+            unitLabel?: string | null;
+            /** Format: int32 */
+            quantity?: number;
+            /** Format: double */
+            unitPrice?: number;
+            /** Format: double */
+            lineTotal?: number;
+        };
+        OrderSummaryDto: {
+            /** Format: uuid */
+            orderId?: string;
+            status?: string | null;
+            /** Format: double */
+            total?: number;
+            currency?: string | null;
+            /** Format: int32 */
+            itemCount?: number;
+            /** Format: date-time */
+            placedAtUtc?: string;
+        };
+        OrderSummaryDtoPagedResult: {
+            items?: components["schemas"]["OrderSummaryDto"][] | null;
+            /** Format: int32 */
+            page?: number;
+            /** Format: int32 */
+            pageSize?: number;
+            /** Format: int64 */
+            totalCount?: number;
+            /** Format: int32 */
+            readonly totalPages?: number;
+            readonly hasPrevious?: boolean;
+            readonly hasNext?: boolean;
         };
         PendingFarmerDto: {
             /** Format: uuid */
@@ -701,6 +982,26 @@ export interface components {
         StateDto: {
             code?: string | null;
             name?: string | null;
+        };
+        SubOrderDto: {
+            /** Format: uuid */
+            subOrderId?: string;
+            /** Format: uuid */
+            farmerId?: string;
+            farmerName?: string | null;
+            status?: string | null;
+            /** Format: double */
+            subtotal?: number;
+            items?: components["schemas"]["OrderItemDto"][] | null;
+            allowedActions?: string[] | null;
+        };
+        SubOrderTransitionDto: {
+            /** Format: uuid */
+            orderId?: string;
+            /** Format: uuid */
+            subOrderId?: string;
+            subOrderStatus?: string | null;
+            orderStatus?: string | null;
         };
         SubmitKycForm: {
             documentType?: components["schemas"]["IdDocumentType"];
@@ -1616,6 +1917,371 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["StateDto"][];
+                };
+            };
+        };
+    };
+    Checkout: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Idempotency-Key"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CheckoutRequest"];
+            };
+        };
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OrderDetailDto"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["HttpValidationProblemDetails"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+        };
+    };
+    ListMyOrders: {
+        parameters: {
+            query?: {
+                page?: number;
+                pageSize?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OrderSummaryDtoPagedResult"];
+                };
+            };
+        };
+    };
+    GetMyOrder: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                orderId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OrderDetailDto"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+        };
+    };
+    DeliverSubOrder: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                orderId: string;
+                subOrderId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SubOrderTransitionDto"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+        };
+    };
+    SimulatePayment: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                orderId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OrderDetailDto"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+        };
+    };
+    CancelSubOrder: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                orderId: string;
+                subOrderId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SubOrderTransitionDto"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+        };
+    };
+    ListFarmerOrders: {
+        parameters: {
+            query?: {
+                page?: number;
+                pageSize?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FarmerOrderSummaryDtoPagedResult"];
+                };
+            };
+        };
+    };
+    GetFarmerOrder: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                orderId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FarmerOrderDetailDto"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+        };
+    };
+    PrepareSubOrder: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                orderId: string;
+                subOrderId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FarmerOrderDetailDto"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+        };
+    };
+    ShipSubOrder: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                orderId: string;
+                subOrderId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FarmerOrderDetailDto"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
                 };
             };
         };

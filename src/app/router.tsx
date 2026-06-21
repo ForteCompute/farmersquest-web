@@ -6,7 +6,9 @@ import { BrowsePage } from '@/features/browse';
 import { CategoryPage } from '@/features/category';
 import { ProductDetailPage } from '@/features/product';
 import { BuyerHome } from '@/features/buyer';
-import { FarmerHome } from '@/features/farmer';
+import { FarmerHome, FarmerOrdersPage, FarmerOrderDetailPage } from '@/features/farmer';
+import { CheckoutPage } from '@/features/checkout';
+import { OrdersListPage, OrderDetailPage } from '@/features/orders';
 import {
   AccountTypeScreen,
   BuyerRegisterScreen,
@@ -103,7 +105,9 @@ export const routes: RouteObject[] = [
   // Farmer identity verification (KYC), inside the app. Guards to signed-in farmers.
   { path: '/sell/verify', element: <KycVerifyScreen /> },
 
-  // Account area: the profile and its settings, in the storefront chrome behind a sign-in guard.
+  // Account area: the profile and its settings, plus checkout and the order screens, in the storefront
+  // chrome behind a sign-in guard. The order screens are role gated as a presentation convenience; the
+  // API stays the sole authority and re-checks role and ownership on every call.
   {
     element: <AccountLayout />,
     children: [
@@ -111,6 +115,50 @@ export const routes: RouteObject[] = [
       { path: '/profile/edit', element: <EditProfileScreen /> },
       { path: '/profile/security', element: <SecurityScreen /> },
       { path: '/profile/notifications', element: <NotificationsScreen /> },
+
+      // Buyer checkout and orders.
+      {
+        path: '/checkout',
+        element: (
+          <RoleGuard allow="buyer">
+            <CheckoutPage />
+          </RoleGuard>
+        ),
+      },
+      {
+        path: '/orders',
+        element: (
+          <RoleGuard allow="buyer">
+            <OrdersListPage />
+          </RoleGuard>
+        ),
+      },
+      {
+        path: '/orders/:orderId',
+        element: (
+          <RoleGuard allow="buyer">
+            <OrderDetailPage />
+          </RoleGuard>
+        ),
+      },
+
+      // Farmer incoming orders, in the farmer account area.
+      {
+        path: '/farmer/orders',
+        element: (
+          <RoleGuard allow="farmer">
+            <FarmerOrdersPage />
+          </RoleGuard>
+        ),
+      },
+      {
+        path: '/farmer/orders/:orderId',
+        element: (
+          <RoleGuard allow="farmer">
+            <FarmerOrderDetailPage />
+          </RoleGuard>
+        ),
+      },
     ],
   },
 
@@ -141,14 +189,6 @@ export const routes: RouteObject[] = [
         ),
       },
       {
-        path: 'buyer/orders',
-        element: (
-          <RoleGuard allow="buyer">
-            <PlaceholderScreen title="Orders" area="Buyer orders" />
-          </RoleGuard>
-        ),
-      },
-      {
         path: 'farmer',
         element: (
           <RoleGuard allow="farmer">
@@ -161,14 +201,6 @@ export const routes: RouteObject[] = [
         element: (
           <RoleGuard allow="farmer">
             <PlaceholderScreen title="Listings" area="Your listings" />
-          </RoleGuard>
-        ),
-      },
-      {
-        path: 'farmer/orders',
-        element: (
-          <RoleGuard allow="farmer">
-            <PlaceholderScreen title="Orders" area="Farmer orders" />
           </RoleGuard>
         ),
       },

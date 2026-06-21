@@ -3,11 +3,13 @@ import type { MouseEvent } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import {
   BadgeCheck,
+  CircleCheck,
   Heart,
   MapPin,
   ProductRow,
   ShoppingCart,
   Star,
+  useAddToCart,
   useSignInPrompt,
 } from '@/components/storefront';
 import { useSession } from '@/app/session';
@@ -33,7 +35,9 @@ export function ProductDetailPage() {
   const { slug = '' } = useParams();
   const { isAuthenticated } = useSession();
   const { promptSignIn } = useSignInPrompt();
+  const { add, adding, added, error: addError } = useAddToCart();
   const [product, setProduct] = useState<ProductDetail | null>(null);
+  const [quantity, setQuantity] = useState(1);
   const [status, setStatus] = useState<Status>('loading');
   const [reloadTick, setReloadTick] = useState(0);
 
@@ -59,6 +63,13 @@ export function ProductDetailPage() {
       e.preventDefault();
       if (!isAuthenticated) promptSignIn(reason);
     };
+  }
+
+  // Add to cart: signed out opens the sign-in prompt (in the hook); signed in adds the chosen
+  // quantity. The API owns stock and pricing; this only sends the request and shows the outcome.
+  function handleAddToCart() {
+    if (!product) return;
+    void add(product.id ?? '', quantity, 'add this to your cart');
   }
 
   if (status === 'loading') {
@@ -176,14 +187,38 @@ export function ProductDetailPage() {
                 Contact seller
               </button>
             ) : (
-              <button
-                type="button"
-                className={styles.primary}
-                onClick={gated('add this to your cart')}
-                disabled={outOfStock}
-              >
-                <ShoppingCart size={18} /> {outOfStock ? 'Out of stock' : 'Add to cart'}
-              </button>
+              <>
+                {!outOfStock && (
+                  <div className={styles.quantity}>
+                    <button
+                      type="button"
+                      aria-label="Decrease quantity"
+                      onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                      disabled={quantity <= 1 || adding}
+                    >
+                      −
+                    </button>
+                    <span aria-label="Quantity">{quantity}</span>
+                    <button
+                      type="button"
+                      aria-label="Increase quantity"
+                      onClick={() => setQuantity((q) => q + 1)}
+                      disabled={adding}
+                    >
+                      +
+                    </button>
+                  </div>
+                )}
+                <button
+                  type="button"
+                  className={styles.primary}
+                  onClick={handleAddToCart}
+                  disabled={outOfStock || adding}
+                >
+                  {added ? <CircleCheck size={18} /> : <ShoppingCart size={18} />}{' '}
+                  {outOfStock ? 'Out of stock' : added ? 'Added to cart' : 'Add to cart'}
+                </button>
+              </>
             )}
             <button
               type="button"
@@ -194,6 +229,20 @@ export function ProductDetailPage() {
               <Heart size={18} /> Save
             </button>
           </div>
+
+          {added && (
+            <p className={styles.cartNote} role="status">
+              Added to your cart.{' '}
+              <Link to="/checkout" className={styles.cartNoteLink}>
+                View cart
+              </Link>
+            </p>
+          )}
+          {addError && (
+            <p className={styles.cartError} role="alert">
+              {addError}
+            </p>
+          )}
 
           <div className={styles.seller}>
             {product.seller?.avatarUrl ? (

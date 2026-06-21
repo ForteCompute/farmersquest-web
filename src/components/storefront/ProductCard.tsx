@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import type { MouseEvent } from 'react';
 import { Link } from 'react-router-dom';
-import { BadgeCheck, Heart, MapPin, Plus, Sprout, Star } from './icons';
+import { BadgeCheck, CircleCheck, Heart, MapPin, Plus, Sprout, Star } from './icons';
+import { Spinner } from '@/design-system';
 import { useSession } from '@/app/session';
 import type { ProductSummary } from '@/services/catalog';
 import {
@@ -11,6 +12,7 @@ import {
   stockView,
 } from '@/services/productView';
 import { useSignInPrompt } from './SignInPrompt';
+import { useAddToCart } from './useAddToCart';
 import styles from './ProductCard.module.css';
 
 // The one reusable product card used on the landing, browse, category, and related rows. Image,
@@ -27,6 +29,7 @@ export interface ProductCardProps {
 export function ProductCard({ product }: ProductCardProps) {
   const { isAuthenticated } = useSession();
   const { promptSignIn } = useSignInPrompt();
+  const { add, adding, added } = useAddToCart();
   const [imageFailed, setImageFailed] = useState(false);
 
   const href = `/product/${product.slug ?? ''}`;
@@ -47,6 +50,18 @@ export function ProductCard({ product }: ProductCardProps) {
         promptSignIn(reason);
       }
     };
+  }
+
+  // Add to cart: signed out it opens the sign-in prompt (handled in the hook); signed in it adds the
+  // item. Contact-for-price items are inquiry only and cannot be added, so the control does nothing
+  // for them. The card link is suppressed so adding never navigates to the product.
+  function handleAddToCart(e: MouseEvent) {
+    e.preventDefault();
+    e.stopPropagation();
+    if (product.contactForPrice) {
+      return;
+    }
+    void add(product.id ?? '', 1);
   }
 
   return (
@@ -103,10 +118,17 @@ export function ProductCard({ product }: ProductCardProps) {
           <button
             type="button"
             className={styles.add}
-            aria-label="Add to cart"
-            onClick={gated('add this to your cart')}
+            aria-label={added ? 'Added to cart' : 'Add to cart'}
+            onClick={handleAddToCart}
+            disabled={adding}
           >
-            <Plus size={18} />
+            {adding ? (
+              <Spinner size={16} />
+            ) : added ? (
+              <CircleCheck size={18} />
+            ) : (
+              <Plus size={18} />
+            )}
           </button>
         </div>
         {stock && (

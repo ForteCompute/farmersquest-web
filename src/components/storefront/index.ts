@@ -16,6 +16,8 @@ export type { PaginationProps } from './Pagination';
 export { CategoryCard } from './CategoryCard';
 export type { CategoryCardProps } from './CategoryCard';
 export { SignInPromptProvider, useSignInPrompt } from './SignInPrompt';
+export { useAddToCart } from './useAddToCart';
+export type { AddToCartState } from './useAddToCart';
 export { useReveal } from './useReveal';
 export { categoryIcon, CONTENT_ICONS } from './iconMap';
 export {
