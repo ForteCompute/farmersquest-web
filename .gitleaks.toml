@@ -1,0 +1,12 @@
+title = "FarmersQuest gitleaks configuration"
+
+# Keep every default rule, then allowlist figma-frames.md only. That file documents the Figma design,
+# and the value flagged in it is a Figma file key (the public figma.com/design/<key> URL identifier),
+# not a credential, so the generic-api-key rule reports it as a false positive. Real secrets anywhere
+# else are still scanned by the default rules; this does not disable the secret scan or any rule.
+[extend]
+useDefault = true
+
+[allowlist]
+description = "figma-frames.md holds a public Figma file key, not a real secret."
+paths = ['''figma-frames\.md$''']
