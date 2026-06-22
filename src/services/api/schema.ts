@@ -633,8 +633,8 @@ export interface components {
             /** Format: int32 */
             itemCount?: number;
             /** Format: double */
-            total?: number;
-            currency?: string | null;
+            total: number;
+            currency: string;
             hasInvalidItems?: boolean;
         };
         CartItemDto: {
@@ -692,8 +692,8 @@ export interface components {
             subOrderId?: string;
             status?: string | null;
             /** Format: double */
-            subtotal?: number;
-            currency?: string | null;
+            subtotal: number;
+            currency: string;
             delivery?: components["schemas"]["DeliveryDto"];
             /** Format: date-time */
             placedAtUtc?: string;
@@ -707,8 +707,8 @@ export interface components {
             subOrderId?: string;
             status?: string | null;
             /** Format: double */
-            subtotal?: number;
-            currency?: string | null;
+            subtotal: number;
+            currency: string;
             /** Format: int32 */
             itemCount?: number;
             /** Format: date-time */
@@ -778,8 +778,8 @@ export interface components {
             orderId?: string;
             status?: string | null;
             /** Format: double */
-            total?: number;
-            currency?: string | null;
+            total: number;
+            currency: string;
             delivery?: components["schemas"]["DeliveryDto"];
             /** Format: date-time */
             placedAtUtc?: string;
@@ -795,17 +795,17 @@ export interface components {
             /** Format: int32 */
             quantity?: number;
             /** Format: double */
-            unitPrice?: number;
+            unitPrice: number;
             /** Format: double */
-            lineTotal?: number;
+            lineTotal: number;
         };
         OrderSummaryDto: {
             /** Format: uuid */
             orderId?: string;
             status?: string | null;
             /** Format: double */
-            total?: number;
-            currency?: string | null;
+            total: number;
+            currency: string;
             /** Format: int32 */
             itemCount?: number;
             /** Format: date-time */
@@ -991,7 +991,7 @@ export interface components {
             farmerName?: string | null;
             status?: string | null;
             /** Format: double */
-            subtotal?: number;
+            subtotal: number;
             items?: components["schemas"]["OrderItemDto"][] | null;
             allowedActions?: string[] | null;
         };

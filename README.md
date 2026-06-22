@@ -66,15 +66,20 @@ This client consumes the FarmersQuest API only. To run against a local API, star
 The client is generated from the API OpenAPI document, committed at
 `openapi/farmersquest-api.openapi.json`.
 
-```bash
-# Refresh the contract from a locally running API (optional):
-curl http://localhost:5099/swagger/v1/swagger.json -o openapi/farmersquest-api.openapi.json
+To refresh the client when the API contract changes, run the single command:
 
-# Regenerate the typed client from the committed document:
-npm run generate:api
+```bash
+npm run sync:contract
 ```
 
-Review the generated diff after regenerating. Never hand-edit `src/services/api/schema.ts`.
+This pulls the API's current contract from its published OpenAPI endpoint, writes it to
+`openapi/farmersquest-api.openapi.json`, and regenerates `src/services/api/schema.ts`. Review the
+diff and commit both files. The endpoint is read from `API_OPENAPI_URL` and defaults to the
+development API, so no setup is needed; set the variable to refresh from another environment.
+
+Never hand-edit `src/services/api/schema.ts`. CI runs `npm run check:contract`, which regenerates
+the client from the same published contract and fails if the committed client is out of date, so the
+web can never silently build against a stale contract.
 
 ## Scripts
 
@@ -85,7 +90,10 @@ Review the generated diff after regenerating. Never hand-edit `src/services/api/
 - `npm run lint` lint with ESLint
 - `npm run format` / `npm run format:check` format with Prettier
 - `npm run typecheck` type check without building
-- `npm run generate:api` regenerate the typed API client from the OpenAPI document
+- `npm run generate:api` regenerate the typed API client from the committed OpenAPI document
+- `npm run sync:contract` refresh the contract from the API's published endpoint and regenerate the client
+- `npm run check:contract` fail if the committed client is out of date with the API contract
+- `npm run check:no-em-dash` fail if an em dash appears anywhere under `src`
 
 ## Configuration
 
@@ -110,9 +118,10 @@ No feature screens are implemented yet.
 ## Continuous integration
 
 CI is defined in `.github/workflows/ci.yml`. On every pull request into `develop` or `main` it runs
-install, build, test, lint, a secret scan, and a dependency vulnerability scan, all blocking. On
-merge to `develop` it runs a gated development deploy stub; a version tag promotes through staging
-and production stubs. Deploy targets are wired once hosting is chosen.
+install, build, test, lint (including the em dash check), an API contract drift check, a secret scan,
+and a dependency vulnerability scan, all blocking. On merge to `develop` it runs a gated development
+deploy stub; a version tag promotes through staging and production stubs. Deploy targets are wired
+once hosting is chosen.
 
 ## Contributing
 

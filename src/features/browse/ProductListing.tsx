@@ -31,12 +31,17 @@ interface CategoryOption {
   label: string;
 }
 
+// Child categories are indented under their parent in the flat select. The indent uses non-breaking
+// spaces (preserved in option text) so a subcategory reads as nested without any dash.
+const CHILD_INDENT = '\u00A0\u00A0';
+
 function flattenCategories(nodes: CategoryNode[]): CategoryOption[] {
   const out: CategoryOption[] = [];
   for (const node of nodes) {
     if (node.slug) out.push({ slug: node.slug, label: node.name ?? node.slug });
     for (const child of node.children ?? []) {
-      if (child.slug) out.push({ slug: child.slug, label: `— ${child.name ?? child.slug}` });
+      if (child.slug)
+        out.push({ slug: child.slug, label: `${CHILD_INDENT}${child.name ?? child.slug}` });
     }
   }
   return out;
@@ -141,7 +146,7 @@ export function ProductListing({ fixedCategorySlug }: ProductListingProps) {
   const stateName = states.find((s) => s.code === stateCode)?.name ?? stateCode;
   const categoryName = categoryOptions
     .find((c) => c.slug === categorySlug)
-    ?.label.replace(/^— /, '');
+    ?.label.replace(/^\u00A0+/, '');
 
   // Active filter chips with the key(s) each one clears.
   const chips: { id: string; label: string; clear: Record<string, string | null> }[] = [];

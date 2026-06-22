@@ -17,7 +17,10 @@
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "generate:api": "openapi-typescript ./openapi/farmersquest-api.openapi.json --output ./src/services/api/schema.ts"
+    "generate:api": "openapi-typescript ./openapi/farmersquest-api.openapi.json --output ./src/services/api/schema.ts",
+    "sync:contract": "node scripts/sync-contract.mjs",
+    "check:contract": "node scripts/check-contract.mjs",
+    "check:no-em-dash": "node scripts/check-no-em-dash.mjs"
   },
   "dependencies": {
     "@fontsource/nunito": "5.2.7",
