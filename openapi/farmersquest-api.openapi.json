@@ -1816,6 +1816,10 @@
         "additionalProperties": false
       },
       "CartDto": {
+        "required": [
+          "currency",
+          "total"
+        ],
         "type": "object",
         "properties": {
           "items": {
@@ -1834,8 +1838,7 @@
             "format": "double"
           },
           "currency": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
           },
           "hasInvalidItems": {
             "type": "boolean"
@@ -1994,6 +1997,10 @@
         "additionalProperties": false
       },
       "FarmerOrderDetailDto": {
+        "required": [
+          "currency",
+          "subtotal"
+        ],
         "type": "object",
         "properties": {
           "orderId": {
@@ -2013,8 +2020,7 @@
             "format": "double"
           },
           "currency": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
           },
           "delivery": {
             "$ref": "#/components/schemas/DeliveryDto"
@@ -2041,6 +2047,10 @@
         "additionalProperties": false
       },
       "FarmerOrderSummaryDto": {
+        "required": [
+          "currency",
+          "subtotal"
+        ],
         "type": "object",
         "properties": {
           "orderId": {
@@ -2060,8 +2070,7 @@
             "format": "double"
           },
           "currency": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
           },
           "itemCount": {
             "type": "integer",
@@ -2147,7 +2156,7 @@
             "nullable": true
           }
         },
-        "additionalProperties": { }
+        "additionalProperties": {}
       },
       "IdDocumentType": {
         "enum": [
@@ -2251,6 +2260,10 @@
         "additionalProperties": false
       },
       "OrderDetailDto": {
+        "required": [
+          "currency",
+          "total"
+        ],
         "type": "object",
         "properties": {
           "orderId": {
@@ -2266,8 +2279,7 @@
             "format": "double"
           },
           "currency": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
           },
           "delivery": {
             "$ref": "#/components/schemas/DeliveryDto"
@@ -2291,6 +2303,10 @@
         "additionalProperties": false
       },
       "OrderItemDto": {
+        "required": [
+          "lineTotal",
+          "unitPrice"
+        ],
         "type": "object",
         "properties": {
           "productId": {
@@ -2321,6 +2337,10 @@
         "additionalProperties": false
       },
       "OrderSummaryDto": {
+        "required": [
+          "currency",
+          "total"
+        ],
         "type": "object",
         "properties": {
           "orderId": {
@@ -2336,8 +2356,7 @@
             "format": "double"
           },
           "currency": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
           },
           "itemCount": {
             "type": "integer",
@@ -2477,7 +2496,7 @@
             "nullable": true
           }
         },
-        "additionalProperties": { }
+        "additionalProperties": {}
       },
       "ProductAttributeDto": {
         "type": "object",
@@ -2901,6 +2920,9 @@
         "additionalProperties": false
       },
       "SubOrderDto": {
+        "required": [
+          "subtotal"
+        ],
         "type": "object",
         "properties": {
           "subOrderId": {
@@ -3074,7 +3096,7 @@
   },
   "security": [
     {
-      "Bearer": [ ]
+      "Bearer": []
     }
   ],
   "tags": [
