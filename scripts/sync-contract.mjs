@@ -3,21 +3,23 @@
 //
 //   npm run sync:contract
 //
-// It pulls the current contract from the API's published OpenAPI endpoint (API_OPENAPI_URL, default
-// the development API), writes it to openapi/farmersquest-api.openapi.json, and regenerates
+// It reads the current contract from the API repository's committed OpenAPI document (the source of
+// truth in git), writes it to openapi/farmersquest-api.openapi.json, and regenerates
 // src/services/api/schema.ts. Review and commit the diff. The client is never hand-edited.
+//
+// Authentication uses API_CONTRACT_TOKEN, or, when that is not set locally, the developer's GitHub
+// CLI login (gh auth login). See scripts/contract-source.mjs.
 import { writeFileSync } from 'node:fs';
 import {
   committedDocPath,
   committedSchemaPath,
-  contractUrl,
+  contractDescription,
   fetchContract,
   generateClient,
 } from './contract-source.mjs';
 
-const url = contractUrl();
-console.log(`Fetching API contract from ${url}`);
-const doc = await fetchContract(url);
+console.log(`Fetching API contract from ${contractDescription()}`);
+const doc = await fetchContract();
 writeFileSync(committedDocPath, doc);
 console.log(`Wrote ${committedDocPath}`);
 generateClient(committedDocPath, committedSchemaPath);

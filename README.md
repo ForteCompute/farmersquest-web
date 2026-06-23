@@ -66,20 +66,42 @@ This client consumes the FarmersQuest API only. To run against a local API, star
 The client is generated from the API OpenAPI document, committed at
 `openapi/farmersquest-api.openapi.json`.
 
+The source of truth is the API repository's committed contract (`docs/openapi/v1.json` on its
+`develop` branch), read from git, not from a running API. A dev-API outage can never break web
+builds: the contract check only fails when the committed web client is actually behind the committed
+contract.
+
 To refresh the client when the API contract changes, run the single command:
 
 ```bash
 npm run sync:contract
 ```
 
-This pulls the API's current contract from its published OpenAPI endpoint, writes it to
+This reads the API repository's committed contract, writes it to
 `openapi/farmersquest-api.openapi.json`, and regenerates `src/services/api/schema.ts`. Review the
-diff and commit both files. The endpoint is read from `API_OPENAPI_URL` and defaults to the
-development API, so no setup is needed; set the variable to refresh from another environment.
+diff and commit both files.
 
-Never hand-edit `src/services/api/schema.ts`. CI runs `npm run check:contract`, which regenerates
-the client from the same published contract and fails if the committed client is out of date, so the
-web can never silently build against a stale contract.
+Reading the contract needs a token with read access to the `farmersquest-api` repository, taken from
+the `API_CONTRACT_TOKEN` environment variable (never hardcoded). Locally, if `API_CONTRACT_TOKEN` is
+not set, the GitHub CLI login is used instead, so a developer signed in with `gh auth login` (to an
+account that can read the API repository) needs no extra setup.
+
+Never hand-edit `src/services/api/schema.ts`. CI runs `npm run check:contract`, which regenerates the
+client from the API repository's committed contract and fails if the committed client is out of date,
+so the web can never silently build against a stale contract.
+
+### Required CI secret
+
+The contract drift check needs one repository secret:
+
+- **Name:** `API_CONTRACT_TOKEN`
+- **Where:** GitHub repository `Settings` > `Secrets and variables` > `Actions` > `New repository
+secret`
+- **Value:** a token with read access to the `ForteCompute/farmersquest-api` repository contents (a
+  fine-grained personal access token scoped to that repository with `Contents: Read`, or a classic
+  token with `repo` scope)
+
+If the secret is missing, the contract drift job fails with a clear message naming it.
 
 ## Scripts
 
@@ -91,7 +113,7 @@ web can never silently build against a stale contract.
 - `npm run format` / `npm run format:check` format with Prettier
 - `npm run typecheck` type check without building
 - `npm run generate:api` regenerate the typed API client from the committed OpenAPI document
-- `npm run sync:contract` refresh the contract from the API's published endpoint and regenerate the client
+- `npm run sync:contract` refresh the contract from the API repo's committed document and regenerate the client
 - `npm run check:contract` fail if the committed client is out of date with the API contract
 - `npm run check:no-em-dash` fail if an em dash appears anywhere under `src`
 

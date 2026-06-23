@@ -57,12 +57,14 @@ jobs:
   contract-drift:
     name: API contract drift
     runs-on: ubuntu-latest
-    # Regenerate the typed client from the API's current published contract and fail if the committed
-    # client is out of date, so the web can never silently build against a stale contract. The URL is
-    # configuration, set here rather than hardcoded in the app. Point it at another environment by
-    # changing this value.
+    # Regenerate the typed client from the API repository's committed OpenAPI document (the source of
+    # truth in git) and fail if the committed client is out of date, so the web can never silently
+    # build against a stale contract. Reading from git, not a running API, means a dev-API outage can
+    # never break this check. The document is read through the GitHub Contents API using a token with
+    # read access to the API repository, provided as the API_CONTRACT_TOKEN repository secret. The
+    # token is never hardcoded.
     env:
-      API_OPENAPI_URL: https://farmquest-api.dev.fortecompute.com/swagger/v1/swagger.json
+      API_CONTRACT_TOKEN: ${{ secrets.API_CONTRACT_TOKEN }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -72,7 +74,14 @@ jobs:
       - name: Install
         run: npm ci
       - name: Check the committed client matches the contract
-        run: npm run check:contract
+        run: |
+          if [ -z "$API_CONTRACT_TOKEN" ]; then
+            echo "Missing required secret API_CONTRACT_TOKEN."
+            echo "Add it under Settings > Secrets and variables > Actions as a repository secret."
+            echo "It must be a token with read access to the farmersquest-api repository contents."
+            exit 1
+          fi
+          npm run check:contract
 
   secret-scan:
     name: Secret scan

@@ -1,30 +1,29 @@
-// Contract drift guard. Regenerates the typed client from the API's current contract and fails if the
-// committed client is out of date, so the web can never silently build against a stale contract.
+// Contract drift guard. Regenerates the typed client from the API repository's committed OpenAPI
+// document and fails if the committed web client is out of date, so the web can never silently build
+// against a stale contract.
 //
 //   npm run check:contract
 //
-// It pulls the current contract from the API's published OpenAPI endpoint (API_OPENAPI_URL, default
-// the development API), generates the client into a temporary file, and compares it to the committed
-// src/services/api/schema.ts. Any difference fails the build with the one command to fix it.
+// The contract is read from git (the API repo's committed document), not a running API, so a dev-API
+// outage can never break this check. It only fails when the committed web client is actually behind
+// the committed contract. Authentication uses API_CONTRACT_TOKEN; see scripts/contract-source.mjs.
 import { mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import {
   committedSchemaPath,
-  contractUrl,
+  contractDescription,
   fetchContract,
   generateClient,
 } from './contract-source.mjs';
 
-const url = contractUrl();
-console.log(`Checking the committed API client against the contract at ${url}`);
+console.log(`Checking the committed API client against the contract at ${contractDescription()}`);
 
 let doc;
 try {
-  doc = await fetchContract(url);
+  doc = await fetchContract();
 } catch (error) {
   console.error(`\nContract check could not run: ${error.message}`);
-  console.error('Set API_OPENAPI_URL to a reachable OpenAPI endpoint and try again.');
   process.exit(1);
 }
 
